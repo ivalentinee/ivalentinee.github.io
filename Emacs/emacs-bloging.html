@@ -115,91 +115,8 @@
 <h3 id="sec-3-1-1"><span class="section-number-3">3.1.1</span> projects.el</h3>
 <div class="outline-text-3" id="text-3-1-1">
 
-<p>    Именно в этом файле находится основная конфигурация проекта.<br/>
-    Кроме материалов мануала ничего не использовалось, поэтому без комментариев просто приведу текст этого файла
-</p>
-
-
-<pre name="code" class="prettyprint lang-lisp">
-(setq org-publish-project-alist
-      '(
-        ("blog" :components ("blog-org" "blog-stylesheets" "blog-javascript" "blog-images"))
-        ("blog-org"
-         :base-directory "путь-до-бложика/blog/posts/"
-         :base-extension "org"
-         :publishing-directory "путь-до-бложика/blog/public/"
-         :recursive t
-         :exclude "template.org\\|widget"
-         :publishing-function org-publish-org-to-custom-html
-         :headline-levels 4
-         :auto-sitemap t
-         :sitemap-title "Записи"
-         :sitemap-function org-publish-org-custom-sitemap
-         :sitemap-filename "index.org"
-         :sitemap-template "templates/sitemap-template.org"
-         :sitemap-date-format "%d.%m.%Y"
-         :sitemap-file-entry-format "%t (%d)"
-         :with-toc nil
-         ;; html options
-         :html-preamble "&lt;div class=\"header\"&gt;&lt;h1&gt;%t&lt;/h1&gt;&lt;h2&gt;%d&lt;/h2&gt;&lt;/div&gt;"
-         :html-postamble nil
-"&lt;div class=\"postamble-content\"&gt;
-  &lt;div class=\"pure-g-r\"&gt;
-
-    &lt;div class=\"pure-u-1-2\"&gt;
-      &lt;ul class=\"postamble-copyright\"&gt;
-        &lt;li&gt;Built with &lt;a href=\"http://purecss.io/\"&gt;Pure CSS&lt;/a&gt;&lt;/li&gt;
-        &lt;li&gt;Created with &lt;a href=\"http://www.gnu.org/software/emacs/\"&gt;Emacs&lt;/a&gt; and &lt;a href=\"http://orgmode.org/\"&gt;Org-Mode&lt;/a&gt;&lt;/li&gt;
-        &lt;li&gt;&lt;span style=\"-webkit-transform: rotate(180deg); -moz-transform: rotate(180deg); -o-transform: rotate(180deg); -khtml-transform: rotate(180deg); -ms-transform: rotate(180deg); transform: rotate(180deg); display: inline-block;\"&gt;
-    &amp;copy;
-&lt;/span&gt; Валентин Ионов, 2014&lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-
-    &lt;div class=\"pure-u-1-2\"&gt;
-      &lt;ul class=\"postamble-links\"&gt;
-        &lt;li&gt;&lt;a href=\"https://github.com/vemperor\"&gt;Github&lt;/a&gt;&lt;/li&gt;
-        &lt;li&gt;&lt;a href=\"https://plus.google.com/u/0/111577518760980284675\"&gt;Google+&lt;/a&gt;&lt;/li&gt;
-        &lt;li&gt;&lt;a href=\"https://vk.com/v_emperor\"&gt;VK&lt;/a&gt;&lt;/li&gt;
-      &lt;/ul&gt;
-    &lt;/div&gt;
-
-  &lt;/div&gt;
-&lt;/div&gt;"
-         :html-html5-fancy t
-         :html-head nil
-         :html-head-include-default-style nil
-         :html-head-include-scripts nil
-         :style nil
-         )
-        ("blog-stylesheets"
-         :base-directory "путь-до-бложика/blog/stylesheets/"
-         :base-extension "css"
-         :publishing-directory "путь-до-бложика/blog/public/stylesheets/"
-         :recursive t
-         :publishing-function org-publish-attachment
-         )
-        ("blog-javascript"
-         :base-directory "путь-до-бложика/blog/javascript/"
-         :base-extension "js"
-         :publishing-directory "путь-до-бложика/blog/public/javascript/"
-         :recursive t
-         :publishing-function org-publish-attachment
-         )
-        ("blog-images"
-         :base-directory "путь-до-бложика/blog/posts/images"
-         :base-extension "jpg\\|png"
-         :publishing-directory "путь-до-бложика/blog/public/images/"
-         :recursive t
-         :publishing-function org-publish-attachment
-         )
-        )
-      )
-
-(provide 'projects)
-</pre>
-
-<p>
+<p>    Именно <a href="https://github.com/vemperor/Blog-Source/blob/master/projects.el">в этом файле</a> находится основная конфигурация проекта.<br/>
+    Кроме материалов мануала ничего не использовалось, поэтому комментировать нечего.<br/>
     Немного фарш, конечно, и raw html в конфиге. Но с этим я пока возиться не стал. Может быть когда-нибудь сделаю нормально.
 </p></div>
 
@@ -216,7 +133,7 @@
 <h4 id="sec-3-1-2-1"><span class="section-number-4">3.1.2.1</span> org-export-html</h4>
 <div class="outline-text-4" id="text-3-1-2-1">
 
-<p>     Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось сделать свою функцию экспорта (копипаста оригинала, C-s и C-S-%). Также пришлось сделать собственную функцию публикации. Приводить текст не буду &mdash; его много и как-нибудь всё равно выложу его в публичный реп.
+<p>     Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L587">сделать свою функцию экспорта</a> (копипаста оригинала, C-s и C-S-%). Также пришлось сделать <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L45">собственную функцию публикации</a>.
 </p></div>
 
 </div>
@@ -288,7 +205,7 @@
 <div class="outline-text-4" id="text-3-2-1-1">
 
 <p>     Для подсветки кода используется <a href="http://code.google.com/p/google-code-prettify/">google-code-prettify</a>. Как видно выше, в шаблоне подключаются соответствующие .js и .css.<br/>
-     Также перепилена функция экспорта кода. Приводить не буду, потому как опять много.
+     Также перепилена <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L147">функция экспорта кода</a>.
 </p></div>
 </div>
 
@@ -309,7 +226,7 @@
 <div class="outline-text-3" id="text-3-2-3">
 
 <p>    Тут основные настройки прописаны в <a href="#sec-3-1-1">projects.el</a>.<br/>
-    Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена функция генерации sitemap'а. Текст приводить не буду, ибо много, но приведу текст шаблона.
+    Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L53">функция генерации sitemap'а</a>. Приведу текст шаблона.
 </p>
 
 
@@ -327,7 +244,7 @@
 </pre>
 
 <p>
-    Очевидно, что отличается он только другим layout'ом.
+    Очевидно, что отличается он только layout'ом.
 </p></div>
 </div>
 </div>
