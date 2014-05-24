@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+<title>Emacs и блог</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Emacs и блог"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2014-05-24"/>
+<meta name="author" content="Emperor"/>
+<meta name="description" content="Emacs как средство публикации записей"/>
+<meta name="keywords" content="org-mode org emacs blogging"/>
+
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/post-style.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/post-layout.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/hide-copyright.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/menu.css" />
+<script async="true" src="/javascript/run_prettify.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/google-code-prettify/desert-theme.css" />
+
+</head>
+<body>
+
+<div id="preamble">
+<div class="header"><h1>Emacs и блог</h1><h2>Emacs как средство публикации записей</h2></div>
+</div>
+
+<div class="content" id="content">
+
+<div id="menu">
+  <div class="pure-menu pure-menu-open">
+    <a class="pure-menu-heading" href="#">Блог</a>
+    <ul>
+      <li><a href="/index.html">Записи</a></li>
+      <li><a href="http://northempire.tk/">Домой</a></li>
+    </ul>
+  </div>
+</div>
+
+
+
+
+<div id="table-of-contents">
+<h1>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h1>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 Предисловие</a></li>
+<li><a href="#sec-2">2 Что использовалось</a></li>
+<li><a href="#sec-3">3 Как сделано</a>
+<ul>
+<li><a href="#sec-3-1">3.1 Базовые штуки</a>
+<ul>
+<li><a href="#sec-3-1-1">3.1.1 projects.el</a></li>
+<li><a href="#sec-3-1-2">3.1.2 customized-org-html.el</a>
+<ul>
+<li><a href="#sec-3-1-2-1">3.1.2.1 org-export-html</a></li>
+<li><a href="#sec-3-1-2-2">3.1.2.2 Ссылки на файлы</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-3-2">3.2 Разные плюшки</a>
+<ul>
+<li><a href="#sec-3-2-1">3.2.1 Стили</a>
+<ul>
+<li><a href="#sec-3-2-1-1">3.2.1.1 Подсветка кода</a></li>
+</ul>
+</li>
+<li><a href="#sec-3-2-2">3.2.2 Меню</a></li>
+<li><a href="#sec-3-2-3">3.2.3 Карта сайта (aka index.html)</a></li>
+</ul></li>
+</ul>
+</li>
+<li><a href="#sec-4">4 Что дальше</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-1">
+<h1 id="sec-1"><span class="section-number-1">1</span> Предисловие</h1>
+<div class="outline-text-1" id="text-1">
+
+<p>  Итак, это наконец-то случилось. Допилил экспорт из Emacs в html с нормальным <a href="../index.html">sitemap'ом</a>. Теперь буду как все социокуртизанки постить про всё подряд. Ага.
+</p></div>
+
+</div>
+
+<div id="outline-container-2" class="outline-1">
+<h1 id="sec-2"><span class="section-number-1">2</span> Что использовалось</h1>
+<div class="outline-text-1" id="text-2">
+
+<p>  Для публикации записей использован замечательный <a href="http://www.emacswiki.org/emacs/OrgMode">org-mode</a>.<br/>
+  Для запиливания были использованы <a href="http://orgmode.org/">сайт org-mode</a> и <a href="http://stackoverflow.com/">stackoverflow</a>.
+</p></div>
+
+</div>
+
+<div id="outline-container-3" class="outline-1">
+<h1 id="sec-3"><span class="section-number-1">3</span> Как сделано</h1>
+<div class="outline-text-1" id="text-3">
+
+<p>  Итак, начнём.
+</p>
+</div>
+
+<div id="outline-container-3-1" class="outline-2">
+<h2 id="sec-3-1"><span class="section-number-2">3.1</span> Базовые штуки</h2>
+<div class="outline-text-2" id="text-3-1">
+
+
+</div>
+
+<div id="outline-container-3-1-1" class="outline-3">
+<h3 id="sec-3-1-1"><span class="section-number-3">3.1.1</span> projects.el</h3>
+<div class="outline-text-3" id="text-3-1-1">
+
+<p>    Именно в этом файле находится основная конфигурация проекта.<br/>
+    Кроме материалов мануала ничего не использовалось, поэтому без комментариев просто приведу текст этого файла
+</p>
+
+
+<pre name="code" class="prettyprint lang-lisp">
+(setq org-publish-project-alist
+      '(
+        ("blog" :components ("blog-org" "blog-stylesheets" "blog-javascript" "blog-images"))
+        ("blog-org"
+         :base-directory "путь-до-бложика/blog/posts/"
+         :base-extension "org"
+         :publishing-directory "путь-до-бложика/blog/public/"
+         :recursive t
+         :exclude "template.org\\|widget"
+         :publishing-function org-publish-org-to-custom-html
+         :headline-levels 4
+         :auto-sitemap t
+         :sitemap-title "Записи"
+         :sitemap-function org-publish-org-custom-sitemap
+         :sitemap-filename "index.org"
+         :sitemap-template "templates/sitemap-template.org"
+         :sitemap-date-format "%d.%m.%Y"
+         :sitemap-file-entry-format "%t (%d)"
+         :with-toc nil
+         ;; html options
+         :html-preamble "&lt;div class=\"header\"&gt;&lt;h1&gt;%t&lt;/h1&gt;&lt;h2&gt;%d&lt;/h2&gt;&lt;/div&gt;"
+         :html-postamble nil
+"&lt;div class=\"postamble-content\"&gt;
+  &lt;div class=\"pure-g-r\"&gt;
+
+    &lt;div class=\"pure-u-1-2\"&gt;
+      &lt;ul class=\"postamble-copyright\"&gt;
+        &lt;li&gt;Built with &lt;a href=\"http://purecss.io/\"&gt;Pure CSS&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;Created with &lt;a href=\"http://www.gnu.org/software/emacs/\"&gt;Emacs&lt;/a&gt; and &lt;a href=\"http://orgmode.org/\"&gt;Org-Mode&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;span style=\"-webkit-transform: rotate(180deg); -moz-transform: rotate(180deg); -o-transform: rotate(180deg); -khtml-transform: rotate(180deg); -ms-transform: rotate(180deg); transform: rotate(180deg); display: inline-block;\"&gt;
+    &amp;copy;
+&lt;/span&gt; Валентин Ионов, 2014&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+
+    &lt;div class=\"pure-u-1-2\"&gt;
+      &lt;ul class=\"postamble-links\"&gt;
+        &lt;li&gt;&lt;a href=\"https://github.com/vemperor\"&gt;Github&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=\"https://plus.google.com/u/0/111577518760980284675\"&gt;Google+&lt;/a&gt;&lt;/li&gt;
+        &lt;li&gt;&lt;a href=\"https://vk.com/v_emperor\"&gt;VK&lt;/a&gt;&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+
+  &lt;/div&gt;
+&lt;/div&gt;"
+         :html-html5-fancy t
+         :html-head nil
+         :html-head-include-default-style nil
+         :html-head-include-scripts nil
+         :style nil
+         )
+        ("blog-stylesheets"
+         :base-directory "путь-до-бложика/blog/stylesheets/"
+         :base-extension "css"
+         :publishing-directory "путь-до-бложика/blog/public/stylesheets/"
+         :recursive t
+         :publishing-function org-publish-attachment
+         )
+        ("blog-javascript"
+         :base-directory "путь-до-бложика/blog/javascript/"
+         :base-extension "js"
+         :publishing-directory "путь-до-бложика/blog/public/javascript/"
+         :recursive t
+         :publishing-function org-publish-attachment
+         )
+        ("blog-images"
+         :base-directory "путь-до-бложика/blog/posts/images"
+         :base-extension "jpg\\|png"
+         :publishing-directory "путь-до-бложика/blog/public/images/"
+         :recursive t
+         :publishing-function org-publish-attachment
+         )
+        )
+      )
+
+(provide 'projects)
+</pre>
+
+<p>
+    Немного фарш, конечно, и raw html в конфиге. Но с этим я пока возиться не стал. Может быть когда-нибудь сделаю нормально.
+</p></div>
+
+</div>
+
+<div id="outline-container-3-1-2" class="outline-3">
+<h3 id="sec-3-1-2"><span class="section-number-3">3.1.2</span> customized-org-html.el</h3>
+<div class="outline-text-3" id="text-3-1-2">
+
+
+</div>
+
+<div id="outline-container-3-1-2-1" class="outline-4">
+<h4 id="sec-3-1-2-1"><span class="section-number-4">3.1.2.1</span> org-export-html</h4>
+<div class="outline-text-4" id="text-3-1-2-1">
+
+<p>     Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось сделать свою функцию экспорта (копипаста оригинала, C-s и C-S-%). Также пришлось сделать собственную функцию публикации. Приводить текст не буду &mdash; его много и как-нибудь всё равно выложу его в публичный реп.
+</p></div>
+
+</div>
+
+<div id="outline-container-3-1-2-2" class="outline-4">
+<h4 id="sec-3-1-2-2"><span class="section-number-4">3.1.2.2</span> Ссылки на файлы</h4>
+<div class="outline-text-4" id="text-3-1-2-2">
+
+<p>     Org-mode умеет красиво делать ссылки на файлы (в моём случае &mdash; картинки). Но не очень красиво их заворачивает при экспорте. Слава <a href="http://stackoverflow.com/">stackoverflow</a>, я нашёл <a href="http://stackoverflow.com/questions/14684263/how-to-org-mode-image-absolute-path-of-export-html">решение</a>. Приведу здесь код
+</p>
+
+
+<pre name="code" class="prettyprint lang-lisp">
+(defun org-custom-link-img-follow (path)
+  (org-open-file-with-emacs
+   (format "../images/%s" path)))
+
+(defun org-custom-link-img-export (path desc format)
+  (cond
+   ((eq format 'html)
+    (format "&lt;img src=\"/images/%s\" alt=\"%s\"/&gt;" path desc))))
+
+(org-add-link-type "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
+</pre>
+
+</div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-3-2" class="outline-2">
+<h2 id="sec-3-2"><span class="section-number-2">3.2</span> Разные плюшки</h2>
+<div class="outline-text-2" id="text-3-2">
+
+<p>   С основной частью мы разобрались, теперь про остальное.
+</p>
+</div>
+
+<div id="outline-container-3-2-1" class="outline-3">
+<h3 id="sec-3-2-1"><span class="section-number-3">3.2.1</span> Стили</h3>
+<div class="outline-text-3" id="text-3-2-1">
+
+<p>    Для внешнего вида решил пользовать <a href="http://purecss.io/">pure css</a>. Приятный и простой css-framework, показался мне симпатичным.<br/>
+    Подключается всё это дело через шаблоны (org-template). Вот код шаблона
+</p>
+
+
+<pre name="code" class="prettyprint lang-lisp">
+#+AUTHOR:    Emperor
+#+EMAIL:     valentine.emperor@gmail.com
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css"&gt;
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="/stylesheets/post-style.css" /&gt;
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="/stylesheets/post-layout.css" /&gt;
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="/stylesheets/menu.css" /&gt;
+
+#+STYLE: &lt;script async="true" src="/javascript/run_prettify.js"&gt;&lt;/script&gt;
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="/stylesheets/google-code-prettify/desert-theme.css" /&gt;
+
+#+OPTIONS: toc:t
+#+LANGUAGE: ru
+</pre>
+
+
+</div>
+
+<div id="outline-container-3-2-1-1" class="outline-4">
+<h4 id="sec-3-2-1-1"><span class="section-number-4">3.2.1.1</span> Подсветка кода</h4>
+<div class="outline-text-4" id="text-3-2-1-1">
+
+<p>     Для подсветки кода используется <a href="http://code.google.com/p/google-code-prettify/">google-code-prettify</a>. Как видно выше, в шаблоне подключаются соответствующие .js и .css.<br/>
+     Также перепилена функция экспорта кода. Приводить не буду, потому как опять много.
+</p></div>
+</div>
+
+</div>
+
+<div id="outline-container-3-2-2" class="outline-3">
+<h3 id="sec-3-2-2"><span class="section-number-3">3.2.2</span> Меню</h3>
+<div class="outline-text-3" id="text-3-2-2">
+
+<p>    Для меню у меня отдельный кусок html-кода, который нагло украден со <a href="http://purecss.io/layouts/side-menu/">страницы соответствующего layout'а pure css</a>.<br/>
+    Подключается отдельным org-файлом. К сожалению, приходится подключать вручную в каждом файле поста. Щито поделать, десу.
+</p></div>
+
+</div>
+
+<div id="outline-container-3-2-3" class="outline-3">
+<h3 id="sec-3-2-3"><span class="section-number-3">3.2.3</span> Карта сайта (aka index.html)</h3>
+<div class="outline-text-3" id="text-3-2-3">
+
+<p>    Тут основные настройки прописаны в <a href="#sec-3-1-1">projects.el</a>.<br/>
+    Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена функция генерации sitemap'а. Текст приводить не буду, ибо много, но приведу текст шаблона.
+</p>
+
+
+<pre name="code" class="prettyprint lang-lisp">
+#+AUTHOR:    Emperor
+#+EMAIL:     valentine.emperor@gmail.com
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css"&gt;
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="stylesheets/sitemap-style.css" /&gt;
+#+STYLE: &lt;link rel="stylesheet" type="text/css" href="stylesheets/sitemap-layout.css" /&gt;
+
+#+HTML_CONTAINER: div
+
+#+OPTIONS: toc:nil
+#+LANGUAGE: ru
+</pre>
+
+<p>
+    Очевидно, что отличается он только другим layout'ом.
+</p></div>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-1">
+<h1 id="sec-4"><span class="section-number-1">4</span> Что дальше</h1>
+<div class="outline-text-1" id="text-4">
+
+<p>  Теперь надо прикрутить комменты из google+, angular/jquery для некоторой интерактивности, допилить стили. В первую очередь надо прикрутить сворачиваемость кода и содержания.
+</p></div>
+</div>
+</div>
+
+<div id="postamble">
+<div class="postamble-content">
+  <div class="pure-g-r">
+
+    <div class="pure-u-1-2">
+      <ul class="postamble-copyright">
+        <li>Built with <a href="http://purecss.io/">Pure CSS</a></li>
+        <li>Created with <a href="http://www.gnu.org/software/emacs/">Emacs</a> and <a href="http://orgmode.org/">Org-Mode</a></li>
+        <li><a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Лицензия Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by-sa/4.0/80x15.png" /></a> Валентин Ионов, 2014</li>
+      </ul>
+    </div>
+
+    <div class="pure-u-1-2">
+      <ul class="postamble-links">
+        <li><a href="https://github.com/vemperor">Github</a></li>
+        <li><a href="https://plus.google.com/u/0/111577518760980284675">Google+</a></li>
+        <li><a href="https://vk.com/v_emperor">VK</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div id="copyright-text">
+    Это <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text" rel="dct:type">произведение </span>, автор которого — <span xmlns:cc="http://creativecommons.org/ns#" property="cc:attributionName">Валентин Ионов </span>, доступно на условиях <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">лицензии Creative Commons «Attribution-ShareAlike» («Атрибуция — На тех же условиях») 4.0 Всемирная </a>.
+  </div>
+
+</div>
+</div>
+</body>
+</html>
