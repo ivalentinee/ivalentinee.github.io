@@ -37,6 +37,10 @@ body {
     margin-top: 0;
 }
 
+.post-date {
+    display:none;
+}
+
 /*
   The content `<div>` is where all your content goes.
   */
