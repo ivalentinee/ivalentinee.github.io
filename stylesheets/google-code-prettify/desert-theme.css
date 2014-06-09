@@ -33,6 +33,7 @@ pre.prettyprint {
     overflow: auto;
     overflow-wrap: normal;
     white-space: pre;
+    font-size: 90%;
 }
 
 
