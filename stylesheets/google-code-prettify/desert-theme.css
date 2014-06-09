@@ -27,10 +27,12 @@ pre.prettyprint, code.prettyprint {
 }
 
 pre.prettyprint {
-        width: 95%;
-        margin: 1em auto;
-        padding: 1em;
-        white-space: pre-wrap;
+    width: 95%;
+    margin: 1em auto;
+    padding: 1em;
+    overflow: auto;
+    overflow-wrap: normal;
+    white-space: pre;
 }
 
 
