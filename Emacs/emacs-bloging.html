@@ -19,6 +19,15 @@
 <link rel="stylesheet" type="text/css" href="/stylesheets/menu.css" />
 <script async="true" src="/javascript/run_prettify.js"></script>
 <link rel="stylesheet" type="text/css" href="/stylesheets/google-code-prettify/desert-theme.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+<link rel="stylesheet" type="text/css" href="/stylesheets/post-style.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/post-layout.css" />
+<link rel="stylesheet" type="text/css" href="/stylesheets/menu.css" />
+<script async="true" src="/javascript/run_prettify.js"></script>
+<link rel="stylesheet" type="text/css" href="/stylesheets/google-code-prettify/desert-theme.css" />
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+<link rel="stylesheet" type="text/css" href="stylesheets/sitemap-style.css" />
+<link rel="stylesheet" type="text/css" href="stylesheets/sitemap-layout.css" />
 
 </head>
 <body>
@@ -41,46 +50,11 @@
 
 
 
-<div id="table-of-contents">
-<h1>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h1>
-<div id="text-table-of-contents">
-<ul>
-<li><a href="#sec-1">1 Предисловие</a></li>
-<li><a href="#sec-2">2 Что использовалось</a></li>
-<li><a href="#sec-3">3 Как сделано</a>
-<ul>
-<li><a href="#sec-3-1">3.1 Базовые штуки</a>
-<ul>
-<li><a href="#sec-3-1-1">3.1.1 projects.el</a></li>
-<li><a href="#sec-3-1-2">3.1.2 customized-org-html.el</a>
-<ul>
-<li><a href="#sec-3-1-2-1">3.1.2.1 org-export-html</a></li>
-<li><a href="#sec-3-1-2-2">3.1.2.2 Ссылки на файлы</a></li>
-</ul></li>
-</ul>
-</li>
-<li><a href="#sec-3-2">3.2 Разные плюшки</a>
-<ul>
-<li><a href="#sec-3-2-1">3.2.1 Стили</a>
-<ul>
-<li><a href="#sec-3-2-1-1">3.2.1.1 Подсветка кода</a></li>
-</ul>
-</li>
-<li><a href="#sec-3-2-2">3.2.2 Меню</a></li>
-<li><a href="#sec-3-2-3">3.2.3 Карта сайта (aka index.html)</a></li>
-</ul></li>
-</ul>
-</li>
-<li><a href="#sec-4">4 Что дальше</a></li>
-</ul>
-</div>
-</div>
-
 <div id="outline-container-1" class="outline-1">
 <h1 id="sec-1"><span class="section-number-1">1</span> Предисловие</h1>
 <div class="outline-text-1" id="text-1">
 
-<p>  Итак, это наконец-то случилось. Допилил экспорт из Emacs в html с нормальным <a href="../index.html">sitemap'ом</a>. Теперь буду как все социокуртизанки постить про всё подряд. Ага.
+<p>Итак, это наконец-то случилось. Допилил экспорт из Emacs в html с нормальным <a href="../index.html">sitemap'ом</a>. Теперь буду как все социокуртизанки постить про всё подряд. Ага.
 </p></div>
 
 </div>
@@ -89,8 +63,8 @@
 <h1 id="sec-2"><span class="section-number-1">2</span> Что использовалось</h1>
 <div class="outline-text-1" id="text-2">
 
-<p>  Для публикации записей использован замечательный <a href="http://www.emacswiki.org/emacs/OrgMode">org-mode</a>.<br/>
-  Для запиливания были использованы <a href="http://orgmode.org/">сайт org-mode</a> и <a href="http://stackoverflow.com/">stackoverflow</a>.
+<p>Для публикации записей использован замечательный <a href="http://www.emacswiki.org/emacs/OrgMode">org-mode</a>.<br/>
+Для запиливания были использованы <a href="http://orgmode.org/">сайт org-mode</a> и <a href="http://stackoverflow.com/">stackoverflow</a>.
 </p></div>
 
 </div>
@@ -99,7 +73,7 @@
 <h1 id="sec-3"><span class="section-number-1">3</span> Как сделано</h1>
 <div class="outline-text-1" id="text-3">
 
-<p>  Итак, начнём.
+<p>Итак, начнём.
 </p>
 </div>
 
@@ -114,9 +88,9 @@
 <h3 id="sec-3-1-1"><span class="section-number-3">3.1.1</span> projects.el</h3>
 <div class="outline-text-3" id="text-3-1-1">
 
-<p>    Именно <a href="https://github.com/vemperor/Blog-Source/blob/master/projects.el">в этом файле</a> находится основная конфигурация проекта.<br/>
-    Кроме материалов мануала ничего не использовалось, поэтому комментировать нечего.<br/>
-    Немного фарш, конечно, и raw html в конфиге. Но с этим я пока возиться не стал. Может быть когда-нибудь сделаю нормально.
+<p>Именно <a href="https://github.com/vemperor/Blog-Source/blob/master/projects.el">в этом файле</a> находится основная конфигурация проекта.<br/>
+Кроме материалов мануала ничего не использовалось, поэтому комментировать нечего.<br/>
+Немного фарш, конечно, и raw html в конфиге. Но с этим я пока возиться не стал. Может быть когда-нибудь сделаю нормально.
 </p></div>
 
 </div>
@@ -132,7 +106,7 @@
 <h4 id="sec-3-1-2-1"><span class="section-number-4">3.1.2.1</span> org-export-html</h4>
 <div class="outline-text-4" id="text-3-1-2-1">
 
-<p>     Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L587">сделать свою функцию экспорта</a> (копипаста оригинала, C-s и C-S-%). Также пришлось сделать <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L45">собственную функцию публикации</a>.
+<p>Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L587">сделать свою функцию экспорта</a> (копипаста оригинала, C-s и C-S-%). Также пришлось сделать <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L45">собственную функцию публикации</a>.
 </p></div>
 
 </div>
@@ -141,7 +115,7 @@
 <h4 id="sec-3-1-2-2"><span class="section-number-4">3.1.2.2</span> Ссылки на файлы</h4>
 <div class="outline-text-4" id="text-3-1-2-2">
 
-<p>     Org-mode умеет красиво делать ссылки на файлы (в моём случае &mdash; картинки). Но не очень красиво их заворачивает при экспорте. Слава <a href="http://stackoverflow.com/">stackoverflow</a>, я нашёл <a href="http://stackoverflow.com/questions/14684263/how-to-org-mode-image-absolute-path-of-export-html">решение</a>. Приведу здесь код
+<p>Org-mode умеет красиво делать ссылки на файлы (в моём случае &mdash; картинки). Но не очень красиво их заворачивает при экспорте. Слава <a href="http://stackoverflow.com/">stackoverflow</a>, я нашёл <a href="http://stackoverflow.com/questions/14684263/how-to-org-mode-image-absolute-path-of-export-html">решение</a>. Приведу здесь код
 </p>
 
 
@@ -158,6 +132,14 @@
 (org-add-link-type "img" 'org-custom-link-img-follow 'org-custom-link-img-export)
 </pre>
 
+<p>
+<b>UPD</b>
+Также добавил тип ссылок с превью img-t. И сейчас же его использую, чтобы потом возвращаться к тексту поста.<br/>
+Автор фотографии &mdash; <a href="http://gongled.ru/">Глеб Гончаров</a>.
+</p>
+<p>
+<a title="Тестовое изображение" href="/images/test.jpg"><img src="/images/thumbnails/test.jpg"></a>
+</p>
 </div>
 </div>
 </div>
@@ -168,7 +150,7 @@
 <h2 id="sec-3-2"><span class="section-number-2">3.2</span> Разные плюшки</h2>
 <div class="outline-text-2" id="text-3-2">
 
-<p>   С основной частью мы разобрались, теперь про остальное.
+<p>С основной частью мы разобрались, теперь про остальное.
 </p>
 </div>
 
@@ -176,8 +158,8 @@
 <h3 id="sec-3-2-1"><span class="section-number-3">3.2.1</span> Стили</h3>
 <div class="outline-text-3" id="text-3-2-1">
 
-<p>    Для внешнего вида решил пользовать <a href="http://purecss.io/">pure css</a>. Приятный и простой css-framework, показался мне симпатичным.<br/>
-    Подключается всё это дело через шаблоны (org-template). Вот код шаблона
+<p>Для внешнего вида решил пользовать <a href="http://purecss.io/">pure css</a>. Приятный и простой css-framework, показался мне симпатичным.<br/>
+Подключается всё это дело через шаблоны (org-template). Вот код шаблона
 </p>
 
 
@@ -203,8 +185,8 @@
 <h4 id="sec-3-2-1-1"><span class="section-number-4">3.2.1.1</span> Подсветка кода</h4>
 <div class="outline-text-4" id="text-3-2-1-1">
 
-<p>     Для подсветки кода используется <a href="http://code.google.com/p/google-code-prettify/">google-code-prettify</a>. Как видно выше, в шаблоне подключаются соответствующие .js и .css.<br/>
-     Также перепилена <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L147">функция экспорта кода</a>.
+<p>Для подсветки кода используется <a href="http://code.google.com/p/google-code-prettify/">google-code-prettify</a>. Как видно выше, в шаблоне подключаются соответствующие .js и .css.<br/>
+Также перепилена <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L147">функция экспорта кода</a>.
 </p></div>
 </div>
 
@@ -214,8 +196,8 @@
 <h3 id="sec-3-2-2"><span class="section-number-3">3.2.2</span> Меню</h3>
 <div class="outline-text-3" id="text-3-2-2">
 
-<p>    Для меню у меня отдельный кусок html-кода, который нагло украден со <a href="http://purecss.io/layouts/side-menu/">страницы соответствующего layout'а pure css</a>.<br/>
-    Подключается отдельным org-файлом. К сожалению, приходится подключать вручную в каждом файле поста. Щито поделать, десу.
+<p>Для меню у меня отдельный кусок html-кода, который нагло украден со <a href="http://purecss.io/layouts/side-menu/">страницы соответствующего layout'а pure css</a>.<br/>
+Подключается отдельным org-файлом. К сожалению, приходится подключать вручную в каждом файле поста. Щито поделать, десу.
 </p></div>
 
 </div>
@@ -224,8 +206,8 @@
 <h3 id="sec-3-2-3"><span class="section-number-3">3.2.3</span> Карта сайта (aka index.html)</h3>
 <div class="outline-text-3" id="text-3-2-3">
 
-<p>    Тут основные настройки прописаны в <a href="#sec-3-1-1">projects.el</a>.<br/>
-    Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L53">функция генерации sitemap'а</a>. Приведу текст шаблона.
+<p>Тут основные настройки прописаны в <a href="#sec-3-1-1">projects.el</a>.<br/>
+Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена <a href="https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L53">функция генерации sitemap'а</a>. Приведу текст шаблона.
 </p>
 
 
@@ -243,7 +225,7 @@
 </pre>
 
 <p>
-    Очевидно, что отличается он только layout'ом.
+Очевидно, что отличается он только layout'ом.
 </p></div>
 </div>
 </div>
@@ -254,7 +236,7 @@
 <h1 id="sec-4"><span class="section-number-1">4</span> Что дальше</h1>
 <div class="outline-text-1" id="text-4">
 
-<p>  <del>Теперь надо прикрутить комменты из google+</del> <b>добавил disqus</b>, angular / jquery / что_ещё_там_напридумывали_для_жабоскрапта для некоторой интерактивности, допилить стили. В первую очередь надо прикрутить сворачиваемость кода и содержания.
+<p><del>Теперь надо прикрутить комменты из google+</del> <b>добавил disqus</b>, angular / jquery / что_ещё_там_напридумывали_для_жабоскрапта для некоторой интерактивности, допилить стили. В первую очередь надо прикрутить сворачиваемость кода и содержания.
 </p>
 
 
