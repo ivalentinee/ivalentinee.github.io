@@ -88,11 +88,12 @@
 </li>
 <li><a href="#sec-3-11">3.11 Синтезаторы</a></li>
 <li><a href="#sec-3-12">3.12 Calf</a></li>
-<li><a href="#sec-3-13">3.13 Looper</a></li>
-<li><a href="#sec-3-14">3.14 Визуализация</a></li>
+<li><a href="#sec-3-13">3.13 Convolver</a></li>
+<li><a href="#sec-3-14">3.14 Looper</a></li>
+<li><a href="#sec-3-15">3.15 Визуализация</a></li>
 </ul>
 </li>
-<li><a href="#sec-4">4 Заключение</a></li>
+<li><a href="#sec-4">4 Примеры записей</a></li>
 <li><a href="#sec-5">5 Мои вопросы</a></li>
 </ul>
 </div>
@@ -572,8 +573,30 @@ Rakarrack имеет свои особенности.
 </div>
 
 <div id="outline-container-3-13" class="outline-2">
-<h2 id="sec-3-13"><span class="section-number-2">3.13</span> Looper</h2>
+<h2 id="sec-3-13"><span class="section-number-2">3.13</span> Convolver</h2>
 <div class="outline-text-2" id="text-3-13">
+
+<p>Многим, работавшим со всякими Guitar Rig'ами и Amplitube'ами эта штука известна как <a href="https://ru.wikipedia.org/wiki/Импульсная_переходная_функция">Impulse Response</a> (что не совсем верно).
+</p>
+<p>
+Я особо в матане не разбраюсь, поэтому пояснить про математическую основу не могу. Изучайте матан!<br/>
+Если объяснять для таких людей как я, то такие обработчики моделируют прохождение сигнала через моделируемую цепь с помощью заранее записанного <a href="https://ru.wikipedia.org/wiki/Импульсная_переходная_функция">отклика</a>.
+</p>
+<p>
+В linux мне известно два convolver'а: встроенный в Rakarrack и <a href="http://factorial.hu/plugins/lv2/ir">ir.lv2</a>. Rakarrack'овый меня не очень устраивает, поэтому я пользуюсь <a href="http://factorial.hu/plugins/lv2/ir">ir.lv2</a>.
+</p>
+<p>
+Как видно из названия, <a href="http://factorial.hu/plugins/lv2/ir">ir.lv2</a> является <a href="http://ru.wikipedia.org/wiki/LV2">lv2</a> плагином, что делает его использование очень удобным вместе с <a href="#DAW">Ardour</a>. Использовать достаточно просто, нужно только найти файлы отклюков. Настройки пока что не особо ковырял, но хочу обратить внимание на то, что ползунок Dry надо сразу установить в 0, потому как сырой сигнал нас в большинстве случаев не интересует :)
+</p>
+<p>
+Конкретно я использую <a href="http://factorial.hu/plugins/lv2/ir">ir.lv2</a> для моделирования гитарных и басовых усилителей, файлы откликов которых легко гуглятся.
+</p></div>
+
+</div>
+
+<div id="outline-container-3-14" class="outline-2">
+<h2 id="sec-3-14"><span class="section-number-2">3.14</span> Looper</h2>
+<div class="outline-text-2" id="text-3-14">
 
 <p>Луперов под Jack тоже предостаточно. Даже в Rakarrack'е есть свой. Но я более всего пользуюсь <a href="http://essej.net/sooperlooper/">SooperLooper</a>.
 </p>
@@ -601,9 +624,9 @@ Rakarrack имеет свои особенности.
 
 </div>
 
-<div id="outline-container-3-14" class="outline-2">
-<h2 id="sec-3-14"><span class="section-number-2">3.14</span> Визуализация</h2>
-<div class="outline-text-2" id="text-3-14">
+<div id="outline-container-3-15" class="outline-2">
+<h2 id="sec-3-15"><span class="section-number-2">3.15</span> Визуализация</h2>
+<div class="outline-text-2" id="text-3-15">
 
 <p>В этом пункте я упомяну приложения, которые делают на основе звука картинку.
 </p>
@@ -619,13 +642,13 @@ Rakarrack имеет свои особенности.
 </div>
 
 <div id="outline-container-4" class="outline-1">
-<h1 id="sec-4"><span class="section-number-1">4</span> Заключение</h1>
+<h1 id="sec-4"><span class="section-number-1">4</span> Примеры записей</h1>
 <div class="outline-text-1" id="text-4">
 
 <p><a href="https://dl.dropboxusercontent.com/u/20940723/2013_11_29.mp3">Пример композиции, записанной в Linux</a>.
 </p>
 <p>
-Записывал я сам специально для Basslife.ru и этого цикла постов в частности.
+Записывал я сам специально для Basslife.ru
 </p>
 <p>
 Запись не подвергалась никакой обработке (разве что компрессором бас поджал). Все дорожки оставлены в том виде, в котором были записаны.<br/>
@@ -633,6 +656,18 @@ Rakarrack имеет свои особенности.
 Для гитарного звука использовались Rakarrack (чистый) и Guitarix (перегруженный).<br/>
 Бас писался "как есть".<br/>
 На барабанах играет Hydrogen.
+</p>
+<p>
+<a href="https://dl.dropboxusercontent.com/u/20940723/convolver_test.ogg">Ещё один пример композиции</a>
+</p>
+<p>
+Снова я писал сам все инструменты.
+</p>
+<p>
+Общий микс обработан ревербом и V-образным эквалайзером.<br/>
+Все инструменты писались через <a href="#sec-3-13">ir.lv2</a> с использованием откликов достаточно дорогих усилителей :)<br/>
+Бас слегка обработан компрессором.<br/>
+На соло-участке гитары висит delay.
 </p>
 </div>
 
@@ -656,7 +691,7 @@ Rakarrack имеет свои особенности.
   <script type="text/javascript">
    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
    var disqus_shortname = 'northempire'; // required: replace example with your forum shortname
-   
+
    /* * * DON'T EDIT BELOW THIS LINE * * */
    (function() {
      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -666,7 +701,6 @@ Rakarrack имеет свои особенности.
   </script>
   <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
   <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-
 
 </div>
 </div>
