@@ -30,7 +30,7 @@ categories: blog
 2. Перенести старые посты.
 
 Вот, кстати, и этот блок ~~говна~~ кода на js.
-{% highlight javascript %}
+~~~javascript
 (function(){
   var requiredScripts = [
   ];
@@ -87,4 +87,4 @@ categories: blog
 
   document.addEventListener("DOMContentLoaded", highlightPostsCodeBlocks);
 })();
-{% endhighlight %}
+~~~
