@@ -2,6 +2,7 @@
 layout: page
 title: Обо мне
 permalink: /about/
+navbar: true
 ---
 
 Зовут меня Ионов Валентин, я живу в [Ульяновске](https://ru.wikipedia.org/wiki/%D0%A3%D0%BB%D1%8C%D1%8F%D0%BD%D0%BE%D0%B2%D1%81%D0%BA) и работаю в замечательной компании [Рестрим](http://restream.rt.ru/).
