@@ -102,8 +102,8 @@ permalink: /gamelist/
 
 ## Highlights from wishlist
 Сам [вишлист](http://steamcommunity.com/id/VtEmperor/wishlist). Как и должно быть, в нём полно трешака.
+- [DOOM](http://store.steampowered.com/app/379720/DOOM/)
 - [Helldivers](http://store.steampowered.com/app/394510/HELLDIVERS/)
 - [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
-- [Steep](http://store.steampowered.com/app/460920/Steep/)
 - [Vanquish](http://store.steampowered.com/app/460810/Vanquish/)
 - Все Darksouls'ы
