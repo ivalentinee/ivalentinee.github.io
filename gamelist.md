@@ -18,12 +18,13 @@ permalink: /gamelist/
 2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
 
 ## In progress
-- [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/)
 
 ## Done
 Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
+- [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 07.07.2017 \\
+Прошёл на сложности Deus Ex. Ачивоньки за стелс и пацифизм не получил — пару раз где-то оплошал, видимо.
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 04.02.2015
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 01.12.2016 \\
   Забил на DLC.
@@ -102,8 +103,5 @@ permalink: /gamelist/
 
 ## Highlights from wishlist
 Сам [вишлист](http://steamcommunity.com/id/VtEmperor/wishlist). Как и должно быть, в нём полно трешака.
-- [DOOM](http://store.steampowered.com/app/379720/DOOM/)
-- [Helldivers](http://store.steampowered.com/app/394510/HELLDIVERS/)
-- [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
 - [Vanquish](http://store.steampowered.com/app/460810/Vanquish/)
 - Все Darksouls'ы
