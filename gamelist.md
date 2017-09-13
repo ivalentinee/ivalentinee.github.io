@@ -32,6 +32,7 @@ permalink: /gamelist/
   Проходил не в соло. Ещё хотелось бы ачивку "We need to go Deeper - Gold", но сюжет пройден — игра пройдена.
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
+- [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/)
 - [Just Cause 3](http://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
   Считаю вместе с ачивкой "Collect 'Em All", потому что на кассетах часть сюжета.
@@ -57,6 +58,7 @@ permalink: /gamelist/
 ## Not started yet (to be done)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/)
 - [Enclave](http://store.steampowered.com/app/253980/Enclave/)
+- [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/)
 - [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
 - [Torchlight](http://store.steampowered.com/app/41500/Torchlight/)
 - [Transistor](http://store.steampowered.com/app/237930/Transistor/)
