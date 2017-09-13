@@ -50,10 +50,11 @@ permalink: /gamelist/
   Забил на DLC
 - [UTOPIA 9 - A Volatile Vacation](http://store.steampowered.com/app/405000/UTOPIA_9__A_Volatile_Vacation/) — 22.03.2017 \\
   Дошёл до конца за туриста. Ещё можно в этой игре поразвлечься или пройти за гида, но считаю, что прошёл.
+- [Vanquish](http://store.steampowered.com/app/460810/Vanquish/) — 13.09.2017 \\
+  Прошёл на Hard. На большей сложности, пожалуй, не буду.
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 09.10.2016
 
 ## Not started yet (to be done)
-- [Deus Ex Mankind Divided](http://store.steampowered.com/app/337000/Deus_Ex_Mankind_Divided/)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/)
 - [Enclave](http://store.steampowered.com/app/253980/Enclave/)
 - [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
@@ -84,6 +85,7 @@ permalink: /gamelist/
 - [Dead Sky](http://store.steampowered.com/app/259700/Dead_Sky/)
 - Dirt Showdown (Ссылка в стиме потратилась) \\
   Неплохая игра, но Dirt 3 бы пройти. До Showdown руки точно не дойдут.
+- [Deus Ex Mankind Divided](http://store.steampowered.com/app/337000/Deus_Ex_Mankind_Divided/)
 - [Half Life 2](http://store.steampowered.com/app/220/HalfLife_2/)
 - [Iesabel](http://store.steampowered.com/app/248710/Iesabel/) \\
   Два прохождения из трёх. Руки не доходят до третьего. И не дойдут.
@@ -103,5 +105,4 @@ permalink: /gamelist/
 
 ## Highlights from wishlist
 Сам [вишлист](http://steamcommunity.com/id/VtEmperor/wishlist). Как и должно быть, в нём полно трешака.
-- [Vanquish](http://store.steampowered.com/app/460810/Vanquish/)
 - Все Darksouls'ы
