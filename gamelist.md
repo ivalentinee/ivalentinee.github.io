@@ -33,9 +33,10 @@ permalink: /gamelist/
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
-- [INSIDE](http://store.steampowered.com/app/304430/INSIDE/)
+- [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 08.07.2016
 - [Just Cause 3](http://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
   Считаю вместе с ачивкой "Collect 'Em All", потому что на кассетах часть сюжета.
+- [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 21.09.2017
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 09.06.2017 \\
   На DLC и NG+ забил.
 - [Portal](http://store.steampowered.com/app/400/Portal/)
@@ -57,9 +58,20 @@ permalink: /gamelist/
 
 ## Not started yet (to be done)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/)
+- [Doom](http://store.steampowered.com/app/379720/DOOM/)
 - [Enclave](http://store.steampowered.com/app/253980/Enclave/)
+- [Haydee](http://store.steampowered.com/app/530890/Haydee/)
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/)
+- [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
+- [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/)
+- [Mother Russia Bleeds](http://store.steampowered.com/app/361300/Mother_Russia_Bleeds/) \\
+  Для этой игры нужна компания из 4 человек
+- [Rayman Legends](http://store.steampowered.com/app/242550/Rayman_Legends/) \\
+  Для этой игры нужен напарник. Или напарница =)
+- [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/)
+- [Refunct](http://store.steampowered.com/app/406150/Refunct/)
 - [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
+- [This War of Mine](http://store.steampowered.com/app/282070/This_War_of_Mine/)
 - [Torchlight](http://store.steampowered.com/app/41500/Torchlight/)
 - [Transistor](http://store.steampowered.com/app/237930/Transistor/)
 - [Trine](http://store.steampowered.com/app/35700/Trine_Enchanted_Edition/)
@@ -91,6 +103,8 @@ permalink: /gamelist/
 - [Half Life 2](http://store.steampowered.com/app/220/HalfLife_2/)
 - [Iesabel](http://store.steampowered.com/app/248710/Iesabel/) \\
   Два прохождения из трёх. Руки не доходят до третьего. И не дойдут.
+- [In Verbis Virtus](http://store.steampowered.com/app/242840/In_Verbis_Virtus/) \\
+  Идея клёвая, но "битва" с первым боссом меня разочаровала настолько, что я дропнул игру. Лучше бы делали головоломки до конца игры.
 - [Magicka](http://store.steampowered.com/app/42910/Magicka/)
 - Necro (Ссылка в стиме потратилась) \\
   Игра неплохая, но её забросили.
@@ -108,3 +122,4 @@ permalink: /gamelist/
 ## Highlights from wishlist
 Сам [вишлист](http://steamcommunity.com/id/VtEmperor/wishlist). Как и должно быть, в нём полно трешака.
 - Все Darksouls'ы
+- [Ruiner](http://store.steampowered.com/app/464060/RUINER/)
