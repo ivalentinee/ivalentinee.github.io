@@ -5,7 +5,7 @@ date:   2017-09-19
 categories: programming
 ---
 
-# С чего началось
+## С чего началось
 
 А началось всё с того, что я полез в эти ваши чёртовы фронтенды. Как-то давно надоело мне ковырять рельсы, и теперь я ещё и на жабаскрипте пописываю иногда.
 
@@ -13,11 +13,11 @@ categories: programming
 
 Для особо нетерпеливых: можно сразу листать до раздела "решение".
 
-# Что, собственно, случилось
+## Что, собственно, случилось
 
 Постарался привести максимально полный и приближённый к реальному код.
 
-#### Код, который тестирует
+### Код, который тестирует
 ~~~javascript
 import SagaTester from 'redux-saga-tester';
 import sinon from 'sinon';
@@ -63,7 +63,7 @@ describe('getValueSaga test', () => {
 });
 ~~~
 
-#### Код, который тестируется
+### Код, который тестируется
 
 ~~~javascript
 import { call, put, takeLatest } from 'redux-saga/effects';
@@ -91,7 +91,7 @@ export default function* watchGetValueSaga() {
 }
 ~~~
 
-#### Проблема
+### Проблема
 Вот на этой строке тест ломается
 ~~~javascript
 expect(sagaTester.getCalledActions()).toContainEqual(change('some-form', 'value', response.value));
@@ -109,7 +109,7 @@ yield put({ type: "@@redux-form/change" });
 
 В результате долгих экспериментов я выяснил, что все action'ы, которые начинаются с `@@redux` куда-то исчезают. Совпадение? Не думаю.
 
-# Решение
+## Решение
 Несколько часов (потому что я — идиот) поиска ключевой фразы сначала в `redux`, потом в `redux-saga`, потом в `redux-form` не дали ничего значимого. А вот поиск в `redux-saga-tester` дал [интересный результат](https://github.com/wix/redux-saga-tester/blob/247c908ff433964e385f41f13d8a3b95ca7af990/src/SagaTester.js#L45):
 ~~~javascript
 if (ignoreReduxActions && action.type.startsWith('@@redux')) {
@@ -128,7 +128,7 @@ sagaTester = new SagaTester({ ignoreReduxActions: false, initialState });
 ~~~
 решает проблему полностью.
 
-# А при чём тут Github, собственно?
+## А при чём тут Github, собственно?
 А при том, что искать по строке `@@redux` он не даёт, как и не даёт искать вообще что-либо с символом `@`.
 
 В результате, протратив время на поиск в github по всем библиотекам, я был вынужден потом клонировать репозиторий каждой и грепать локально. Позор, Github!

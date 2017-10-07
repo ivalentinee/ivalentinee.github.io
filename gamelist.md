@@ -45,6 +45,8 @@ permalink: /gamelist/
 - [Prototype 2](http://store.steampowered.com/app/115320/Prototype_2/) — 27.03.2017
 - [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 22.05.2017
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 06.01.2017
+- [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
+  Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
 - [Shadowrun Returns](http://store.steampowered.com/app/234650/Shadowrun_Returns/)
 - [Shadowrun Dragonfall](http://store.steampowered.com/app/300550/Shadowrun_Dragonfall__Directors_Cut/) \\
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
@@ -122,4 +124,3 @@ permalink: /gamelist/
 ## Highlights from wishlist
 Сам [вишлист](http://steamcommunity.com/id/VtEmperor/wishlist). Как и должно быть, в нём полно трешака.
 - Все Darksouls'ы
-- [Ruiner](http://store.steampowered.com/app/464060/RUINER/)

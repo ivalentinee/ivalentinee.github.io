@@ -27,7 +27,7 @@ categories: blog
 
 В планах сейчас
 1. ~~В третий раз впилить disqus, потому что "а разве есть что-то ещё"~~ Таки впилил комменты из плюсача. Они красявше. [Статья раз](http://steelx.github.io/best-internet-tips/2014/11/23/Add-google-plus-comments-box-to-jekyll-website.html), [Статья два](http://blog.nrowegt.com/how-to-setup-jekyll-with-google-plus-comments-and-other-customizations-on-github-pages/).
-2. Перенести старые посты.
+2. ~~Перенести старые посты~~ Перенёс старые посты.
 
 Вот, кстати, и этот блок ~~говна~~ кода на js.
 ~~~javascript

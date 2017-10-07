@@ -5,10 +5,10 @@ date:   2016-10-17
 categories: rails
 ---
 
-# Предисловие
+## Предисловие
 [ActionCable](http://edgeguides.rubyonrails.org/action_cable_overview.html) — надстройка над рельсами для [websocket](https://ru.wikipedia.org/wiki/WebSocket). Содержит в себе как frontend (js) так и backend части. Документацию описывать не буду, примеры кода приводить тоже не буду, но опишу проблему, с которой я столкнулся и на которую потратил больше часа времени.
 
-# Проблема
+## Проблема
 Как это обычно бывает, сделал "как в документации", но при попытке [подписаться](http://edgeguides.rubyonrails.org/action_cable_overview.html#client-server-interactions-subscriptions) в логах [unicorn'а](http://unicorn.bogomips.org/), ответственного за ActionCable я увидел вот это:
 ~~~
 web-sockets_1 | Rack::Lint::LintError: Status must be >=100 seen as integer
@@ -25,7 +25,7 @@ WTF?
 status.to_i >= 100
 ~~~
 
-# Решение
+## Решение
 Я для себя выбрал более простой и бездумный путь: использовать [Puma](https://github.com/puma/puma). Просто потому что puma не включает в себя Rack::Lint.
 
 Найти способ отключить Rack::Lint я не смог, хотя и не искал особо долго.
