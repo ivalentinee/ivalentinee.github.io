@@ -60,12 +60,15 @@ permalink: /gamelist/
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 09.10.2016
 
 ## Not started yet (to be done)
+- [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/)
 - [Doom](http://store.steampowered.com/app/379720/DOOM/)
 - [Enclave](http://store.steampowered.com/app/253980/Enclave/)
 - [Haydee](http://store.steampowered.com/app/530890/Haydee/)
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/)
 - [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
+- [JYDGE](http://store.steampowered.com/app/654050/JYDGE/) \\
+  Для этой игры нужна компания из 4 человек
 - [Mother Russia Bleeds](http://store.steampowered.com/app/361300/Mother_Russia_Bleeds/) \\
   Для этой игры нужна компания из 4 человек
 - [Rayman Legends](http://store.steampowered.com/app/242550/Rayman_Legends/) \\
