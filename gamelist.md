@@ -45,6 +45,7 @@ permalink: /gamelist/
 - [Prototype 2](http://store.steampowered.com/app/115320/Prototype_2/) — 27.03.2017
 - [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 22.05.2017
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 06.01.2017
+- [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
   Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
 - [Shadowrun Returns](http://store.steampowered.com/app/234650/Shadowrun_Returns/)
@@ -65,12 +66,10 @@ permalink: /gamelist/
 - [Haydee](http://store.steampowered.com/app/530890/Haydee/)
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/)
 - [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
-- [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/)
 - [Mother Russia Bleeds](http://store.steampowered.com/app/361300/Mother_Russia_Bleeds/) \\
   Для этой игры нужна компания из 4 человек
 - [Rayman Legends](http://store.steampowered.com/app/242550/Rayman_Legends/) \\
   Для этой игры нужен напарник. Или напарница =)
-- [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/)
 - [Refunct](http://store.steampowered.com/app/406150/Refunct/)
 - [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
 - [This War of Mine](http://store.steampowered.com/app/282070/This_War_of_Mine/)
@@ -88,6 +87,7 @@ permalink: /gamelist/
 - [Furi](http://store.steampowered.com/app/423230/Furi/)
 - [Guacamelee](http://store.steampowered.com/app/275390/Guacamelee_Super_Turbo_Championship_Edition/)
 - [Icey](http://store.steampowered.com/app/553640/ICEY/)
+- [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/)
 - [Neon Chrome](http://store.steampowered.com/app/428750/Neon_Chrome/) \\
   Прошёл пару первых уровней с одним другом. Жду Local Coop Party!
 - [Outland](http://store.steampowered.com/app/305050/Outland/)
