@@ -18,6 +18,7 @@ permalink: /gamelist/
 2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
 
 ## In progress
+- [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/)
 
 ## Done
 Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
@@ -60,7 +61,6 @@ permalink: /gamelist/
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 09.10.2016
 
 ## Not started yet (to be done)
-- [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/)
 - [Doom](http://store.steampowered.com/app/379720/DOOM/)
 - [Enclave](http://store.steampowered.com/app/253980/Enclave/)
