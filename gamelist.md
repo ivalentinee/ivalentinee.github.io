@@ -75,6 +75,7 @@ permalink: /gamelist/
   Для этой игры нужен напарник. Или напарница =)
 - [Refunct](http://store.steampowered.com/app/406150/Refunct/)
 - [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
+- [Styx: Master of Shadows](http://store.steampowered.com/app/242640/Styx_Master_of_Shadows/)
 - [This War of Mine](http://store.steampowered.com/app/282070/This_War_of_Mine/)
 - [Torchlight](http://store.steampowered.com/app/41500/Torchlight/)
 - [Transistor](http://store.steampowered.com/app/237930/Transistor/)
