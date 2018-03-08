@@ -18,10 +18,10 @@ permalink: /gamelist/
 2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
 
 ## In progress
-- [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/)
 
 ## Done
 Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
+- [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 07.07.2017 \\
