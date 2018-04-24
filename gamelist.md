@@ -37,6 +37,7 @@ permalink: /gamelist/
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 08.07.2016
 - [Just Cause 3](http://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
   Считаю вместе с ачивкой "Collect 'Em All", потому что на кассетах часть сюжета.
+- [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/) — 24.04.2018
 - [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 21.09.2017
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 09.06.2017 \\
   На DLC и NG+ забил.
@@ -91,7 +92,6 @@ permalink: /gamelist/
 - [Furi](http://store.steampowered.com/app/423230/Furi/)
 - [Guacamelee](http://store.steampowered.com/app/275390/Guacamelee_Super_Turbo_Championship_Edition/)
 - [Icey](http://store.steampowered.com/app/553640/ICEY/)
-- [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/)
 - [Neon Chrome](http://store.steampowered.com/app/428750/Neon_Chrome/) \\
   Прошёл пару первых уровней с одним другом. Жду Local Coop Party!
 - [Outland](http://store.steampowered.com/app/305050/Outland/)
