@@ -48,6 +48,7 @@ permalink: /gamelist/
 - [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 22.05.2017
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 06.01.2017
 - [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
+- [Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 11.05.2018
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
   Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
 - [Shadowrun Returns](http://store.steampowered.com/app/234650/Shadowrun_Returns/)
@@ -77,6 +78,7 @@ permalink: /gamelist/
 - [Refunct](http://store.steampowered.com/app/406150/Refunct/)
 - [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
 - [Styx: Master of Shadows](http://store.steampowered.com/app/242640/Styx_Master_of_Shadows/)
+- [The Talos Principle](https://store.steampowered.com/app/257510/The_Talos_Principle/)
 - [This War of Mine](http://store.steampowered.com/app/282070/This_War_of_Mine/)
 - [Torchlight](http://store.steampowered.com/app/41500/Torchlight/)
 - [Transistor](http://store.steampowered.com/app/237930/Transistor/)
