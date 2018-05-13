@@ -34,6 +34,8 @@ permalink: /gamelist/
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
+- [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 13.05.2018 \\
+  Первая часть лучше
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 08.07.2016
 - [Just Cause 3](http://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
   Считаю вместе с ачивкой "Collect 'Em All", потому что на кассетах часть сюжета.
@@ -67,7 +69,6 @@ permalink: /gamelist/
 - [Doom](http://store.steampowered.com/app/379720/DOOM/)
 - [Enclave](http://store.steampowered.com/app/253980/Enclave/)
 - [Haydee](http://store.steampowered.com/app/530890/Haydee/)
-- [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/)
 - [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
 - [JYDGE](http://store.steampowered.com/app/654050/JYDGE/) \\
   Для этой игры нужна компания из 4 человек
