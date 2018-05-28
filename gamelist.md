@@ -37,7 +37,9 @@ permalink: /gamelist/
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 13.05.2018 \\
   Первая часть лучше
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 08.07.2016
-- [Just Cause 3](http://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
+- [Just Cause 2](https://store.steampowered.com/app/8190/Just_Cause_2/) — 28.05.2018 \\
+  Completitionist'а не делал, просто прошёл сюжетку.
+- [Just Cause 3](https://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
   Считаю вместе с ачивкой "Collect 'Em All", потому что на кассетах часть сюжета.
 - [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/) — 24.04.2018
 - [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 21.09.2017
