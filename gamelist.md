@@ -31,6 +31,7 @@ permalink: /gamelist/
   Забил на DLC.
 - [Gauntlet](http://store.steampowered.com/app/258970/Gauntlet_Slayer_Edition/) — 24.09.2016 \\
   Проходил не в соло. Ещё хотелось бы ачивку "We need to go Deeper - Gold", но сюжет пройден — игра пройдена.
+- [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f?activetab=pivot%3aoverviewtab) — 03.07.2018
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
