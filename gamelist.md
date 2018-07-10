@@ -3,7 +3,7 @@ layout: page
 title: Список видеоигр
 permalink: /gamelist/
 ---
-Так-то этот список для меня, чтобы было проще отслеживать прогресс и планировать. Очень помогает [вот эта статья](https://dtf.ru/3668-kak-zastavit-sebya-prohodit-dlinnye-igry) при прохождении.
+Так-то этот список для меня, чтобы было проще отслеживать прогресс. Очень помогает [вот эта статья](https://dtf.ru/3668-kak-zastavit-sebya-prohodit-dlinnye-igry) при прохождении.
 
 Не для всех игорей даты завершения, потому как дело было давно, или просто восстановить не получилось.
 
@@ -26,6 +26,8 @@ permalink: /gamelist/
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 07.07.2017 \\
 Прошёл на сложности Deus Ex. Ачивоньки за стелс и пацифизм не получил — пару раз где-то оплошал, видимо.
+- [Devil May Cry 1](https://store.steampowered.com/app/631510/Devil_May_Cry_HD_Collection/) — 10.07.2018 \\
+На харде проходить не стал. Хотя очень хотелось.
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 04.02.2015
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 01.12.2016 \\
   Забил на DLC.
