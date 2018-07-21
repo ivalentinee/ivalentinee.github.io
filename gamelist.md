@@ -70,52 +70,31 @@ permalink: /gamelist/
   Прошёл на Hard. На большей сложности, пожалуй, не буду.
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 09.10.2016
 
-## Not started yet (to be done)
-- [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/)
-- [Doom](http://store.steampowered.com/app/379720/DOOM/)
-- [Enclave](http://store.steampowered.com/app/253980/Enclave/)
-- [Haydee](http://store.steampowered.com/app/530890/Haydee/)
-- [Hyper Light Drifter](http://store.steampowered.com/app/257850/Hyper_Light_Drifter/)
-- [JYDGE](http://store.steampowered.com/app/654050/JYDGE/) \\
-  Для этой игры нужна компания из 4 человек
-- [Mother Russia Bleeds](http://store.steampowered.com/app/361300/Mother_Russia_Bleeds/) \\
-  Для этой игры нужна компания из 4 человек
-- [Rayman Legends](http://store.steampowered.com/app/242550/Rayman_Legends/) \\
-  Для этой игры нужен напарник. Или напарница =)
-- [Refunct](http://store.steampowered.com/app/406150/Refunct/)
-- [Shadowrun Hong Kong](http://store.steampowered.com/app/346940/Shadowrun_Hong_Kong__Extended_Edition/)
-- [Styx: Master of Shadows](http://store.steampowered.com/app/242640/Styx_Master_of_Shadows/)
-- [The Talos Principle](https://store.steampowered.com/app/257510/The_Talos_Principle/)
-- [This War of Mine](http://store.steampowered.com/app/282070/This_War_of_Mine/)
-- [Torchlight](http://store.steampowered.com/app/41500/Torchlight/)
-- [Transistor](http://store.steampowered.com/app/237930/Transistor/)
-- [Trine](http://store.steampowered.com/app/35700/Trine_Enchanted_Edition/)
-
 ## On hold
 - [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) \\
   Остался последний босс, но не с кем его пройти. Увы.
 - [Castle Crashers](http://store.steampowered.com/app/204360/Castle_Crashers/)
-- Dirt 3 (Ссылка в стиме потратилась)
 - [Forced](http://store.steampowered.com/app/249990/FORCED_Slightly_Better_Edition/) \\
   Весело играть только компанией, но все разбежались, так что доиграть не с кем =(.
 - [Furi](http://store.steampowered.com/app/423230/Furi/)
-- [Guacamelee](http://store.steampowered.com/app/275390/Guacamelee_Super_Turbo_Championship_Edition/)
-- [Icey](http://store.steampowered.com/app/553640/ICEY/)
 - [Neon Chrome](http://store.steampowered.com/app/428750/Neon_Chrome/) \\
   Прошёл пару первых уровней с одним другом. Жду Local Coop Party!
-- [Outland](http://store.steampowered.com/app/305050/Outland/)
-- [Senran Kagura Shinovi Versus](http://store.steampowered.com/app/411830/SENRAN_KAGURA_SHINOVI_VERSUS/)
-- [Spaceport Hope](http://store.steampowered.com/app/394540/Spaceport_Hope/)
-- [Super Meatboy](http://store.steampowered.com/app/40800/Super_Meat_Boy/)
-- [Torchlight 2](http://store.steampowered.com/app/200710/Torchlight_II/)
 
 ## Dropped
 - [Brutal Legend](http://store.steampowered.com/app/225260/Brutal_Legend/)
 - [Dead Sky](http://store.steampowered.com/app/259700/Dead_Sky/)
+- Dirt 3 (Ссылка в стиме потратилась) \\
+  Клёво, но на середине сезона приелось.
 - Dirt Showdown (Ссылка в стиме потратилась) \\
   Неплохая игра, но Dirt 3 бы пройти. До Showdown руки точно не дойдут.
 - [Deus Ex Mankind Divided](http://store.steampowered.com/app/337000/Deus_Ex_Mankind_Divided/)
+- [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/) \\
+  Слишком много времени для полного отсутствия экшона (ну, кнопки там пожмакать)
+- [Guacamelee](http://store.steampowered.com/app/275390/Guacamelee_Super_Turbo_Championship_Edition/) \\
+  Надоело.
 - [Half Life 2](http://store.steampowered.com/app/220/HalfLife_2/)
+- [Icey](http://store.steampowered.com/app/553640/ICEY/) \\
+  Всем рекомендую! Но мне ближе к концу геймплей надоел немного.
 - [Iesabel](http://store.steampowered.com/app/248710/Iesabel/) \\
   Два прохождения из трёх. Руки не доходят до третьего. И не дойдут.
 - [In Verbis Virtus](http://store.steampowered.com/app/242840/In_Verbis_Virtus/) \\
@@ -123,17 +102,27 @@ permalink: /gamelist/
 - [Magicka](http://store.steampowered.com/app/42910/Magicka/)
 - Necro (Ссылка в стиме потратилась) \\
   Игра неплохая, но её забросили.
+- [Outland](http://store.steampowered.com/app/305050/Outland/) \\
+  Красивая игрушка, но возвращаться на середину не хочется, а проходить с самого начала неохота.
 - [RWBY: Grimm Eclipse](http://store.steampowered.com/app/418340/RWBY_Grimm_Eclipse/) \\
   Надеюсь когда-нибудь раздропнуть.
+- [Senran Kagura Shinovi Versus](http://store.steampowered.com/app/411830/SENRAN_KAGURA_SHINOVI_VERSUS/) \\
+  Осталась история одной школы и пару личных сюжетов. Но руки не дойдут.
 - [Serious Sam 3: BFE](http://store.steampowered.com/app/41070/Serious_Sam_3_BFE/) \\
   Уже три раза дошёл до одного и того же места, а дальше становится однообразно и скучно.
+- [Spaceport Hope](http://store.steampowered.com/app/394540/Spaceport_Hope/) \\
+  Клёвая игрушка, но руки до неё точно не дойдут
 - [Strike Suit Zero](http://store.steampowered.com/app/209540/Strike_Suit_Zero/) \\
   Ниасилил крутиться в 3D.
+- [Styx: Master of Shadows](http://store.steampowered.com/app/242640/Styx_Master_of_Shadows/) \\
+  Не мой геймплей.
+- [Super Meatboy](http://store.steampowered.com/app/40800/Super_Meat_Boy/) \\
+  Не зашло.
 - [System Shock 2](http://store.steampowered.com/app/238210/System_Shock_2/) \\
   Отличная игра. Но с возрастом я слишком размяк для таких игр.
+- [Torchlight 2](http://store.steampowered.com/app/200710/Torchlight_II/) \\
+  Остался последний уровень. Но чот неохота.
+- [Transistor](http://store.steampowered.com/app/237930/Transistor/) \\
+  Геймплей не мой
 - [XCOM: Enemy Unknown](http://store.steampowered.com/app/200510/XCOM_Enemy_Unknown/) \\
   Скучно стало.
-
-## Highlights from wishlist
-Сам [вишлист](http://steamcommunity.com/id/VtEmperor/wishlist). Как и должно быть, в нём полно трешака.
-- Все Darksouls'ы
