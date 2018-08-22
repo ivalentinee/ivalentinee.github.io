@@ -25,6 +25,7 @@ permalink: /gamelist/
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Darksiders](https://store.steampowered.com/app/462780/Darksiders_Warmastered_Edition/) — 21.07.2018
+- [Darksiders II](https://store.steampowered.com/app/388410/Darksiders_II_Deathinitive_Edition/) — 22.08.2018
 - [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 07.07.2017 \\
 Прошёл на сложности Deus Ex. Ачивоньки за стелс и пацифизм не получил — пару раз где-то оплошал, видимо.
 - [Devil May Cry 1](https://store.steampowered.com/app/631510/Devil_May_Cry_HD_Collection/) — 10.07.2018 \\
