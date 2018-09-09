@@ -17,8 +17,6 @@ permalink: /gamelist/
 1. Игры, для которых не могу подобрать критерий завершённости (вроде [Enter the Gungeon](http://store.steampowered.com/app/311690/Enter_the_Gungeon/) или [Rocket League](http://store.steampowered.com/app/252950/Rocket_League/)).
 2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
 
-## In progress
-
 ## Done
 Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
