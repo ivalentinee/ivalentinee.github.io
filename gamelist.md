@@ -41,6 +41,7 @@ permalink: /gamelist/
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 13.05.2018 \\
   Первая часть лучше
+- [Hyper Light Drifter](https://store.steampowered.com/app/257850/Hyper_Light_Drifter/) — 09.09.2018
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 08.07.2016
 - [Just Cause 2](https://store.steampowered.com/app/8190/Just_Cause_2/) — 28.05.2018 \\
   Completitionist'а не делал, просто прошёл сюжетку.
