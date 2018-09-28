@@ -1,0 +1,74 @@
+openapi: 3.0.0
+info:
+  title: «Похаченное» API
+  version: v1
+components:
+  schemas:
+    Product::name:
+      type: string
+      description: Название товара
+    Product::description:
+      type: string
+      description: Описание товара
+    Product::vendor_code:
+      type: number
+      description: Артикул
+    Product::picture:
+      type: object
+      description: Изображение
+      properties:
+        link:
+          type: string
+          description: Ссылка на файл
+        filename:
+          type: string
+          description: Имя файла
+    Product::picture::upload:
+      type: string
+      format: binary
+      description: Изображение
+paths:
+  /api/products:
+    post:
+      summary: Создание продукта
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name: {"$ref": "#/components/schemas/Product::name"}
+                description: {"$ref": "#/components/schemas/Product::description"}
+                vendor_code: {"$ref": "#/components/schemas/Product::vendor_code"}
+                picture: {"$ref": "#/components/schemas/Product::picture::upload"}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Идентификатор созданного продукта
+  /api/products/{id}:
+    get:
+      summary: Получение продукта
+      parameters:
+        - name: id
+          in: query
+          description: Идентификатор продукта
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name: {"$ref": "#/components/schemas/Product::name"}
+                  description: {"$ref": "#/components/schemas/Product::description"}
+                  vendor_code: {"$ref": "#/components/schemas/Product::vendor_code"}
+                  picture: {"$ref": "#/components/schemas/Product::picture"}
