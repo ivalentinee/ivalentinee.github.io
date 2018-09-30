@@ -62,6 +62,7 @@ permalink: /gamelist/
 - [Shadowrun Returns](http://store.steampowered.com/app/234650/Shadowrun_Returns/)
 - [Shadowrun Dragonfall](http://store.steampowered.com/app/300550/Shadowrun_Dragonfall__Directors_Cut/) \\
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
+- [Shadow Warrior](https://store.steampowered.com/app/233130/Shadow_Warrior/) — 30.09.2018
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 01.03.2014 \\
   Забил на DLC
 - [UTOPIA 9 - A Volatile Vacation](http://store.steampowered.com/app/405000/UTOPIA_9__A_Volatile_Vacation/) — 22.03.2017 \\
