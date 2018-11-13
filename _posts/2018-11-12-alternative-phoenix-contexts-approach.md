@@ -64,11 +64,11 @@ defmodule MyApp.Models.Pizza.Query do
   require Ecto.Query
 
   def discounted(query) do
-    from(q in query, where: discounted.state == "true")
+    from(q in query, where: discounted == true)
   end
 
   def non_discounted(query) do
-    from(q in query, where: discounted.state != "true")
+    from(q in query, where: discounted != true)
   end
 
   def by_id(query) do
