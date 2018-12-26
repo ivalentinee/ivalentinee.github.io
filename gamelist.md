@@ -20,6 +20,7 @@ permalink: /gamelist/
 ## Done
 Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
+- [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 26.12.2018
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Darksiders](https://store.steampowered.com/app/462780/Darksiders_Warmastered_Edition/) — 21.07.2018
