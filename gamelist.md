@@ -21,6 +21,7 @@ permalink: /gamelist/
 Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
 - [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 26.12.2018
+- [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) — 08.01.2019
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 28.12.2018
@@ -74,8 +75,6 @@ permalink: /gamelist/
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 09.10.2016
 
 ## On hold
-- [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) \\
-  Остался последний босс, но не с кем его пройти. Увы.
 - [Castle Crashers](http://store.steampowered.com/app/204360/Castle_Crashers/)
 - [Forced](http://store.steampowered.com/app/249990/FORCED_Slightly_Better_Edition/) \\
   Весело играть только компанией, но все разбежались, так что доиграть не с кем =(.
