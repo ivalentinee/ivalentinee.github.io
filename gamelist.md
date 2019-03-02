@@ -67,6 +67,7 @@ permalink: /gamelist/
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
 - [Shadow Warrior](https://store.steampowered.com/app/233130/Shadow_Warrior/) — 30.09.2018
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 02.02.2019
+- [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 02.03.2019
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 01.03.2014 \\
   Забил на DLC
 - [UTOPIA 9 - A Volatile Vacation](http://store.steampowered.com/app/405000/UTOPIA_9__A_Volatile_Vacation/) — 22.03.2017 \\
