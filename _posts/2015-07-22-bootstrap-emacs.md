@@ -86,7 +86,7 @@ categories: emacs
 1.  Установить cask.
 2.  Выполнить установку пакетов через *cask install*.
 
-Я выбрал самый топорный способ — скрипт на bash. Хотя никто не запрещает сделать это на python, к примеру. [Мой скрипт на Github](https://github.com/vemperor/emacs_config/blob/master/install.sh).
+Я выбрал самый топорный способ — скрипт на bash. Хотя никто не запрещает сделать это на python, к примеру. [Мой скрипт на Github](https://github.com/ivalentinee/emacs_config/blob/master/install.sh).
 
 Мой скрипт достаточно стрёмный, поэтому если у вас есть хоть капля самоуважения — рекомендую его переписать или вообще написать с нуля. Мне уже лень.
 
@@ -100,6 +100,6 @@ categories: emacs
 
 Второй выполняется так:
 
-    $ wget https://raw.github.com/vemperor/emacs_config/master/install.sh | bash
+    $ wget https://raw.github.com/ivalentinee/emacs_config/master/install.sh | bash
 
 Вот теперь мы точно восхитительны!

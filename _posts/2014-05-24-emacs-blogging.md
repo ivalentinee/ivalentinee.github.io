@@ -23,7 +23,7 @@ categories: blog
 
 #### projects.el
 
-Именно [в этом файле](https://github.com/vemperor/Blog-Source/blob/master/projects.el) находится основная конфигурация проекта.
+Именно [в этом файле](https://github.com/ivalentinee/Blog-Source/blob/master/projects.el) находится основная конфигурация проекта.
 
 Кроме материалов мануала ничего не использовалось, поэтому комментировать нечего.
 
@@ -33,7 +33,7 @@ categories: blog
 
 1.  org-export-html
 
-    Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось [сделать свою функцию экспорта](https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L587) (копипаста оригинала, C-s и C-S-%). Также пришлось сделать [собственную функцию публикации](https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L45).
+    Ввиду того, что оригинальный org-export-html делает пару вещей не так, пришлось [сделать свою функцию экспорта](https://github.com/ivalentinee/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L587) (копипаста оригинала, C-s и C-S-%). Также пришлось сделать [собственную функцию публикации](https://github.com/ivalentinee/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L45).
 
 2.  Ссылки на файлы
 
@@ -80,7 +80,7 @@ categories: blog
 
 1.  Подсветка кода
 
-    Для подсветки кода используется [google-code-prettify](http://code.google.com/p/google-code-prettify/). Как видно выше, в шаблоне подключаются соответствующие .js и .css. Также перепилена [функция экспорта кода](https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L147).
+    Для подсветки кода используется [google-code-prettify](http://code.google.com/p/google-code-prettify/). Как видно выше, в шаблоне подключаются соответствующие .js и .css. Также перепилена [функция экспорта кода](https://github.com/ivalentinee/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L147).
 
 #### Меню
 
@@ -90,7 +90,7 @@ categories: blog
 
 Тут основные настройки прописаны в projects.el.
 
-Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена [функция генерации sitemap'а](https://github.com/vemperor/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L53). Приведу текст шаблона.
+Стоит только отметить, что для sitemap'а отдельный шаблон. Ради этого была препилена [функция генерации sitemap'а](https://github.com/ivalentinee/emacs_config/blob/20999812763e86b95dfe84c3d57bbe8c1f28c416/.emacs.d/global/customized-org-html.el#L53). Приведу текст шаблона.
 
     #+AUTHOR:    Emperor
     #+EMAIL:     valentine.emperor@gmail.com

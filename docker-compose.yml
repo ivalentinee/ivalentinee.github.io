@@ -3,7 +3,7 @@ version: "2"
 services:
   web:
     build: .
-    image: vemperor.github.io
+    image: ivalentinee.github.io
     command: bundle exec jekyll serve -H 0.0.0.0
     volumes: &web-volumes
       - ./:/app

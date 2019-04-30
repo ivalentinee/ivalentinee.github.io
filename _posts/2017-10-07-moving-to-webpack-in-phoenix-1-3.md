@@ -9,7 +9,7 @@ categories: programming
 
 Пришла тут мне с elixir-radar'а в ленте [вот эта статеечка](https://blog.danivovich.com/2017/08/30/webpack-phoenix). Ну и я подумал: "А чем, собственно, я хуже?" Да ничем не хуже. Тем более, что у меня подход более радикальный. Да и с докерами.
 
-Сразу скажу, что результат можно посмотреть [тут](https://github.com/vemperor/impressioner/tree/master/frontend).
+Сразу скажу, что результат можно посмотреть [тут](https://github.com/ivalentinee/impressioner/tree/master/frontend).
 
 Пост предполагает, что следующий инструкциям **уже имел дело с webpack'ом и phoenix'ом**, потому что я не обещаю, что всё будет хорошо =).
 
@@ -220,7 +220,7 @@ module.exports = {
                     cd: Path.expand("../frontend", __DIR__)]]
 ```
 
-Затем в [`docker-compose.yml`](https://github.com/vemperor/DM-Assistant/blob/b418648e9959914afb6e6667b628a30fccaca8e6/docker-compose.yml) надо сделать две вещи:
+Затем в [`docker-compose.yml`](https://github.com/ivalentinee/DM-Assistant/blob/b418648e9959914afb6e6667b628a30fccaca8e6/docker-compose.yml) надо сделать две вещи:
 1. Добавить сервис для webpack'а.
 2. Сделать общий volume для контейнеров с cowboy (web) и webpack, чтобы собранные webpack'ом файлы раздавались веб-сервером приложения.
 

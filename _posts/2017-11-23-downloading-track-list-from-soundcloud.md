@@ -100,4 +100,4 @@ categories: programming
 
 Готово, вы восхитительны!
 
-~~Как-нибудь выложу свой говнокод на [elixir'е](https://elixir-lang.org/) на Github~~ Выложил [свой говнокод на Github](https://github.com/vemperor/Track-downloader).
+~~Как-нибудь выложу свой говнокод на [elixir'е](https://elixir-lang.org/) на Github~~ Выложил [свой говнокод на Github](https://github.com/ivalentinee/Track-downloader).
