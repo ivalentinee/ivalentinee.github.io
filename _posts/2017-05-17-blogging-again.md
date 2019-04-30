@@ -26,7 +26,7 @@ categories: blog
 Так и скатился в jekyll. Ну хоть в Emacs'е можно редактировать, а не в WYSYWIG. Правда markdown с его разрывами строк двумя пробелами... Зря они так, конечно. А Github Pages не поддерживают более textile, увы.
 
 В планах сейчас
-1. ~~В третий раз впилить disqus, потому что "а разве есть что-то ещё"~~ Таки впилил комменты из плюсача. Они красявше. [Статья раз](http://steelx.github.io/best-internet-tips/2014/11/23/Add-google-plus-comments-box-to-jekyll-website.html), [Статья два](http://blog.nrowegt.com/how-to-setup-jekyll-with-google-plus-comments-and-other-customizations-on-github-pages/).
+1. ~~В третий раз впилить disqus, потому что "а разве есть что-то ещё"~~ ~~Таки впилил комменты из плюсача. Они красявше. [Статья раз](http://steelx.github.io/best-internet-tips/2014/11/23/Add-google-plus-comments-box-to-jekyll-website.html), [Статья два](http://blog.nrowegt.com/how-to-setup-jekyll-with-google-plus-comments-and-other-customizations-on-github-pages/)~~ Снова впилил Disqus, потому что плюсач загнулся.
 2. ~~Перенести старые посты~~ Перенёс старые посты.
 
 Вот, кстати, и этот блок ~~говна~~ кода на js.
