@@ -104,6 +104,7 @@ permalink: /gamelist/
   Два прохождения из трёх. Руки не доходят до третьего. И не дойдут.
 - [In Verbis Virtus](http://store.steampowered.com/app/242840/In_Verbis_Virtus/) \\
   Идея клёвая, но "битва" с первым боссом меня разочаровала настолько, что я дропнул игру. Лучше бы делали головоломки до конца игры.
+- [Killer is Dead](https://store.steampowered.com/app/261110/Killer_is_Dead__Nightmare_Edition/)
 - [Magicka](http://store.steampowered.com/app/42910/Magicka/)
 - Necro (Ссылка в стиме потратилась) \\
   Игра неплохая, но её забросили.
