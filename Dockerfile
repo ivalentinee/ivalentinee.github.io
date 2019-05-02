@@ -1,6 +1,4 @@
-FROM ruby:2.4.1
-
-RUN gem install jekyll bundler
+FROM ruby:2.6.3
 
 RUN mkdir /app
 WORKDIR /app
