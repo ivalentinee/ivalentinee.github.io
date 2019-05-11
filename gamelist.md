@@ -59,6 +59,7 @@ permalink: /gamelist/
 - [Prototype 2](http://store.steampowered.com/app/115320/Prototype_2/) — 27.03.2017
 - [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 22.05.2017
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 06.01.2017
+- [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 11.05.2019
 - [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
 - [Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 11.05.2018
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
