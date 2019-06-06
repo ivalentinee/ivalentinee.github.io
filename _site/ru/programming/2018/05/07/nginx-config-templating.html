@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Шаблонизация конфигурационных файлов nginx | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Шаблонизация конфигурационных файлов nginx" />
+<meta property="og:locale" content="ru" />
+<meta name="description" content="Предисловие Писать особо не о чем, а хочется, поэтому приходится вот такие тупые темы рассматривать. Но вдруг кому-то пригодится. Зачем? Несколько стендов приложения. Тестовый, боевой, ещё какой-нибудь… Много их. И для всех нужен немного разный конфиг nginx. Я хочу держать конфиг nginx в git, потому что в 2k18 этот конфиг уже давно стал частью кода приложения, а не какой-то инфраструктурщиной. То есть нужен контроль версий, code-review и прочие практики. В то же время я не хочу держать по конфигу на каждый стенд, потому что нет совершенно никакого желания каждый раз при разворачивании стенда писать новый конфиг. Nginx сам (почти) не умеет в динамическую конфигурацию. Даже значения из ENV жрать не может. Что делаем? Пытаемся конфигурировать nginx динамически (ну, почти) с использованием ENV-переменных. Почему ENV? Потому что мне приходится работать с Openshift, в котором конфигурация через ENV является если не единственно возможной (есть ещё всякие config-map’ы), то одной из самых удобных и предсказуемых. Как? Очень просто. Шаблонизация. Какая шаблонизация? Я знаком с двумя более-менее подходящими шаблонизаторами: ERB и Jinja2. Есть ещё всякие EEX и куча других шаблонизаторов, но с ними было бы не так удобно. Так как в python я понимаю примерно ничего, то от Jinja2 я отказался. Остался ERB. Как это всё используем? Идея простая: при старте nginx генерируем конфиг из шаблона. Для этого нужно два скрипта: один умеет генерить конфиг из шаблона, второй — запускать первый скрипт перед nginx. Генерим конфиг С первой задачей справляется вот этот ruby-скрипт, хотя я уверен, что есть готовые и более элегантные решения. Мне было лень гуглить, поэтому я быстренько накатал своё. Для примера конфиг с опциональной базовой аутентификацией: server { listen 80 default_server; server_name &lt;%= env[&#39;SERVER_NAME&#39;] %&gt;; &lt;% if env[&#39;BASIC_AUTH_ENABLED&#39;] %&gt; auth_basic &quot;Restricted Content&quot;; auth_basic_user_file /etc/nginx/auth/htpasswd; &lt;% end %&gt; root /public; location / { try_files $uri $uri/index.html; } } Стартуем nginx Со второй задачей всё ещё проще — там справляется обычный bash в пару строк (ну или что там у вас используется для shell-скриптов): #/bin/bash /usr/bin/render-template /configs/default.conf.erb /etc/nginx/conf.d/default.conf nginx -g &quot;daemon off;&quot; Готово! Вы восхитительны! В результате Конфиг nginx находится в git (что позволяет хотя бы сделать git blame в случае полного провала). Этот конфиг полностью отвязан от стендов. Я, например, тот же конфиг даже при разработке использую." />
+<meta property="og:description" content="Предисловие Писать особо не о чем, а хочется, поэтому приходится вот такие тупые темы рассматривать. Но вдруг кому-то пригодится. Зачем? Несколько стендов приложения. Тестовый, боевой, ещё какой-нибудь… Много их. И для всех нужен немного разный конфиг nginx. Я хочу держать конфиг nginx в git, потому что в 2k18 этот конфиг уже давно стал частью кода приложения, а не какой-то инфраструктурщиной. То есть нужен контроль версий, code-review и прочие практики. В то же время я не хочу держать по конфигу на каждый стенд, потому что нет совершенно никакого желания каждый раз при разворачивании стенда писать новый конфиг. Nginx сам (почти) не умеет в динамическую конфигурацию. Даже значения из ENV жрать не может. Что делаем? Пытаемся конфигурировать nginx динамически (ну, почти) с использованием ENV-переменных. Почему ENV? Потому что мне приходится работать с Openshift, в котором конфигурация через ENV является если не единственно возможной (есть ещё всякие config-map’ы), то одной из самых удобных и предсказуемых. Как? Очень просто. Шаблонизация. Какая шаблонизация? Я знаком с двумя более-менее подходящими шаблонизаторами: ERB и Jinja2. Есть ещё всякие EEX и куча других шаблонизаторов, но с ними было бы не так удобно. Так как в python я понимаю примерно ничего, то от Jinja2 я отказался. Остался ERB. Как это всё используем? Идея простая: при старте nginx генерируем конфиг из шаблона. Для этого нужно два скрипта: один умеет генерить конфиг из шаблона, второй — запускать первый скрипт перед nginx. Генерим конфиг С первой задачей справляется вот этот ruby-скрипт, хотя я уверен, что есть готовые и более элегантные решения. Мне было лень гуглить, поэтому я быстренько накатал своё. Для примера конфиг с опциональной базовой аутентификацией: server { listen 80 default_server; server_name &lt;%= env[&#39;SERVER_NAME&#39;] %&gt;; &lt;% if env[&#39;BASIC_AUTH_ENABLED&#39;] %&gt; auth_basic &quot;Restricted Content&quot;; auth_basic_user_file /etc/nginx/auth/htpasswd; &lt;% end %&gt; root /public; location / { try_files $uri $uri/index.html; } } Стартуем nginx Со второй задачей всё ещё проще — там справляется обычный bash в пару строк (ну или что там у вас используется для shell-скриптов): #/bin/bash /usr/bin/render-template /configs/default.conf.erb /etc/nginx/conf.d/default.conf nginx -g &quot;daemon off;&quot; Готово! Вы восхитительны! В результате Конфиг nginx находится в git (что позволяет хотя бы сделать git blame в случае полного провала). Этот конфиг полностью отвязан от стендов. Я, например, тот же конфиг даже при разработке использую." />
+<link rel="canonical" href="https://ivalentinee.github.io/ru/programming/2018/05/07/nginx-config-templating.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/ru/programming/2018/05/07/nginx-config-templating.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-05-07T00:00:00+00:00" />
+<script type="application/ld+json">
+{"headline":"Шаблонизация конфигурационных файлов nginx","dateModified":"2018-05-07T00:00:00+00:00","datePublished":"2018-05-07T00:00:00+00:00","description":"Предисловие Писать особо не о чем, а хочется, поэтому приходится вот такие тупые темы рассматривать. Но вдруг кому-то пригодится. Зачем? Несколько стендов приложения. Тестовый, боевой, ещё какой-нибудь… Много их. И для всех нужен немного разный конфиг nginx. Я хочу держать конфиг nginx в git, потому что в 2k18 этот конфиг уже давно стал частью кода приложения, а не какой-то инфраструктурщиной. То есть нужен контроль версий, code-review и прочие практики. В то же время я не хочу держать по конфигу на каждый стенд, потому что нет совершенно никакого желания каждый раз при разворачивании стенда писать новый конфиг. Nginx сам (почти) не умеет в динамическую конфигурацию. Даже значения из ENV жрать не может. Что делаем? Пытаемся конфигурировать nginx динамически (ну, почти) с использованием ENV-переменных. Почему ENV? Потому что мне приходится работать с Openshift, в котором конфигурация через ENV является если не единственно возможной (есть ещё всякие config-map’ы), то одной из самых удобных и предсказуемых. Как? Очень просто. Шаблонизация. Какая шаблонизация? Я знаком с двумя более-менее подходящими шаблонизаторами: ERB и Jinja2. Есть ещё всякие EEX и куча других шаблонизаторов, но с ними было бы не так удобно. Так как в python я понимаю примерно ничего, то от Jinja2 я отказался. Остался ERB. Как это всё используем? Идея простая: при старте nginx генерируем конфиг из шаблона. Для этого нужно два скрипта: один умеет генерить конфиг из шаблона, второй — запускать первый скрипт перед nginx. Генерим конфиг С первой задачей справляется вот этот ruby-скрипт, хотя я уверен, что есть готовые и более элегантные решения. Мне было лень гуглить, поэтому я быстренько накатал своё. Для примера конфиг с опциональной базовой аутентификацией: server { listen 80 default_server; server_name &lt;%= env[&#39;SERVER_NAME&#39;] %&gt;; &lt;% if env[&#39;BASIC_AUTH_ENABLED&#39;] %&gt; auth_basic &quot;Restricted Content&quot;; auth_basic_user_file /etc/nginx/auth/htpasswd; &lt;% end %&gt; root /public; location / { try_files $uri $uri/index.html; } } Стартуем nginx Со второй задачей всё ещё проще — там справляется обычный bash в пару строк (ну или что там у вас используется для shell-скриптов): #/bin/bash /usr/bin/render-template /configs/default.conf.erb /etc/nginx/conf.d/default.conf nginx -g &quot;daemon off;&quot; Готово! Вы восхитительны! В результате Конфиг nginx находится в git (что позволяет хотя бы сделать git blame в случае полного провала). Этот конфиг полностью отвязан от стендов. Я, например, тот же конфиг даже при разработке использую.","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2018/05/07/nginx-config-templating.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2018/05/07/nginx-config-templating.html","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/ru/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/ru/about/">Обо мне</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Шаблонизация конфигурационных файлов nginx</h1>
+    <p class="post-meta">
+      <time datetime="2018-05-07T00:00:00+00:00" itemprop="datePublished">
+        
+        May 7, 2018
+      </time>
+      </p>
+  </header>
+
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="предисловие">Предисловие</h2>
+<p>Писать особо не о чем, а хочется, поэтому приходится вот такие тупые темы рассматривать. Но вдруг кому-то пригодится.</p>
+
+<h2 id="зачем">Зачем?</h2>
+<ol>
+  <li>Несколько стендов приложения. Тестовый, боевой, ещё какой-нибудь… Много их. И для всех нужен немного разный конфиг nginx.</li>
+  <li>Я хочу держать конфиг nginx в git, потому что в 2k18 этот конфиг уже давно стал частью кода приложения, а не какой-то инфраструктурщиной. То есть нужен контроль версий, code-review и прочие практики.</li>
+  <li>В то же время я не хочу держать по конфигу на каждый стенд, потому что нет совершенно никакого желания каждый раз при разворачивании стенда писать новый конфиг.</li>
+  <li>Nginx сам (<a href="https://unit.nginx.org/">почти</a>) не умеет в динамическую конфигурацию. Даже значения из ENV жрать не может.</li>
+</ol>
+
+<h2 id="что-делаем">Что делаем?</h2>
+<p>Пытаемся конфигурировать nginx динамически (ну, почти) с использованием ENV-переменных. Почему ENV? Потому что мне приходится работать с <a href="https://www.openshift.com/">Openshift</a>, в котором конфигурация через ENV является если не единственно возможной (есть ещё всякие config-map’ы), то одной из самых удобных и предсказуемых.</p>
+
+<h2 id="как">Как?</h2>
+<p>Очень просто. Шаблонизация.</p>
+
+<h3 id="какая-шаблонизация">Какая шаблонизация?</h3>
+<p>Я знаком с двумя более-менее подходящими шаблонизаторами: <a href="https://ru.wikipedia.org/wiki/ERuby">ERB</a> и <a href="https://ru.wikipedia.org/wiki/Jinja">Jinja2</a>. Есть ещё всякие <a href="https://hexdocs.pm/eex/EEx.html">EEX</a> и куча других шаблонизаторов, но с ними было бы не так удобно.</p>
+
+<p>Так как в python я понимаю примерно ничего, то от Jinja2 я отказался. Остался ERB.</p>
+
+<h3 id="как-это-всё-используем">Как это всё используем?</h3>
+<p>Идея простая: при старте nginx генерируем конфиг из шаблона.</p>
+
+<p>Для этого нужно два скрипта: один умеет генерить конфиг из шаблона, второй — запускать первый скрипт перед nginx.</p>
+
+<h4 id="генерим-конфиг">Генерим конфиг</h4>
+<p>С первой задачей справляется <a href="https://github.com/ivalentinee/template-renderer">вот этот ruby-скрипт</a>, хотя я уверен, что есть готовые и более элегантные решения. Мне было лень гуглить, поэтому я быстренько накатал своё.</p>
+
+<p>Для примера конфиг с опциональной базовой аутентификацией:</p>
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server {
+    listen 80 default_server;
+    server_name <span class="cp">&lt;%=</span> <span class="n">env</span><span class="p">[</span><span class="s1">'SERVER_NAME'</span><span class="p">]</span> <span class="cp">%&gt;</span>;
+
+    <span class="cp">&lt;%</span> <span class="k">if</span> <span class="n">env</span><span class="p">[</span><span class="s1">'BASIC_AUTH_ENABLED'</span><span class="p">]</span> <span class="cp">%&gt;</span>
+    auth_basic "Restricted Content";
+    auth_basic_user_file /etc/nginx/auth/htpasswd;
+    <span class="cp">&lt;%</span> <span class="k">end</span> <span class="cp">%&gt;</span>
+
+    root /public;
+    location / {
+        try_files $uri $uri/index.html;
+    }
+}
+</code></pre></div></div>
+
+<h4 id="стартуем-nginx">Стартуем nginx</h4>
+<p>Со второй задачей всё ещё проще — там справляется обычный <a href="http://www.gnu.org/software/bash/">bash</a> в пару строк (ну или что там у вас используется для shell-скриптов):</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#/bin/bash</span>
+/usr/bin/render-template /configs/default.conf.erb /etc/nginx/conf.d/default.conf
+
+nginx <span class="nt">-g</span> <span class="s2">"daemon off;"</span>
+</code></pre></div></div>
+
+<h2 id="готово">Готово!</h2>
+<p>Вы восхитительны!</p>
+
+<p>В результате</p>
+<ol>
+  <li>Конфиг nginx находится в git (что позволяет хотя бы сделать git blame в случае полного провала).</li>
+  <li>Этот конфиг полностью отвязан от стендов. Я, например, тот же конфиг даже при разработке использую.</li>
+</ol>
+
+  </div>
+
+  
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://ivalentinee.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

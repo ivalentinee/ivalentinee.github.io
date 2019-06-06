@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Прикручиваем webpack к phoenix 1.3 | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Прикручиваем webpack к phoenix 1.3" />
+<meta property="og:locale" content="ru" />
+<meta name="description" content="Почему решил написать Пришла тут мне с elixir-radar’а в ленте вот эта статеечка. Ну и я подумал: “А чем, собственно, я хуже?” Да ничем не хуже. Тем более, что у меня подход более радикальный. Да и с докерами. Сразу скажу, что результат можно посмотреть тут. Пост предполагает, что следующий инструкциям уже имел дело с webpack’ом и phoenix’ом, потому что я не обещаю, что всё будет хорошо =). Почему webpack вместо brunch? Потому что у меня не завелись css-модули. Я пробовал подключить их с postcss-brunch, но у меня не получилось, увы. Да и вообще под вебпак куда больше модулей, шире поддержка. Изменения в структуре проекта 1. Отказался от от phoenix’ового watch’ера Потому что у меня docker и docker-compose, и я привык распихивать сервисы по контейнерам. 2. Перенёс файлы фронта в папку “frontend” Потому что засовывать целое фронтовое приложение в папку assets… Ну, не знаю. Во-первых, современный фронт уже давно перестал морально быть “ассетами” и зачастую содержит не меньше сложной логики, чем бэк, а во-вторых будет гораздо понятнее, что где искать, если в корне проекта будет папка /frontend, а не фронтовые файлы в /assets/static. Поехали Добавляем папку /frontend, переделываем package.json и переходим на yarn Переделываем папки Для начала создаём папку /frontend (mkdir frontend). В ней будет лежать наше фронтовое приложение. \ Затем переносим socket.js из /assets в /frontend на случай, если он понадобится в будущем. Для этого надо будет создать подпапки application и application/lib: $ mkdir -p frontend/application/lib $ cp assets/js/socket.js frontend/application/lib/socket.js Добавляем файл /frontend/application/app.js: console.log(&#39;It works!&#39;); Ну и наконец концами удаляем папку /assets (rm -rf assets), ибо она нам больше не понадобится. package.json Теперь добавляем файл package.json в корень проекта с примерно таким содержимым (версии пакетов, конечно, лучше поменять на последние): { &quot;repository&quot;: {}, &quot;license&quot;: &quot;MIT&quot;, &quot;scripts&quot;: { &quot;build&quot;: &quot;node ./node_modules/webpack/bin/webpack.js --config frontend/webpack.config.js&quot;, &quot;watch&quot;: &quot;node ./node_modules/webpack/bin/webpack.js -w --config frontend/webpack.config.js&quot; }, &quot;dependencies&quot;: { // много бабелевых плагинов &quot;babel&quot;: &quot;^6.23.0&quot;, &quot;babel-core&quot;: &quot;^6.25.0&quot;, &quot;babel-loader&quot;: &quot;^7.1.1&quot;, &quot;babel-plugin-transform-object-rest-spread&quot;: &quot;^6.23.0&quot;, &quot;babel-polyfill&quot;: &quot;^6.23.0&quot;, &quot;babel-preset-env&quot;: &quot;^1.6.0&quot;, &quot;babel-preset-es2015&quot;: &quot;^6.24.1&quot;, &quot;babel-preset-react&quot;: &quot;^6.24.1&quot;, &quot;babel-runtime&quot;: &quot;^6.25.0&quot;, // и прочих библиотек, которые для предмета поста не важны &quot;autoprefixer&quot;: &quot;^7.1.2&quot;, &quot;css-loader&quot;: &quot;^0.28.4&quot;, &quot;eslint&quot;: &quot;^4.4.1&quot;, &quot;extract-text-webpack-plugin&quot;: &quot;^3.0.0&quot;, &quot;file-loader&quot;: &quot;^0.11.2&quot;, &quot;style-loader&quot;: &quot;^0.18.2&quot;, &quot;postcss-loader&quot;: &quot;^2.0.6&quot;, &quot;prop-types&quot;: &quot;^15.5.10&quot;, &quot;react&quot;: &quot;^15.6.1&quot;, &quot;react-dom&quot;: &quot;^15.6.1&quot;, &quot;react-redux&quot;: &quot;^5.0.6&quot;, &quot;redux&quot;: &quot;^3.7.2&quot;, // ну и кэп подсказывает, что это вебпак &quot;webpack&quot;: &quot;^3.5.1&quot; // это файлы, которые необходимы для работы с channels в фениксе. &quot;phoenix&quot;: &quot;file:./deps/phoenix&quot;, &quot;phoenix_html&quot;: &quot;file:./deps/phoenix_html&quot;, } } webpack.config.js Теперь надо создать конфиг для webpack’а. Хотя его можно положить куда угодно, я считаю, что неплохо его сложить в папку /frontend. В конфиге экспорт настроен так, чтобы выходные файлы складывать в /priv/static/assets (app.js и app.css), чтобы потом их мог раздавать сервер приложения. “Входным” файлом приложения является /frontend/application/app.js, что можно увидеть в конфиге, который приведён ниже. Digest’ами в webpack не занимаюсь, потому что это делает phoenix. /frontend/webpack.config.js: const ExtractTextPlugin = require(&#39;extract-text-webpack-plugin&#39;); module.exports = { entry: [&#39;./frontend/application/app.js&#39;], output: { path: `${__dirname}/../priv/static/assets`, filename: &#39;app.js&#39;, }, devtool: &#39;source-map&#39;, resolve: { extensions: [&#39;.js&#39;, &#39;.jsx&#39;], }, module: { loaders: [ { test: /\.jsx?$/, exclude: /node_modules/, loader: &#39;babel-loader&#39;, }, { test: /\.css$/, use: ExtractTextPlugin.extract({ fallback: &#39;style-loader&#39;, use: [ { loader: &#39;css-loader&#39;, options: { modules: true, localIdentName: &#39;[path][name]__[local]--[hash:base64:5]&#39;, }, }, { loader: &#39;postcss-loader&#39; }, ], }), }, { test: /\.(png|jpg|gif)$/, use: [{ loader: &#39;file-loader&#39;, options: { publicPath: &#39;/assets/&#39;, }, }], }, ], }, plugins: [ new ExtractTextPlugin(&#39;app.css&#39;), ], }; Лоадеры, понятное дело, надо переделать под себя. Ну и .babelrc для полноты, хотя это не так важно: { &quot;presets&quot;: [ [ &quot;env&quot;, { &quot;modules&quot;: false } ], &quot;react&quot;, &quot;es2015&quot;, ] } (Бонус-контент) создаём структуру папок под проект “Бонус-контент” это потому, что структура моя заточена под react + redux, так что скорее всего её надо будет переделывать под свой проект. Комментировать не буду особо. Кому надо, то сам разберётся или спросит. /frontend /application /actionTypes /actions app.js /components /constants /containers /lib /reducers /sagas /store webpack.config.js Раздаём ассеты веб-сервером: В файле lib/&lt;projectname&gt;_web/endpoint.ex строку only: ~w(css fonts images js favicon.ico robots.txt) надо заменить на такую only: ~w(assets favicon.ico robots.txt) И затем используем в шаблонах ассеты так: &lt;script src=&quot;&lt;%= static_path(@conn, &quot;/assets/app.js&quot;) %&gt;&quot;&gt;&lt;/script&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;&lt;%= static_path(@conn, &quot;/assets/app.css&quot;) %&gt;&quot;&gt; Выпиливаем brunch из config/dev.exs, добавляем сервис webpack’а в docker-compose.yml Открываем файл config/dev.exs и выпиливаем вот это: watchers: [node: [&quot;node_modules/brunch/bin/brunch&quot;, &quot;watch&quot;, &quot;--stdin&quot;, cd: Path.expand(&quot;../frontend&quot;, __DIR__)]] Затем в docker-compose.yml надо сделать две вещи: Добавить сервис для webpack’а. Сделать общий volume для контейнеров с cowboy (web) и webpack, чтобы собранные webpack’ом файлы раздавались веб-сервером приложения. Просто приведу часть кода (полный docker-compose.yml будет чуть дальше): services: web: # ... volumes: &amp;web-volumes - /priv/static/ webpack: build: . volumes: *web-volumes command: npm run watch environment: NODE_ENV: development Собираем Dockerfile Dockerfile # Кэп подсказывает, что тут мы ставим elixir FROM elixir:1.5.1 # ставим inotify-tools для вотчеров # required packages RUN apt-get update &amp;&amp; \ apt-get install -y inotify-tools &amp;&amp; \ apt-get clean # Устанавливаем nodejs и yarn RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - &amp;&amp; \ apt-get install -y nodejs &amp;&amp; \ npm install yarn -g &amp;&amp; \ apt-get clean # Создаём директорию для проекта RUN mkdir /app WORKDIR /app # Устанавливаем окружение нашего приложения в production # чтобы потом можно было этот контейнер поднимать в проде (например, в kubernetes) ENV MIX_ENV=prod NODE_ENV=production # Устанавливаем пакеты elixir (hex deps) COPY mix.exs mix.lock /app/ RUN mix local.hex --force &amp;&amp; \ mix deps.get &amp;&amp; \ mix local.rebar --force # Устанавливаем пакеты nodejs COPY package.json yarn.lock /app/ RUN yarn install -s --frozen-lockfile --non-interactive # Выпячиваем наружу порт EXPOSE 4000 # Добавляем файлы приложения в образ ADD . /app # Компилируем приложение (elixir и javascript) RUN mix compile &amp;&amp; \ npm run build &amp;&amp; \ mix phx.digest # Ну и команда для запуска проекта CMD bash -c &quot;mix ecto.create &amp;&amp; mix ecto.migrate &amp;&amp; mix phoenix.server&quot; docker-compose.yml version: &quot;3&quot; services: db: image: postgres:9.6.2 ports: - &quot;5432&quot; web: build: . links: - db ports: - &quot;4000:4000&quot; volumes: &amp;web-volumes - ./:/app - ~/.bash_history:/root/.bash_history - /priv/static/ environment: MIX_ENV: null NODE_ENV: development POSTGRESQL_HOST: db webpack: build: . volumes: *web-volumes command: npm run watch environment: NODE_ENV: development .dockerignore Стоит добавить в корень проекта файл .dockerignore, чтобы всякий шлак не попал в образ с нашим приложением во время выполнения команды ADD. Этот файл обычно почти повторяет .gitignore: # App artifacts /_build /db /deps /*.ez # Generated on crash by the VM erl_crash.dump # Static artifacts yarn-error.log /node_modules npm-debug.log # Since we are building assets from web/static, # we ignore priv/static. You may want to comment # this depending on your deployment strategy. /priv/static/ # The config/prod.secret.exs file by default contains sensitive # data and you should not commit it into version control. # # Alternatively, you may comment the line below and commit the # secrets file as long as you replace its contents by environment # variables. /config/prod.secret.exs Готово! Вы восхитительны! Осталось только написать в README о том, как поднимать проект: $ docker-compose build $ docker-compose run --rm web mix deps.get $ docker-compose run --rm web yarn -s --frozen-lockfile --non-interactive $ docker-compose up -d" />
+<meta property="og:description" content="Почему решил написать Пришла тут мне с elixir-radar’а в ленте вот эта статеечка. Ну и я подумал: “А чем, собственно, я хуже?” Да ничем не хуже. Тем более, что у меня подход более радикальный. Да и с докерами. Сразу скажу, что результат можно посмотреть тут. Пост предполагает, что следующий инструкциям уже имел дело с webpack’ом и phoenix’ом, потому что я не обещаю, что всё будет хорошо =). Почему webpack вместо brunch? Потому что у меня не завелись css-модули. Я пробовал подключить их с postcss-brunch, но у меня не получилось, увы. Да и вообще под вебпак куда больше модулей, шире поддержка. Изменения в структуре проекта 1. Отказался от от phoenix’ового watch’ера Потому что у меня docker и docker-compose, и я привык распихивать сервисы по контейнерам. 2. Перенёс файлы фронта в папку “frontend” Потому что засовывать целое фронтовое приложение в папку assets… Ну, не знаю. Во-первых, современный фронт уже давно перестал морально быть “ассетами” и зачастую содержит не меньше сложной логики, чем бэк, а во-вторых будет гораздо понятнее, что где искать, если в корне проекта будет папка /frontend, а не фронтовые файлы в /assets/static. Поехали Добавляем папку /frontend, переделываем package.json и переходим на yarn Переделываем папки Для начала создаём папку /frontend (mkdir frontend). В ней будет лежать наше фронтовое приложение. \ Затем переносим socket.js из /assets в /frontend на случай, если он понадобится в будущем. Для этого надо будет создать подпапки application и application/lib: $ mkdir -p frontend/application/lib $ cp assets/js/socket.js frontend/application/lib/socket.js Добавляем файл /frontend/application/app.js: console.log(&#39;It works!&#39;); Ну и наконец концами удаляем папку /assets (rm -rf assets), ибо она нам больше не понадобится. package.json Теперь добавляем файл package.json в корень проекта с примерно таким содержимым (версии пакетов, конечно, лучше поменять на последние): { &quot;repository&quot;: {}, &quot;license&quot;: &quot;MIT&quot;, &quot;scripts&quot;: { &quot;build&quot;: &quot;node ./node_modules/webpack/bin/webpack.js --config frontend/webpack.config.js&quot;, &quot;watch&quot;: &quot;node ./node_modules/webpack/bin/webpack.js -w --config frontend/webpack.config.js&quot; }, &quot;dependencies&quot;: { // много бабелевых плагинов &quot;babel&quot;: &quot;^6.23.0&quot;, &quot;babel-core&quot;: &quot;^6.25.0&quot;, &quot;babel-loader&quot;: &quot;^7.1.1&quot;, &quot;babel-plugin-transform-object-rest-spread&quot;: &quot;^6.23.0&quot;, &quot;babel-polyfill&quot;: &quot;^6.23.0&quot;, &quot;babel-preset-env&quot;: &quot;^1.6.0&quot;, &quot;babel-preset-es2015&quot;: &quot;^6.24.1&quot;, &quot;babel-preset-react&quot;: &quot;^6.24.1&quot;, &quot;babel-runtime&quot;: &quot;^6.25.0&quot;, // и прочих библиотек, которые для предмета поста не важны &quot;autoprefixer&quot;: &quot;^7.1.2&quot;, &quot;css-loader&quot;: &quot;^0.28.4&quot;, &quot;eslint&quot;: &quot;^4.4.1&quot;, &quot;extract-text-webpack-plugin&quot;: &quot;^3.0.0&quot;, &quot;file-loader&quot;: &quot;^0.11.2&quot;, &quot;style-loader&quot;: &quot;^0.18.2&quot;, &quot;postcss-loader&quot;: &quot;^2.0.6&quot;, &quot;prop-types&quot;: &quot;^15.5.10&quot;, &quot;react&quot;: &quot;^15.6.1&quot;, &quot;react-dom&quot;: &quot;^15.6.1&quot;, &quot;react-redux&quot;: &quot;^5.0.6&quot;, &quot;redux&quot;: &quot;^3.7.2&quot;, // ну и кэп подсказывает, что это вебпак &quot;webpack&quot;: &quot;^3.5.1&quot; // это файлы, которые необходимы для работы с channels в фениксе. &quot;phoenix&quot;: &quot;file:./deps/phoenix&quot;, &quot;phoenix_html&quot;: &quot;file:./deps/phoenix_html&quot;, } } webpack.config.js Теперь надо создать конфиг для webpack’а. Хотя его можно положить куда угодно, я считаю, что неплохо его сложить в папку /frontend. В конфиге экспорт настроен так, чтобы выходные файлы складывать в /priv/static/assets (app.js и app.css), чтобы потом их мог раздавать сервер приложения. “Входным” файлом приложения является /frontend/application/app.js, что можно увидеть в конфиге, который приведён ниже. Digest’ами в webpack не занимаюсь, потому что это делает phoenix. /frontend/webpack.config.js: const ExtractTextPlugin = require(&#39;extract-text-webpack-plugin&#39;); module.exports = { entry: [&#39;./frontend/application/app.js&#39;], output: { path: `${__dirname}/../priv/static/assets`, filename: &#39;app.js&#39;, }, devtool: &#39;source-map&#39;, resolve: { extensions: [&#39;.js&#39;, &#39;.jsx&#39;], }, module: { loaders: [ { test: /\.jsx?$/, exclude: /node_modules/, loader: &#39;babel-loader&#39;, }, { test: /\.css$/, use: ExtractTextPlugin.extract({ fallback: &#39;style-loader&#39;, use: [ { loader: &#39;css-loader&#39;, options: { modules: true, localIdentName: &#39;[path][name]__[local]--[hash:base64:5]&#39;, }, }, { loader: &#39;postcss-loader&#39; }, ], }), }, { test: /\.(png|jpg|gif)$/, use: [{ loader: &#39;file-loader&#39;, options: { publicPath: &#39;/assets/&#39;, }, }], }, ], }, plugins: [ new ExtractTextPlugin(&#39;app.css&#39;), ], }; Лоадеры, понятное дело, надо переделать под себя. Ну и .babelrc для полноты, хотя это не так важно: { &quot;presets&quot;: [ [ &quot;env&quot;, { &quot;modules&quot;: false } ], &quot;react&quot;, &quot;es2015&quot;, ] } (Бонус-контент) создаём структуру папок под проект “Бонус-контент” это потому, что структура моя заточена под react + redux, так что скорее всего её надо будет переделывать под свой проект. Комментировать не буду особо. Кому надо, то сам разберётся или спросит. /frontend /application /actionTypes /actions app.js /components /constants /containers /lib /reducers /sagas /store webpack.config.js Раздаём ассеты веб-сервером: В файле lib/&lt;projectname&gt;_web/endpoint.ex строку only: ~w(css fonts images js favicon.ico robots.txt) надо заменить на такую only: ~w(assets favicon.ico robots.txt) И затем используем в шаблонах ассеты так: &lt;script src=&quot;&lt;%= static_path(@conn, &quot;/assets/app.js&quot;) %&gt;&quot;&gt;&lt;/script&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;&lt;%= static_path(@conn, &quot;/assets/app.css&quot;) %&gt;&quot;&gt; Выпиливаем brunch из config/dev.exs, добавляем сервис webpack’а в docker-compose.yml Открываем файл config/dev.exs и выпиливаем вот это: watchers: [node: [&quot;node_modules/brunch/bin/brunch&quot;, &quot;watch&quot;, &quot;--stdin&quot;, cd: Path.expand(&quot;../frontend&quot;, __DIR__)]] Затем в docker-compose.yml надо сделать две вещи: Добавить сервис для webpack’а. Сделать общий volume для контейнеров с cowboy (web) и webpack, чтобы собранные webpack’ом файлы раздавались веб-сервером приложения. Просто приведу часть кода (полный docker-compose.yml будет чуть дальше): services: web: # ... volumes: &amp;web-volumes - /priv/static/ webpack: build: . volumes: *web-volumes command: npm run watch environment: NODE_ENV: development Собираем Dockerfile Dockerfile # Кэп подсказывает, что тут мы ставим elixir FROM elixir:1.5.1 # ставим inotify-tools для вотчеров # required packages RUN apt-get update &amp;&amp; \ apt-get install -y inotify-tools &amp;&amp; \ apt-get clean # Устанавливаем nodejs и yarn RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - &amp;&amp; \ apt-get install -y nodejs &amp;&amp; \ npm install yarn -g &amp;&amp; \ apt-get clean # Создаём директорию для проекта RUN mkdir /app WORKDIR /app # Устанавливаем окружение нашего приложения в production # чтобы потом можно было этот контейнер поднимать в проде (например, в kubernetes) ENV MIX_ENV=prod NODE_ENV=production # Устанавливаем пакеты elixir (hex deps) COPY mix.exs mix.lock /app/ RUN mix local.hex --force &amp;&amp; \ mix deps.get &amp;&amp; \ mix local.rebar --force # Устанавливаем пакеты nodejs COPY package.json yarn.lock /app/ RUN yarn install -s --frozen-lockfile --non-interactive # Выпячиваем наружу порт EXPOSE 4000 # Добавляем файлы приложения в образ ADD . /app # Компилируем приложение (elixir и javascript) RUN mix compile &amp;&amp; \ npm run build &amp;&amp; \ mix phx.digest # Ну и команда для запуска проекта CMD bash -c &quot;mix ecto.create &amp;&amp; mix ecto.migrate &amp;&amp; mix phoenix.server&quot; docker-compose.yml version: &quot;3&quot; services: db: image: postgres:9.6.2 ports: - &quot;5432&quot; web: build: . links: - db ports: - &quot;4000:4000&quot; volumes: &amp;web-volumes - ./:/app - ~/.bash_history:/root/.bash_history - /priv/static/ environment: MIX_ENV: null NODE_ENV: development POSTGRESQL_HOST: db webpack: build: . volumes: *web-volumes command: npm run watch environment: NODE_ENV: development .dockerignore Стоит добавить в корень проекта файл .dockerignore, чтобы всякий шлак не попал в образ с нашим приложением во время выполнения команды ADD. Этот файл обычно почти повторяет .gitignore: # App artifacts /_build /db /deps /*.ez # Generated on crash by the VM erl_crash.dump # Static artifacts yarn-error.log /node_modules npm-debug.log # Since we are building assets from web/static, # we ignore priv/static. You may want to comment # this depending on your deployment strategy. /priv/static/ # The config/prod.secret.exs file by default contains sensitive # data and you should not commit it into version control. # # Alternatively, you may comment the line below and commit the # secrets file as long as you replace its contents by environment # variables. /config/prod.secret.exs Готово! Вы восхитительны! Осталось только написать в README о том, как поднимать проект: $ docker-compose build $ docker-compose run --rm web mix deps.get $ docker-compose run --rm web yarn -s --frozen-lockfile --non-interactive $ docker-compose up -d" />
+<link rel="canonical" href="https://ivalentinee.github.io/ru/programming/2017/10/07/moving-to-webpack-in-phoenix-1-3.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/ru/programming/2017/10/07/moving-to-webpack-in-phoenix-1-3.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-10-07T00:00:00+00:00" />
+<script type="application/ld+json">
+{"headline":"Прикручиваем webpack к phoenix 1.3","dateModified":"2017-10-07T00:00:00+00:00","datePublished":"2017-10-07T00:00:00+00:00","description":"Почему решил написать Пришла тут мне с elixir-radar’а в ленте вот эта статеечка. Ну и я подумал: “А чем, собственно, я хуже?” Да ничем не хуже. Тем более, что у меня подход более радикальный. Да и с докерами. Сразу скажу, что результат можно посмотреть тут. Пост предполагает, что следующий инструкциям уже имел дело с webpack’ом и phoenix’ом, потому что я не обещаю, что всё будет хорошо =). Почему webpack вместо brunch? Потому что у меня не завелись css-модули. Я пробовал подключить их с postcss-brunch, но у меня не получилось, увы. Да и вообще под вебпак куда больше модулей, шире поддержка. Изменения в структуре проекта 1. Отказался от от phoenix’ового watch’ера Потому что у меня docker и docker-compose, и я привык распихивать сервисы по контейнерам. 2. Перенёс файлы фронта в папку “frontend” Потому что засовывать целое фронтовое приложение в папку assets… Ну, не знаю. Во-первых, современный фронт уже давно перестал морально быть “ассетами” и зачастую содержит не меньше сложной логики, чем бэк, а во-вторых будет гораздо понятнее, что где искать, если в корне проекта будет папка /frontend, а не фронтовые файлы в /assets/static. Поехали Добавляем папку /frontend, переделываем package.json и переходим на yarn Переделываем папки Для начала создаём папку /frontend (mkdir frontend). В ней будет лежать наше фронтовое приложение. \\ Затем переносим socket.js из /assets в /frontend на случай, если он понадобится в будущем. Для этого надо будет создать подпапки application и application/lib: $ mkdir -p frontend/application/lib $ cp assets/js/socket.js frontend/application/lib/socket.js Добавляем файл /frontend/application/app.js: console.log(&#39;It works!&#39;); Ну и наконец концами удаляем папку /assets (rm -rf assets), ибо она нам больше не понадобится. package.json Теперь добавляем файл package.json в корень проекта с примерно таким содержимым (версии пакетов, конечно, лучше поменять на последние): { &quot;repository&quot;: {}, &quot;license&quot;: &quot;MIT&quot;, &quot;scripts&quot;: { &quot;build&quot;: &quot;node ./node_modules/webpack/bin/webpack.js --config frontend/webpack.config.js&quot;, &quot;watch&quot;: &quot;node ./node_modules/webpack/bin/webpack.js -w --config frontend/webpack.config.js&quot; }, &quot;dependencies&quot;: { // много бабелевых плагинов &quot;babel&quot;: &quot;^6.23.0&quot;, &quot;babel-core&quot;: &quot;^6.25.0&quot;, &quot;babel-loader&quot;: &quot;^7.1.1&quot;, &quot;babel-plugin-transform-object-rest-spread&quot;: &quot;^6.23.0&quot;, &quot;babel-polyfill&quot;: &quot;^6.23.0&quot;, &quot;babel-preset-env&quot;: &quot;^1.6.0&quot;, &quot;babel-preset-es2015&quot;: &quot;^6.24.1&quot;, &quot;babel-preset-react&quot;: &quot;^6.24.1&quot;, &quot;babel-runtime&quot;: &quot;^6.25.0&quot;, // и прочих библиотек, которые для предмета поста не важны &quot;autoprefixer&quot;: &quot;^7.1.2&quot;, &quot;css-loader&quot;: &quot;^0.28.4&quot;, &quot;eslint&quot;: &quot;^4.4.1&quot;, &quot;extract-text-webpack-plugin&quot;: &quot;^3.0.0&quot;, &quot;file-loader&quot;: &quot;^0.11.2&quot;, &quot;style-loader&quot;: &quot;^0.18.2&quot;, &quot;postcss-loader&quot;: &quot;^2.0.6&quot;, &quot;prop-types&quot;: &quot;^15.5.10&quot;, &quot;react&quot;: &quot;^15.6.1&quot;, &quot;react-dom&quot;: &quot;^15.6.1&quot;, &quot;react-redux&quot;: &quot;^5.0.6&quot;, &quot;redux&quot;: &quot;^3.7.2&quot;, // ну и кэп подсказывает, что это вебпак &quot;webpack&quot;: &quot;^3.5.1&quot; // это файлы, которые необходимы для работы с channels в фениксе. &quot;phoenix&quot;: &quot;file:./deps/phoenix&quot;, &quot;phoenix_html&quot;: &quot;file:./deps/phoenix_html&quot;, } } webpack.config.js Теперь надо создать конфиг для webpack’а. Хотя его можно положить куда угодно, я считаю, что неплохо его сложить в папку /frontend. В конфиге экспорт настроен так, чтобы выходные файлы складывать в /priv/static/assets (app.js и app.css), чтобы потом их мог раздавать сервер приложения. “Входным” файлом приложения является /frontend/application/app.js, что можно увидеть в конфиге, который приведён ниже. Digest’ами в webpack не занимаюсь, потому что это делает phoenix. /frontend/webpack.config.js: const ExtractTextPlugin = require(&#39;extract-text-webpack-plugin&#39;); module.exports = { entry: [&#39;./frontend/application/app.js&#39;], output: { path: `${__dirname}/../priv/static/assets`, filename: &#39;app.js&#39;, }, devtool: &#39;source-map&#39;, resolve: { extensions: [&#39;.js&#39;, &#39;.jsx&#39;], }, module: { loaders: [ { test: /\\.jsx?$/, exclude: /node_modules/, loader: &#39;babel-loader&#39;, }, { test: /\\.css$/, use: ExtractTextPlugin.extract({ fallback: &#39;style-loader&#39;, use: [ { loader: &#39;css-loader&#39;, options: { modules: true, localIdentName: &#39;[path][name]__[local]--[hash:base64:5]&#39;, }, }, { loader: &#39;postcss-loader&#39; }, ], }), }, { test: /\\.(png|jpg|gif)$/, use: [{ loader: &#39;file-loader&#39;, options: { publicPath: &#39;/assets/&#39;, }, }], }, ], }, plugins: [ new ExtractTextPlugin(&#39;app.css&#39;), ], }; Лоадеры, понятное дело, надо переделать под себя. Ну и .babelrc для полноты, хотя это не так важно: { &quot;presets&quot;: [ [ &quot;env&quot;, { &quot;modules&quot;: false } ], &quot;react&quot;, &quot;es2015&quot;, ] } (Бонус-контент) создаём структуру папок под проект “Бонус-контент” это потому, что структура моя заточена под react + redux, так что скорее всего её надо будет переделывать под свой проект. Комментировать не буду особо. Кому надо, то сам разберётся или спросит. /frontend /application /actionTypes /actions app.js /components /constants /containers /lib /reducers /sagas /store webpack.config.js Раздаём ассеты веб-сервером: В файле lib/&lt;projectname&gt;_web/endpoint.ex строку only: ~w(css fonts images js favicon.ico robots.txt) надо заменить на такую only: ~w(assets favicon.ico robots.txt) И затем используем в шаблонах ассеты так: &lt;script src=&quot;&lt;%= static_path(@conn, &quot;/assets/app.js&quot;) %&gt;&quot;&gt;&lt;/script&gt; &lt;link rel=&quot;stylesheet&quot; href=&quot;&lt;%= static_path(@conn, &quot;/assets/app.css&quot;) %&gt;&quot;&gt; Выпиливаем brunch из config/dev.exs, добавляем сервис webpack’а в docker-compose.yml Открываем файл config/dev.exs и выпиливаем вот это: watchers: [node: [&quot;node_modules/brunch/bin/brunch&quot;, &quot;watch&quot;, &quot;--stdin&quot;, cd: Path.expand(&quot;../frontend&quot;, __DIR__)]] Затем в docker-compose.yml надо сделать две вещи: Добавить сервис для webpack’а. Сделать общий volume для контейнеров с cowboy (web) и webpack, чтобы собранные webpack’ом файлы раздавались веб-сервером приложения. Просто приведу часть кода (полный docker-compose.yml будет чуть дальше): services: web: # ... volumes: &amp;web-volumes - /priv/static/ webpack: build: . volumes: *web-volumes command: npm run watch environment: NODE_ENV: development Собираем Dockerfile Dockerfile # Кэп подсказывает, что тут мы ставим elixir FROM elixir:1.5.1 # ставим inotify-tools для вотчеров # required packages RUN apt-get update &amp;&amp; \\ apt-get install -y inotify-tools &amp;&amp; \\ apt-get clean # Устанавливаем nodejs и yarn RUN curl --silent --location https://deb.nodesource.com/setup_6.x | bash - &amp;&amp; \\ apt-get install -y nodejs &amp;&amp; \\ npm install yarn -g &amp;&amp; \\ apt-get clean # Создаём директорию для проекта RUN mkdir /app WORKDIR /app # Устанавливаем окружение нашего приложения в production # чтобы потом можно было этот контейнер поднимать в проде (например, в kubernetes) ENV MIX_ENV=prod NODE_ENV=production # Устанавливаем пакеты elixir (hex deps) COPY mix.exs mix.lock /app/ RUN mix local.hex --force &amp;&amp; \\ mix deps.get &amp;&amp; \\ mix local.rebar --force # Устанавливаем пакеты nodejs COPY package.json yarn.lock /app/ RUN yarn install -s --frozen-lockfile --non-interactive # Выпячиваем наружу порт EXPOSE 4000 # Добавляем файлы приложения в образ ADD . /app # Компилируем приложение (elixir и javascript) RUN mix compile &amp;&amp; \\ npm run build &amp;&amp; \\ mix phx.digest # Ну и команда для запуска проекта CMD bash -c &quot;mix ecto.create &amp;&amp; mix ecto.migrate &amp;&amp; mix phoenix.server&quot; docker-compose.yml version: &quot;3&quot; services: db: image: postgres:9.6.2 ports: - &quot;5432&quot; web: build: . links: - db ports: - &quot;4000:4000&quot; volumes: &amp;web-volumes - ./:/app - ~/.bash_history:/root/.bash_history - /priv/static/ environment: MIX_ENV: null NODE_ENV: development POSTGRESQL_HOST: db webpack: build: . volumes: *web-volumes command: npm run watch environment: NODE_ENV: development .dockerignore Стоит добавить в корень проекта файл .dockerignore, чтобы всякий шлак не попал в образ с нашим приложением во время выполнения команды ADD. Этот файл обычно почти повторяет .gitignore: # App artifacts /_build /db /deps /*.ez # Generated on crash by the VM erl_crash.dump # Static artifacts yarn-error.log /node_modules npm-debug.log # Since we are building assets from web/static, # we ignore priv/static. You may want to comment # this depending on your deployment strategy. /priv/static/ # The config/prod.secret.exs file by default contains sensitive # data and you should not commit it into version control. # # Alternatively, you may comment the line below and commit the # secrets file as long as you replace its contents by environment # variables. /config/prod.secret.exs Готово! Вы восхитительны! Осталось только написать в README о том, как поднимать проект: $ docker-compose build $ docker-compose run --rm web mix deps.get $ docker-compose run --rm web yarn -s --frozen-lockfile --non-interactive $ docker-compose up -d","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2017/10/07/moving-to-webpack-in-phoenix-1-3.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2017/10/07/moving-to-webpack-in-phoenix-1-3.html","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/ru/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/ru/about/">Обо мне</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Прикручиваем webpack к phoenix 1.3</h1>
+    <p class="post-meta">
+      <time datetime="2017-10-07T00:00:00+00:00" itemprop="datePublished">
+        
+        Oct 7, 2017
+      </time>
+      </p>
+  </header>
+
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="почему-решил-написать">Почему решил написать</h2>
+
+<p>Пришла тут мне с elixir-radar’а в ленте <a href="https://blog.danivovich.com/2017/08/30/webpack-phoenix">вот эта статеечка</a>. Ну и я подумал: “А чем, собственно, я хуже?” Да ничем не хуже. Тем более, что у меня подход более радикальный. Да и с докерами.</p>
+
+<p>Сразу скажу, что результат можно посмотреть <a href="https://github.com/ivalentinee/impressioner/tree/master/frontend">тут</a>.</p>
+
+<p>Пост предполагает, что следующий инструкциям <strong>уже имел дело с webpack’ом и phoenix’ом</strong>, потому что я не обещаю, что всё будет хорошо =).</p>
+
+<h2 id="почему-webpack-вместо-brunch">Почему webpack вместо brunch?</h2>
+
+<p>Потому что у меня не завелись css-модули. Я пробовал подключить их с <a href="https://github.com/brunch/postcss-brunch">postcss-brunch</a>, но у меня не получилось, увы. Да и вообще под вебпак куда больше модулей, шире поддержка.</p>
+
+<h2 id="изменения-в-структуре-проекта">Изменения в структуре проекта</h2>
+
+<h3 id="1-отказался-от-от-phoenixового-watchера">1. Отказался от от phoenix’ового watch’ера</h3>
+
+<p>Потому что у меня docker и docker-compose, и я привык распихивать сервисы по контейнерам.</p>
+
+<h3 id="2-перенёс-файлы-фронта-в-папку-frontend">2. Перенёс файлы фронта в папку “frontend”</h3>
+
+<p>Потому что засовывать целое фронтовое приложение в папку assets… Ну, не знаю. Во-первых, современный фронт уже давно перестал морально быть “ассетами” и зачастую содержит не меньше сложной логики, чем бэк, а во-вторых будет гораздо понятнее, что где искать, если в корне проекта будет папка <code class="highlighter-rouge">/frontend</code>, а не фронтовые файлы в <code class="highlighter-rouge">/assets/static</code>.</p>
+
+<h2 id="поехали">Поехали</h2>
+
+<h3 id="добавляем-папку-frontend-переделываем-packagejson-и-переходим-на-yarn">Добавляем папку <code class="highlighter-rouge">/frontend</code>, переделываем package.json и переходим на yarn</h3>
+
+<h4 id="переделываем-папки">Переделываем папки</h4>
+
+<p>Для начала создаём папку <code class="highlighter-rouge">/frontend</code> (<code class="highlighter-rouge">mkdir frontend</code>). В ней будет лежать наше фронтовое приложение. \</p>
+
+<p>Затем переносим <code class="highlighter-rouge">socket.js</code> из <code class="highlighter-rouge">/assets</code> в <code class="highlighter-rouge">/frontend</code> на случай, если он понадобится в будущем. Для этого надо будет создать подпапки <code class="highlighter-rouge">application</code> и <code class="highlighter-rouge">application/lib</code>:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>mkdir <span class="nt">-p</span> frontend/application/lib
+<span class="nv">$ </span>cp assets/js/socket.js frontend/application/lib/socket.js
+</code></pre></div></div>
+
+<p>Добавляем файл <code class="highlighter-rouge">/frontend/application/app.js</code>:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">'It works!'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Ну и наконец концами удаляем папку <code class="highlighter-rouge">/assets</code> (<code class="highlighter-rouge">rm -rf assets</code>), ибо она нам больше не понадобится.</p>
+
+<h4 id="packagejson">package.json</h4>
+
+<p>Теперь добавляем файл <code class="highlighter-rouge">package.json</code> в корень проекта с примерно таким содержимым (версии пакетов, конечно, лучше поменять на последние):</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"repository"</span><span class="p">:</span><span class="w"> </span><span class="p">{},</span><span class="w">
+  </span><span class="s2">"license"</span><span class="p">:</span><span class="w"> </span><span class="s2">"MIT"</span><span class="p">,</span><span class="w">
+  </span><span class="s2">"scripts"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="s2">"build"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node ./node_modules/webpack/bin/webpack.js --config frontend/webpack.config.js"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"watch"</span><span class="p">:</span><span class="w"> </span><span class="s2">"node ./node_modules/webpack/bin/webpack.js -w --config frontend/webpack.config.js"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="s2">"dependencies"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">много</span><span class="w"> </span><span class="err">бабелевых</span><span class="w"> </span><span class="err">плагинов</span><span class="w">
+    </span><span class="s2">"babel"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.23.0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-core"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.25.0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^7.1.1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-plugin-transform-object-rest-spread"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.23.0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-polyfill"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.23.0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-preset-env"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^1.6.0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-preset-es2015"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.24.1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-preset-react"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.24.1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"babel-runtime"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^6.25.0"</span><span class="p">,</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">и</span><span class="w"> </span><span class="err">прочих</span><span class="w"> </span><span class="err">библиотек</span><span class="p">,</span><span class="w"> </span><span class="err">которые</span><span class="w"> </span><span class="err">для</span><span class="w"> </span><span class="err">предмета</span><span class="w"> </span><span class="err">поста</span><span class="w"> </span><span class="err">не</span><span class="w"> </span><span class="err">важны</span><span class="w">
+    </span><span class="s2">"autoprefixer"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^7.1.2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"css-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.28.4"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"eslint"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^4.4.1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"extract-text-webpack-plugin"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.0.0"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"file-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.11.2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"style-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^0.18.2"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"postcss-loader"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^2.0.6"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"prop-types"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^15.5.10"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"react"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^15.6.1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"react-dom"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^15.6.1"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"react-redux"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^5.0.6"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"redux"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.7.2"</span><span class="p">,</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">ну</span><span class="w"> </span><span class="err">и</span><span class="w"> </span><span class="err">кэп</span><span class="w"> </span><span class="err">подсказывает</span><span class="p">,</span><span class="w"> </span><span class="err">что</span><span class="w"> </span><span class="err">это</span><span class="w"> </span><span class="err">вебпак</span><span class="w">
+    </span><span class="s2">"webpack"</span><span class="p">:</span><span class="w"> </span><span class="s2">"^3.5.1"</span><span class="w">
+    </span><span class="err">//</span><span class="w"> </span><span class="err">это</span><span class="w"> </span><span class="err">файлы</span><span class="p">,</span><span class="w"> </span><span class="err">которые</span><span class="w"> </span><span class="err">необходимы</span><span class="w"> </span><span class="err">для</span><span class="w"> </span><span class="err">работы</span><span class="w"> </span><span class="err">с</span><span class="w"> </span><span class="err">channels</span><span class="w"> </span><span class="err">в</span><span class="w"> </span><span class="err">фениксе.</span><span class="w">
+    </span><span class="s2">"phoenix"</span><span class="p">:</span><span class="w"> </span><span class="s2">"file:./deps/phoenix"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"phoenix_html"</span><span class="p">:</span><span class="w"> </span><span class="s2">"file:./deps/phoenix_html"</span><span class="p">,</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h4 id="webpackconfigjs">webpack.config.js</h4>
+
+<p>Теперь надо создать конфиг для webpack’а. Хотя его можно положить куда угодно, я считаю, что неплохо его сложить в папку <code class="highlighter-rouge">/frontend</code>.</p>
+
+<p>В конфиге экспорт настроен так, чтобы выходные файлы складывать в <code class="highlighter-rouge">/priv/static/assets</code> (<code class="highlighter-rouge">app.js</code> и <code class="highlighter-rouge">app.css</code>), чтобы потом их мог раздавать сервер приложения.</p>
+
+<p>“Входным” файлом приложения является <code class="highlighter-rouge">/frontend/application/app.js</code>, что можно увидеть в конфиге, который приведён ниже.</p>
+
+<p>Digest’ами в webpack не занимаюсь, потому что это <a href="https://hexdocs.pm/phoenix/1.3.0-rc.3/Mix.Tasks.Phoenix.Digest.html">делает phoenix</a>.</p>
+
+<p><code class="highlighter-rouge">/frontend/webpack.config.js</code>:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">ExtractTextPlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">'extract-text-webpack-plugin'</span><span class="p">);</span>
+
+<span class="nx">module</span><span class="p">.</span><span class="nx">exports</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">entry</span><span class="p">:</span> <span class="p">[</span><span class="s1">'./frontend/application/app.js'</span><span class="p">],</span>
+  <span class="na">output</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">path</span><span class="p">:</span> <span class="s2">`</span><span class="p">${</span><span class="nx">__dirname</span><span class="p">}</span><span class="s2">/../priv/static/assets`</span><span class="p">,</span>
+    <span class="na">filename</span><span class="p">:</span> <span class="s1">'app.js'</span><span class="p">,</span>
+  <span class="p">},</span>
+  <span class="na">devtool</span><span class="p">:</span> <span class="s1">'source-map'</span><span class="p">,</span>
+  <span class="na">resolve</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">extensions</span><span class="p">:</span> <span class="p">[</span><span class="s1">'.js'</span><span class="p">,</span> <span class="s1">'.jsx'</span><span class="p">],</span>
+  <span class="p">},</span>
+  <span class="na">module</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">loaders</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+        <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">jsx</span><span class="se">?</span><span class="sr">$/</span><span class="p">,</span>
+        <span class="na">exclude</span><span class="p">:</span> <span class="sr">/node_modules/</span><span class="p">,</span>
+        <span class="na">loader</span><span class="p">:</span> <span class="s1">'babel-loader'</span><span class="p">,</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.</span><span class="sr">css$/</span><span class="p">,</span>
+        <span class="na">use</span><span class="p">:</span> <span class="nx">ExtractTextPlugin</span><span class="p">.</span><span class="nx">extract</span><span class="p">({</span>
+          <span class="na">fallback</span><span class="p">:</span> <span class="s1">'style-loader'</span><span class="p">,</span>
+          <span class="na">use</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+              <span class="na">loader</span><span class="p">:</span> <span class="s1">'css-loader'</span><span class="p">,</span>
+              <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+                <span class="na">modules</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+                <span class="na">localIdentName</span><span class="p">:</span> <span class="s1">'[path][name]__[local]--[hash:base64:5]'</span><span class="p">,</span>
+              <span class="p">},</span>
+            <span class="p">},</span>
+            <span class="p">{</span> <span class="na">loader</span><span class="p">:</span> <span class="s1">'postcss-loader'</span> <span class="p">},</span>
+          <span class="p">],</span>
+        <span class="p">}),</span>
+      <span class="p">},</span>
+      <span class="p">{</span>
+        <span class="na">test</span><span class="p">:</span> <span class="sr">/</span><span class="se">\.(</span><span class="sr">png|jpg|gif</span><span class="se">)</span><span class="sr">$/</span><span class="p">,</span>
+        <span class="na">use</span><span class="p">:</span> <span class="p">[{</span>
+          <span class="na">loader</span><span class="p">:</span> <span class="s1">'file-loader'</span><span class="p">,</span>
+          <span class="na">options</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">publicPath</span><span class="p">:</span> <span class="s1">'/assets/'</span><span class="p">,</span>
+          <span class="p">},</span>
+        <span class="p">}],</span>
+      <span class="p">},</span>
+    <span class="p">],</span>
+  <span class="p">},</span>
+  <span class="na">plugins</span><span class="p">:</span> <span class="p">[</span>
+    <span class="k">new</span> <span class="nx">ExtractTextPlugin</span><span class="p">(</span><span class="s1">'app.css'</span><span class="p">),</span>
+  <span class="p">],</span>
+<span class="p">};</span>
+</code></pre></div></div>
+<p>Лоадеры, понятное дело, надо переделать под себя.</p>
+
+<p>Ну и <code class="highlighter-rouge">.babelrc</code> для полноты, хотя это не так важно:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="s2">"presets"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+    </span><span class="p">[</span><span class="w">
+      </span><span class="s2">"env"</span><span class="p">,</span><span class="w">
+      </span><span class="p">{</span><span class="w">
+        </span><span class="s2">"modules"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+      </span><span class="p">}</span><span class="w">
+    </span><span class="p">],</span><span class="w">
+    </span><span class="s2">"react"</span><span class="p">,</span><span class="w">
+    </span><span class="s2">"es2015"</span><span class="p">,</span><span class="w">
+  </span><span class="p">]</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<h4 id="бонус-контент-создаём-структуру-папок-под-проект">(Бонус-контент) создаём структуру папок под проект</h4>
+
+<p>“Бонус-контент” это потому, что структура моя заточена под <a href="https://reactjs.org/">react</a> + <a href="http://redux.js.org/">redux</a>, так что скорее всего её надо будет переделывать под свой проект.</p>
+
+<p>Комментировать не буду особо. Кому надо, то сам разберётся или спросит.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>/frontend
+  /application
+    /actionTypes
+    /actions
+    app.js
+    /components
+    /constants
+    /containers
+    /lib
+    /reducers
+    /sagas
+    /store
+    webpack.config.js
+</code></pre></div></div>
+
+<h3 id="раздаём-ассеты-веб-сервером">Раздаём ассеты веб-сервером:</h3>
+
+<p>В файле <code class="highlighter-rouge">lib/&lt;projectname&gt;_web/endpoint.ex</code> строку</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="ss">only:</span> <span class="sx">~w(css fonts images js favicon.ico robots.txt)</span>
+</code></pre></div></div>
+<p>надо заменить на такую</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="ss">only:</span> <span class="sx">~w(assets favicon.ico robots.txt)</span>
+</code></pre></div></div>
+
+<p>И затем используем в шаблонах ассеты так:</p>
+<div class="language-erb highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"</span><span class="cp">&lt;%=</span> <span class="n">static_path</span><span class="p">(</span><span class="vi">@conn</span><span class="p">,</span> <span class="s2">"/assets/app.js"</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"stylesheet"</span> <span class="na">href=</span><span class="s">"</span><span class="cp">&lt;%=</span> <span class="n">static_path</span><span class="p">(</span><span class="vi">@conn</span><span class="p">,</span> <span class="s2">"/assets/app.css"</span><span class="p">)</span> <span class="cp">%&gt;</span><span class="s">"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<h3 id="выпиливаем-brunch-из-configdevexs-добавляем-сервис-webpackа-в-docker-composeyml">Выпиливаем brunch из config/dev.exs, добавляем сервис webpack’а в docker-compose.yml</h3>
+
+<p>Открываем файл <code class="highlighter-rouge">config/dev.exs</code> и выпиливаем вот это:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="ss">watchers:</span> <span class="p">[</span><span class="ss">node:</span> <span class="p">[</span><span class="sd">"</span><span class="s2">node_modules/brunch/bin/brunch"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">watch"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">--stdin"</span><span class="p">,</span>
+                    <span class="ss">cd:</span> <span class="no">Path</span><span class="o">.</span><span class="n">expand</span><span class="p">(</span><span class="sd">"</span><span class="s2">../frontend"</span><span class="p">,</span> <span class="n">__DIR__</span><span class="p">)]]</span>
+</code></pre></div></div>
+
+<p>Затем в <a href="https://github.com/ivalentinee/DM-Assistant/blob/b418648e9959914afb6e6667b628a30fccaca8e6/docker-compose.yml"><code class="highlighter-rouge">docker-compose.yml</code></a> надо сделать две вещи:</p>
+<ol>
+  <li>Добавить сервис для webpack’а.</li>
+  <li>Сделать общий volume для контейнеров с cowboy (web) и webpack, чтобы собранные webpack’ом файлы раздавались веб-сервером приложения.</li>
+</ol>
+
+<p>Просто приведу часть кода (полный <code class="highlighter-rouge">docker-compose.yml</code> будет чуть дальше):</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">services</span><span class="pi">:</span>
+  <span class="na">web</span><span class="pi">:</span>
+    <span class="c1"># ...</span>
+    <span class="na">volumes</span><span class="pi">:</span> <span class="nl">&amp;web-volumes</span>
+      <span class="pi">-</span> <span class="s">/priv/static/</span>
+
+  <span class="na">webpack</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">volumes</span><span class="pi">:</span> <span class="nv">*web-volumes</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">npm run watch</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">NODE_ENV</span><span class="pi">:</span> <span class="s">development</span>
+</code></pre></div></div>
+
+<h3 id="собираем-dockerfile">Собираем Dockerfile</h3>
+
+<h4 id="dockerfile">Dockerfile</h4>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Кэп подсказывает, что тут мы ставим elixir
+</span><span class="n">FROM</span> <span class="n">elixir</span>:<span class="m">1</span>.<span class="m">5</span>.<span class="m">1</span>
+
+<span class="c"># ставим inotify-tools для вотчеров
+# required packages
+</span><span class="n">RUN</span> <span class="n">apt</span>-<span class="n">get</span> <span class="n">update</span> &amp;&amp; \
+    <span class="n">apt</span>-<span class="n">get</span> <span class="n">install</span> -<span class="n">y</span> <span class="n">inotify</span>-<span class="n">tools</span> &amp;&amp; \
+    <span class="n">apt</span>-<span class="n">get</span> <span class="n">clean</span>
+
+<span class="c"># Устанавливаем nodejs и yarn
+</span><span class="n">RUN</span> <span class="n">curl</span> --<span class="n">silent</span> --<span class="n">location</span> <span class="n">https</span>://<span class="n">deb</span>.<span class="n">nodesource</span>.<span class="n">com</span>/<span class="n">setup_6</span>.<span class="n">x</span> | <span class="n">bash</span> - &amp;&amp; \
+    <span class="n">apt</span>-<span class="n">get</span> <span class="n">install</span> -<span class="n">y</span> <span class="n">nodejs</span> &amp;&amp; \
+    <span class="n">npm</span> <span class="n">install</span> <span class="n">yarn</span> -<span class="n">g</span> &amp;&amp; \
+    <span class="n">apt</span>-<span class="n">get</span> <span class="n">clean</span>
+
+<span class="c"># Создаём директорию для проекта
+</span><span class="n">RUN</span> <span class="n">mkdir</span> /<span class="n">app</span>
+<span class="n">WORKDIR</span> /<span class="n">app</span>
+
+<span class="c"># Устанавливаем окружение нашего приложения в production
+# чтобы потом можно было этот контейнер поднимать в проде (например, в kubernetes)
+</span><span class="n">ENV</span> <span class="n">MIX_ENV</span>=<span class="n">prod</span> <span class="n">NODE_ENV</span>=<span class="n">production</span>
+
+<span class="c"># Устанавливаем пакеты elixir (hex deps)
+</span><span class="n">COPY</span> <span class="n">mix</span>.<span class="n">exs</span> <span class="n">mix</span>.<span class="n">lock</span> /<span class="n">app</span>/
+<span class="n">RUN</span> <span class="n">mix</span> <span class="n">local</span>.<span class="n">hex</span> --<span class="n">force</span> &amp;&amp; \
+    <span class="n">mix</span> <span class="n">deps</span>.<span class="n">get</span> &amp;&amp; \
+    <span class="n">mix</span> <span class="n">local</span>.<span class="n">rebar</span> --<span class="n">force</span>
+
+<span class="c"># Устанавливаем пакеты nodejs
+</span><span class="n">COPY</span> <span class="n">package</span>.<span class="n">json</span> <span class="n">yarn</span>.<span class="n">lock</span> /<span class="n">app</span>/
+<span class="n">RUN</span> <span class="n">yarn</span> <span class="n">install</span> -<span class="n">s</span> --<span class="n">frozen</span>-<span class="n">lockfile</span> --<span class="n">non</span>-<span class="n">interactive</span>
+
+<span class="c"># Выпячиваем наружу порт
+</span><span class="n">EXPOSE</span> <span class="m">4000</span>
+
+<span class="c"># Добавляем файлы приложения в образ
+</span><span class="n">ADD</span> . /<span class="n">app</span>
+
+<span class="c"># Компилируем приложение (elixir и javascript)
+</span><span class="n">RUN</span> <span class="n">mix</span> <span class="n">compile</span> &amp;&amp; \
+    <span class="n">npm</span> <span class="n">run</span> <span class="n">build</span> &amp;&amp; \
+    <span class="n">mix</span> <span class="n">phx</span>.<span class="n">digest</span>
+
+<span class="c"># Ну и команда для запуска проекта
+</span><span class="n">CMD</span> <span class="n">bash</span> -<span class="n">c</span> <span class="s2">"mix ecto.create &amp;&amp; mix ecto.migrate &amp;&amp; mix phoenix.server"</span>
+</code></pre></div></div>
+
+<h4 id="docker-composeyml">docker-compose.yml</h4>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="s2">"</span><span class="s">3"</span>
+
+<span class="na">services</span><span class="pi">:</span>
+  <span class="na">db</span><span class="pi">:</span>
+    <span class="na">image</span><span class="pi">:</span> <span class="s">postgres:9.6.2</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">5432"</span>
+
+  <span class="na">web</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">links</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">db</span>
+    <span class="na">ports</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s2">"</span><span class="s">4000:4000"</span>
+    <span class="na">volumes</span><span class="pi">:</span> <span class="nl">&amp;web-volumes</span>
+      <span class="pi">-</span> <span class="s">./:/app</span>
+      <span class="pi">-</span> <span class="s">~/.bash_history:/root/.bash_history</span>
+      <span class="pi">-</span> <span class="s">/priv/static/</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">MIX_ENV</span><span class="pi">:</span> <span class="no">null</span>
+      <span class="na">NODE_ENV</span><span class="pi">:</span> <span class="s">development</span>
+      <span class="na">POSTGRESQL_HOST</span><span class="pi">:</span> <span class="s">db</span>
+
+  <span class="na">webpack</span><span class="pi">:</span>
+    <span class="na">build</span><span class="pi">:</span> <span class="s">.</span>
+    <span class="na">volumes</span><span class="pi">:</span> <span class="nv">*web-volumes</span>
+    <span class="na">command</span><span class="pi">:</span> <span class="s">npm run watch</span>
+    <span class="na">environment</span><span class="pi">:</span>
+      <span class="na">NODE_ENV</span><span class="pi">:</span> <span class="s">development</span>
+</code></pre></div></div>
+
+<h4 id="dockerignore">.dockerignore</h4>
+
+<p>Стоит добавить в корень проекта файл <code class="highlighter-rouge">.dockerignore</code>, чтобы всякий шлак не попал в образ с нашим приложением во время выполнения команды <code class="highlighter-rouge">ADD</code>. Этот файл обычно почти повторяет <code class="highlighter-rouge">.gitignore</code>:</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># App artifacts
+</span>/<span class="err">_</span><span class="n">build</span>
+/<span class="n">db</span>
+/<span class="n">deps</span>
+/*.<span class="n">ez</span>
+
+<span class="c"># Generated on crash by the VM
+</span><span class="n">erl_crash</span>.<span class="n">dump</span>
+
+<span class="c"># Static artifacts
+</span><span class="n">yarn</span>-<span class="n">error</span>.<span class="n">log</span>
+/<span class="n">node_modules</span>
+<span class="n">npm</span>-<span class="n">debug</span>.<span class="n">log</span>
+
+<span class="c"># Since we are building assets from web/static,
+# we ignore priv/static. You may want to comment
+# this depending on your deployment strategy.
+</span>/<span class="n">priv</span>/<span class="n">static</span>/
+
+<span class="c"># The config/prod.secret.exs file by default contains sensitive
+# data and you should not commit it into version control.
+#
+# Alternatively, you may comment the line below and commit the
+# secrets file as long as you replace its contents by environment
+# variables.
+</span>/<span class="n">config</span>/<span class="n">prod</span>.<span class="n">secret</span>.<span class="n">exs</span>
+</code></pre></div></div>
+
+<h2 id="готово-вы-восхитительны">Готово! Вы восхитительны!</h2>
+
+<p>Осталось только написать в <code class="highlighter-rouge">README</code> о том, как поднимать проект:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>docker-compose build
+<span class="nv">$ </span>docker-compose run <span class="nt">--rm</span> web mix deps.get
+<span class="nv">$ </span>docker-compose run <span class="nt">--rm</span> web yarn <span class="nt">-s</span> <span class="nt">--frozen-lockfile</span> <span class="nt">--non-interactive</span>
+<span class="nv">$ </span>docker-compose up <span class="nt">-d</span>
+</code></pre></div></div>
+
+  </div>
+
+  
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://ivalentinee.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
