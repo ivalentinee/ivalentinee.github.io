@@ -3,6 +3,7 @@ layout: post
 title:  "Хачим OpenAPI"
 date:   2018-09-27
 categories: programming
+uid: hacking-openapi
 ---
 
 ## Предисловие

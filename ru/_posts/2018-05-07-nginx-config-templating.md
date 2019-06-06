@@ -3,6 +3,7 @@ layout: post
 title:  "Шаблонизация конфигурационных файлов nginx"
 date:   2018-05-07
 categories: programming
+uid: nginx-config-templating
 ---
 
 ## Предисловие

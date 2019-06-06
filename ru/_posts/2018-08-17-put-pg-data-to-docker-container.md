@@ -3,6 +3,7 @@ layout: post
 title:  "Как засунуть pg_data-бекап в docker-контейнер"
 date:   2018-08-17
 categories: programming
+uid: put-pg-data-to-docker-container
 ---
 
 ## Предисловие

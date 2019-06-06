@@ -3,6 +3,7 @@ layout: post
 title:  "Redux-form с валидациями и сабмитом из браузера"
 date:   2017-11-16
 categories: programming
+uid: redux-form-validations-with-browser-submit
 ---
 
 ## Проблема

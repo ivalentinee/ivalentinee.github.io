@@ -3,6 +3,7 @@ layout: post
 title:  "Конфигурация elixir-приложений"
 date:   2018-06-26
 categories: programming
+uid: elixir-application-configuration
 ---
 
 ## Предисловие

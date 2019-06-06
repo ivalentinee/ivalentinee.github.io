@@ -3,6 +3,7 @@ layout: post
 title:  "Разворачивание конфигов Emacs в одну команду"
 date:   2015-07-22
 categories: emacs
+uid: bootstrap-emacs
 ---
 
 ## Задача

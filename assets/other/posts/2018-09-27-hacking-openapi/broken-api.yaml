@@ -1,30 +1,30 @@
 openapi: 3.0.0
 info:
-  title: «Сломанное» API
+  title: «Broken» API
   version: v1
 components:
   schemas:
     Product:
       type: object
-      description: Продукт
+      description: Product
       properties:
         name:
           type: string
-          description: Название товара
+          description: Name
         description:
           type: string
-          description: Описание товара
+          description: Description
         vendor_code:
           type: number
-          description: Артикул
+          description: Vendor code
         picture:
           type: string
           format: binary
-          description: Изображение
+          description: Picture
 paths:
   /api/products:
     post:
-      summary: Создание продукта
+      summary: Create product
       requestBody:
         required: true
         content:
@@ -40,14 +40,14 @@ paths:
                 properties:
                   id:
                     type: string
-                    description: Идентификатор созданного продукта
+                    description: Product ID
   /api/products/{id}:
     get:
-      summary: Получение продукта
+      summary: Create product
       parameters:
         - name: id
           in: query
-          description: Идентификатор продукта
+          description: Product ID
           schema:
             type: string
       responses:

@@ -3,6 +3,7 @@ layout: post
 title:  "Используем контексты из Phoenix по-другому"
 date:   2018-11-12
 categories: programming
+uid: alternative-phoenix-contexts-approach
 ---
 
 ## Предисловие

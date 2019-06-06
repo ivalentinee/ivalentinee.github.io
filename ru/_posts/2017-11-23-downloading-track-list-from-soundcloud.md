@@ -3,6 +3,7 @@ layout: post
 title:  "Скачиваем список песенок с Soundcloud"
 date:   2017-11-23
 categories: programming
+uid: downloading-track-list-from-soundcloud
 ---
 
 ## Морально-юридический вопрос

@@ -3,6 +3,7 @@ layout: post
 title:  "Дружим Ransack и jsonb"
 date:   2017-12-15
 categories: programming
+uid: ransack-and-jsonb
 ---
 
 ## Предисловие

@@ -3,6 +3,7 @@ layout: post
 title:  "Emacs как средство публикации записей"
 date:   2014-05-24
 categories: blog
+uid: emacs-blogging
 ---
 
 ## Предисловие

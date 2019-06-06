@@ -3,6 +3,7 @@ layout: post
 title:  "Rails ActionCable и почему он у меня сразу не запустился"
 date:   2016-10-17
 categories: rails
+uid: rails-action-cable-puma
 ---
 
 ## Предисловие

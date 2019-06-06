@@ -3,6 +3,7 @@ layout: post
 title:  "Получение stacktrace'а в elixir'е"
 date:   2018-06-27
 categories: programming
+uid: elixir-trace
 ---
 
 ## Предисловие

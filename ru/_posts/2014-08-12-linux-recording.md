@@ -4,6 +4,7 @@ title: "Запись звука в Linux"
 date: 2014-08-12
 tags: linux ardour jack debian guitarix rakarrack qjackctl
 categories: music
+uid: linux-recording
 ---
 
 ## Вступление

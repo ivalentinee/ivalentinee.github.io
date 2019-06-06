@@ -1,36 +1,36 @@
 openapi: 3.0.0
 info:
-  title: «Похаченное» API
+  title: «Hacked» API
   version: v1
 components:
   schemas:
     Product::name:
       type: string
-      description: Название товара
+      description: Name
     Product::description:
       type: string
-      description: Описание товара
+      description: Description
     Product::vendor_code:
       type: number
-      description: Артикул
+      description: Vendor code
     Product::picture:
       type: object
-      description: Изображение
+      description: Picture
       properties:
         link:
           type: string
-          description: Ссылка на файл
+          description: File url
         filename:
           type: string
-          description: Имя файла
+          description: File name
     Product::picture::upload:
       type: string
       format: binary
-      description: Изображение
+      description: Picture
 paths:
   /api/products:
     post:
-      summary: Создание продукта
+      summary: Create product
       requestBody:
         required: true
         content:
@@ -51,14 +51,14 @@ paths:
                 properties:
                   id:
                     type: string
-                    description: Идентификатор созданного продукта
+                    description: Product ID
   /api/products/{id}:
     get:
-      summary: Получение продукта
+      summary: Get product
       parameters:
         - name: id
           in: query
-          description: Идентификатор продукта
+          description: Product ID
           schema:
             type: string
       responses:

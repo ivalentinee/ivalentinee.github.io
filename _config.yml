@@ -16,21 +16,25 @@
 lang: ru
 title: ivalentinee
 email: valentine.emperor@gmail.com
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://ivalentinee.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username: ivalentinee
+languages:
+  - name: English
+    code: en
+  - name: Русский
+    code: ru
 
 # Build settings
 theme: minima
 excerpt_separator: "<!--more-->"
 lsi: false
-safe: true
+safe: false
 source: ""
 incremental: false
 highlighter: rouge
 gist:
   noscript: false
-gems:
+plugins:
   - jekyll-feed
 markdown: kramdown
 kramdown:
@@ -45,7 +49,17 @@ exclude:
 defaults:
   -
     scope:
-      path: "" # an empty string here means all files in the project
+      path: ru
     values:
+      lang: ru
+      base-url: "/ru/"
+      comments: true
+      math: false
+  -
+    scope:
+      path: en
+    values:
+      lang: en
+      base-url: "/en/"
       comments: true
       math: false

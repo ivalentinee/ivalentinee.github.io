@@ -3,6 +3,7 @@ layout: post
 title:  "Авторизация, аутентификация и идентификация"
 date:   2018-06-26
 categories: programming
+uid: authorization-authentication-and-identification
 ---
 
 ## Предисловие

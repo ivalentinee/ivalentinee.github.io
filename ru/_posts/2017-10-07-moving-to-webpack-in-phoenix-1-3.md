@@ -3,6 +3,7 @@ layout: post
 title:  "Прикручиваем webpack к phoenix 1.3"
 date:   2017-10-07
 categories: programming
+uid: moving-to-webpack-in-phoenix-1-3
 ---
 
 ## Почему решил написать
