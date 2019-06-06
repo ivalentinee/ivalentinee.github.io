@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Emacs в Windows | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Emacs в Windows" />
+<meta property="og:locale" content="ru" />
+<meta name="description" content="Как же я дошёл до жизни такой? В связи со сменой работы мне пришлось взять новый ноут (корпоративный забрали). Требования к ноуту у меня были достаточно понятные: 16 гиг оперативы, 512 гиг жёсткого диска (или больше) и — это самое противное — чтобы на нём завёлся Linux без особых танцев. Я не очень долго выбирал, потому что несколько лет работал на Lenovo X1 Carbon (вроде как 4 поколения), взяв Lenovo X1 Carbon но уже 9 поколения. Когда мне пришёл ноут, я запустил Windows 10 Pro, которая шла в комплекте, и … решил не ставить Linux. Почему? Потому что тут внезапно(!) оказался тачскрин, работающий сканер отпечатков пальцев, профили питания для экономии батареи… Короче, я понял, что заводить всё это в лялихе мне неохота, а отказываться от таких удобств чисто ради виндекапца я не готов. Настроил за пару дней WSL2, Docker, Emacs, всё завелось, я смог работать. Но тут по работе пришлось скачивать кучу файлов, смотреть/редактировать их, затем отправлять назад. Так как все приложения кроме докера и Emacs’а у меня запущены в винде, открывать всё это в Emacs, который работает изнутри WSL не очень удобно. Я решил попробовать запустить Emacs в винде. Так как на многие мои вопросы ответы в интернете ищутся не по первой ссылке, я решил часть всего этого описать тут. Установка Ну тут всё просто: идём на сайт https://www.gnu.org/software/emacs/, качаем, ставим. Складываем конфиги По-умолчанию Emacs ищет конфиги не в C:\Users\&lt;Username&gt;, а в C:\Users\&lt;Username&gt;\AppData\Roaming. Туда их и сложим, чтобы не извращаться с особенностями винды. Так как я держу конфиги в Git, я склонировал репозиторий в C:\Users\&lt;Username&gt;\Code\emacs_config, а затем сделал символические ссылки в PowerShell (запущенном под админом): C:\Users\Valen&gt; mkdir .emacs.d C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs&#39; C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\.emacs.d\ -Name settings -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs.d\settings&#39; Меняем домашнюю директорию Так как emacs по-умолчанию считает домашней директорией C:\Users\&lt;Username&gt;\AppData\Roaming, открывать файлы в emacs не очень удобно (нужно постоянно возвращаться в C:\Users\&lt;Username&gt;). Чтобы с этим побороться есть несколько способов: Перенастроить переменную HOME Не мой вариант, потому что мне лень возиться с тем, чтобы объяснять Emacs’у, где у него HOME из винды Переопределить переменную HOME Вот это мой варик, тут мне всё понятно Для этого в конец .emacs дописываем следующий код: (if (string= system-type &quot;windows-nt&quot;) (setenv &quot;HOME&quot; &quot;C:\\Users\\Valen&quot;)) emacs –daemon и emacsclient Я достаточно долго (пару часов) гуглил, чтобы решить ряд непонятных ошибок, поэтому в этом разделе, думаю, самое ценное. Во-первых, мне бы хотелось пользоваться emacsclient, потому что в 2021 году emacs всё ещё стартует непозволительно долго. Во-вторых, мне не хотелось запускать emacs --daemon при каждом старте системы. Ну просто потому что. Выход я нашёл следующий: если запускать emacsclient с ключом -a (который запускает альтернативный редактор, если emacsclient не запустился) равным пустой строке, то emacsclient сам пытается запустить emacs --daemon и подключиться к нему. Наш вариант! Для того, чтобы это всё заработало, надо удалить папку C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-&lt;version&gt;, в которой находятся ярлыки, созданные при установке Emacs. Далее в папке C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs нужно создать ярлык с названием Emacs и в свойстве target указать следующее: &quot;C:\Program Files\Emacs\x86_64\bin\emacsclient.exe&quot; -c -n -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; -a= Где -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; указывает на файл сокета. Помните, мы меняли домашнюю директорию? Так вот да, есть последствия. Перенастройка Linux’овый конфиг Emacs’а не давал нормально запускаться. Пришлось искать и лечить. В частности, пришлось отключить pinentry-интеграция (в винде она всё равно не актуальна): (if (string= system-type &quot;gnu/linux&quot;) (progn (setenv &quot;INSIDE_EMACS&quot; (format &quot;%s,comint&quot; emacs-version)) (setq epa-pinentry-mode &#39;loopback) (pinentry-start))) PowerShell Для полного счастья не хватало только PowerShell в shell-mode. Делается это добавлением следующего в конфиг Emacs: (if (string= system-type &quot;windows-nt&quot;) (setq shell-file-name &quot;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe&quot; explicit-powershell.exe-args &#39;(&quot;-InputFormat&quot; &quot;Text&quot; &quot;-NoLogo&quot;))) Правда, автодополнение не завелось пока что. Что ещё? Очевидно, не завелись ни grep, ни silversearcher-ag, что печалит. Но наверняка найдётся выход и из этого положения. Плюс я не занимался вопросом интеграции с git, потому что, очевидно, под виндой не занимаюсь написанием кода. Небольшое заключение В WSL2 он (Emacs) всё ещё работает быстрее а пользоваться им удобнее. Поэтому я всё-таки сделал symlink /mnt/c/Users/Valen → ~/winhome и пользуюсь WSL’ным. А, да, на днях вышел анонс Surface Laptop Studio, так что я пожалел, что взял Lenovo Carbon. Но теперь я знаю, что на винде есть жизнь." />
+<meta property="og:description" content="Как же я дошёл до жизни такой? В связи со сменой работы мне пришлось взять новый ноут (корпоративный забрали). Требования к ноуту у меня были достаточно понятные: 16 гиг оперативы, 512 гиг жёсткого диска (или больше) и — это самое противное — чтобы на нём завёлся Linux без особых танцев. Я не очень долго выбирал, потому что несколько лет работал на Lenovo X1 Carbon (вроде как 4 поколения), взяв Lenovo X1 Carbon но уже 9 поколения. Когда мне пришёл ноут, я запустил Windows 10 Pro, которая шла в комплекте, и … решил не ставить Linux. Почему? Потому что тут внезапно(!) оказался тачскрин, работающий сканер отпечатков пальцев, профили питания для экономии батареи… Короче, я понял, что заводить всё это в лялихе мне неохота, а отказываться от таких удобств чисто ради виндекапца я не готов. Настроил за пару дней WSL2, Docker, Emacs, всё завелось, я смог работать. Но тут по работе пришлось скачивать кучу файлов, смотреть/редактировать их, затем отправлять назад. Так как все приложения кроме докера и Emacs’а у меня запущены в винде, открывать всё это в Emacs, который работает изнутри WSL не очень удобно. Я решил попробовать запустить Emacs в винде. Так как на многие мои вопросы ответы в интернете ищутся не по первой ссылке, я решил часть всего этого описать тут. Установка Ну тут всё просто: идём на сайт https://www.gnu.org/software/emacs/, качаем, ставим. Складываем конфиги По-умолчанию Emacs ищет конфиги не в C:\Users\&lt;Username&gt;, а в C:\Users\&lt;Username&gt;\AppData\Roaming. Туда их и сложим, чтобы не извращаться с особенностями винды. Так как я держу конфиги в Git, я склонировал репозиторий в C:\Users\&lt;Username&gt;\Code\emacs_config, а затем сделал символические ссылки в PowerShell (запущенном под админом): C:\Users\Valen&gt; mkdir .emacs.d C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs&#39; C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\.emacs.d\ -Name settings -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs.d\settings&#39; Меняем домашнюю директорию Так как emacs по-умолчанию считает домашней директорией C:\Users\&lt;Username&gt;\AppData\Roaming, открывать файлы в emacs не очень удобно (нужно постоянно возвращаться в C:\Users\&lt;Username&gt;). Чтобы с этим побороться есть несколько способов: Перенастроить переменную HOME Не мой вариант, потому что мне лень возиться с тем, чтобы объяснять Emacs’у, где у него HOME из винды Переопределить переменную HOME Вот это мой варик, тут мне всё понятно Для этого в конец .emacs дописываем следующий код: (if (string= system-type &quot;windows-nt&quot;) (setenv &quot;HOME&quot; &quot;C:\\Users\\Valen&quot;)) emacs –daemon и emacsclient Я достаточно долго (пару часов) гуглил, чтобы решить ряд непонятных ошибок, поэтому в этом разделе, думаю, самое ценное. Во-первых, мне бы хотелось пользоваться emacsclient, потому что в 2021 году emacs всё ещё стартует непозволительно долго. Во-вторых, мне не хотелось запускать emacs --daemon при каждом старте системы. Ну просто потому что. Выход я нашёл следующий: если запускать emacsclient с ключом -a (который запускает альтернативный редактор, если emacsclient не запустился) равным пустой строке, то emacsclient сам пытается запустить emacs --daemon и подключиться к нему. Наш вариант! Для того, чтобы это всё заработало, надо удалить папку C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-&lt;version&gt;, в которой находятся ярлыки, созданные при установке Emacs. Далее в папке C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs нужно создать ярлык с названием Emacs и в свойстве target указать следующее: &quot;C:\Program Files\Emacs\x86_64\bin\emacsclient.exe&quot; -c -n -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; -a= Где -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; указывает на файл сокета. Помните, мы меняли домашнюю директорию? Так вот да, есть последствия. Перенастройка Linux’овый конфиг Emacs’а не давал нормально запускаться. Пришлось искать и лечить. В частности, пришлось отключить pinentry-интеграция (в винде она всё равно не актуальна): (if (string= system-type &quot;gnu/linux&quot;) (progn (setenv &quot;INSIDE_EMACS&quot; (format &quot;%s,comint&quot; emacs-version)) (setq epa-pinentry-mode &#39;loopback) (pinentry-start))) PowerShell Для полного счастья не хватало только PowerShell в shell-mode. Делается это добавлением следующего в конфиг Emacs: (if (string= system-type &quot;windows-nt&quot;) (setq shell-file-name &quot;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe&quot; explicit-powershell.exe-args &#39;(&quot;-InputFormat&quot; &quot;Text&quot; &quot;-NoLogo&quot;))) Правда, автодополнение не завелось пока что. Что ещё? Очевидно, не завелись ни grep, ни silversearcher-ag, что печалит. Но наверняка найдётся выход и из этого положения. Плюс я не занимался вопросом интеграции с git, потому что, очевидно, под виндой не занимаюсь написанием кода. Небольшое заключение В WSL2 он (Emacs) всё ещё работает быстрее а пользоваться им удобнее. Поэтому я всё-таки сделал symlink /mnt/c/Users/Valen → ~/winhome и пользуюсь WSL’ным. А, да, на днях вышел анонс Surface Laptop Studio, так что я пожалел, что взял Lenovo Carbon. Но теперь я знаю, что на винде есть жизнь." />
+<link rel="canonical" href="https://ivalentinee.github.io/ru/programming/2021/09/24/emacs-on-windows.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/ru/programming/2021/09/24/emacs-on-windows.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-24T00:00:00+00:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2021/09/24/emacs-on-windows.html"},"description":"Как же я дошёл до жизни такой? В связи со сменой работы мне пришлось взять новый ноут (корпоративный забрали). Требования к ноуту у меня были достаточно понятные: 16 гиг оперативы, 512 гиг жёсткого диска (или больше) и — это самое противное — чтобы на нём завёлся Linux без особых танцев. Я не очень долго выбирал, потому что несколько лет работал на Lenovo X1 Carbon (вроде как 4 поколения), взяв Lenovo X1 Carbon но уже 9 поколения. Когда мне пришёл ноут, я запустил Windows 10 Pro, которая шла в комплекте, и … решил не ставить Linux. Почему? Потому что тут внезапно(!) оказался тачскрин, работающий сканер отпечатков пальцев, профили питания для экономии батареи… Короче, я понял, что заводить всё это в лялихе мне неохота, а отказываться от таких удобств чисто ради виндекапца я не готов. Настроил за пару дней WSL2, Docker, Emacs, всё завелось, я смог работать. Но тут по работе пришлось скачивать кучу файлов, смотреть/редактировать их, затем отправлять назад. Так как все приложения кроме докера и Emacs’а у меня запущены в винде, открывать всё это в Emacs, который работает изнутри WSL не очень удобно. Я решил попробовать запустить Emacs в винде. Так как на многие мои вопросы ответы в интернете ищутся не по первой ссылке, я решил часть всего этого описать тут. Установка Ну тут всё просто: идём на сайт https://www.gnu.org/software/emacs/, качаем, ставим. Складываем конфиги По-умолчанию Emacs ищет конфиги не в C:\\Users\\&lt;Username&gt;, а в C:\\Users\\&lt;Username&gt;\\AppData\\Roaming. Туда их и сложим, чтобы не извращаться с особенностями винды. Так как я держу конфиги в Git, я склонировал репозиторий в C:\\Users\\&lt;Username&gt;\\Code\\emacs_config, а затем сделал символические ссылки в PowerShell (запущенном под админом): C:\\Users\\Valen&gt; mkdir .emacs.d C:\\Users\\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\\Users\\Valen\\ -Name .emacs -Value &#39;C:\\Users\\Valen\\Code\\emacs_config\\.emacs&#39; C:\\Users\\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\\Users\\Valen\\.emacs.d\\ -Name settings -Value &#39;C:\\Users\\Valen\\Code\\emacs_config\\.emacs.d\\settings&#39; Меняем домашнюю директорию Так как emacs по-умолчанию считает домашней директорией C:\\Users\\&lt;Username&gt;\\AppData\\Roaming, открывать файлы в emacs не очень удобно (нужно постоянно возвращаться в C:\\Users\\&lt;Username&gt;). Чтобы с этим побороться есть несколько способов: Перенастроить переменную HOME Не мой вариант, потому что мне лень возиться с тем, чтобы объяснять Emacs’у, где у него HOME из винды Переопределить переменную HOME Вот это мой варик, тут мне всё понятно Для этого в конец .emacs дописываем следующий код: (if (string= system-type &quot;windows-nt&quot;) (setenv &quot;HOME&quot; &quot;C:\\\\Users\\\\Valen&quot;)) emacs –daemon и emacsclient Я достаточно долго (пару часов) гуглил, чтобы решить ряд непонятных ошибок, поэтому в этом разделе, думаю, самое ценное. Во-первых, мне бы хотелось пользоваться emacsclient, потому что в 2021 году emacs всё ещё стартует непозволительно долго. Во-вторых, мне не хотелось запускать emacs --daemon при каждом старте системы. Ну просто потому что. Выход я нашёл следующий: если запускать emacsclient с ключом -a (который запускает альтернативный редактор, если emacsclient не запустился) равным пустой строке, то emacsclient сам пытается запустить emacs --daemon и подключиться к нему. Наш вариант! Для того, чтобы это всё заработало, надо удалить папку C:\\Users\\Valen\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Emacs-&lt;version&gt;, в которой находятся ярлыки, созданные при установке Emacs. Далее в папке C:\\Users\\Valen\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs нужно создать ярлык с названием Emacs и в свойстве target указать следующее: &quot;C:\\Program Files\\Emacs\\x86_64\\bin\\emacsclient.exe&quot; -c -n -f &quot;c:\\Users\\Valen\\.emacs.d\\server\\server&quot; -a= Где -f &quot;c:\\Users\\Valen\\.emacs.d\\server\\server&quot; указывает на файл сокета. Помните, мы меняли домашнюю директорию? Так вот да, есть последствия. Перенастройка Linux’овый конфиг Emacs’а не давал нормально запускаться. Пришлось искать и лечить. В частности, пришлось отключить pinentry-интеграция (в винде она всё равно не актуальна): (if (string= system-type &quot;gnu/linux&quot;) (progn (setenv &quot;INSIDE_EMACS&quot; (format &quot;%s,comint&quot; emacs-version)) (setq epa-pinentry-mode &#39;loopback) (pinentry-start))) PowerShell Для полного счастья не хватало только PowerShell в shell-mode. Делается это добавлением следующего в конфиг Emacs: (if (string= system-type &quot;windows-nt&quot;) (setq shell-file-name &quot;C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe&quot; explicit-powershell.exe-args &#39;(&quot;-InputFormat&quot; &quot;Text&quot; &quot;-NoLogo&quot;))) Правда, автодополнение не завелось пока что. Что ещё? Очевидно, не завелись ни grep, ни silversearcher-ag, что печалит. Но наверняка найдётся выход и из этого положения. Плюс я не занимался вопросом интеграции с git, потому что, очевидно, под виндой не занимаюсь написанием кода. Небольшое заключение В WSL2 он (Emacs) всё ещё работает быстрее а пользоваться им удобнее. Поэтому я всё-таки сделал symlink /mnt/c/Users/Valen → ~/winhome и пользуюсь WSL’ным. А, да, на днях вышел анонс Surface Laptop Studio, так что я пожалел, что взял Lenovo Carbon. Но теперь я знаю, что на винде есть жизнь.","@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2021/09/24/emacs-on-windows.html","headline":"Emacs в Windows","dateModified":"2021-09-24T00:00:00+00:00","datePublished":"2021-09-24T00:00:00+00:00","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/ru/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+            
+          
+            
+            
+              
+                <a class="page-link" href="/ru/about/">Обо мне</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Emacs в Windows</h1>
+    <p class="post-meta">
+      <time datetime="2021-09-24T00:00:00+00:00" itemprop="datePublished">
+        
+        Sep 24, 2021
+      </time>
+      </p>
+  </header>
+
+          <div class="language-selector">
+          <a href="/en/programming/2021/09/24/emacs-on-windows.html" class="language-selector-link">English</a><span class="language-selector-separator">|</span><span class="language-selector-link">Русский</span>
+        </div>
+
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="как-же-я-дошёл-до-жизни-такой">Как же я дошёл до жизни такой?</h2>
+<p>В связи со сменой работы мне пришлось взять новый ноут (корпоративный забрали).<br />
+Требования к ноуту у меня были достаточно понятные: 16 гиг оперативы, 512 гиг жёсткого диска (или больше) и — это самое противное — чтобы на нём завёлся Linux без особых танцев.<br />
+Я не очень долго выбирал, потому что несколько лет работал на Lenovo X1 Carbon (вроде как 4 поколения), взяв Lenovo X1 Carbon но уже 9 поколения.</p>
+
+<p>Когда мне пришёл ноут, я запустил Windows 10 Pro, которая шла в комплекте, и … решил не ставить Linux. Почему? Потому что тут внезапно(!) оказался тачскрин, работающий сканер отпечатков пальцев, профили питания для экономии батареи… Короче, я понял, что заводить всё это в лялихе мне неохота, а отказываться от таких удобств чисто ради виндекапца я не готов.</p>
+
+<p>Настроил за пару дней WSL2, Docker, <a href="https://emacsredux.com/blog/2020/09/23/using-emacs-on-windows-with-wsl2/">Emacs</a>, всё завелось, я смог работать.</p>
+
+<p>Но тут по работе пришлось скачивать кучу файлов, смотреть/редактировать их, затем отправлять назад. Так как все приложения кроме докера и Emacs’а у меня запущены в винде, открывать всё это в Emacs, который работает изнутри WSL не очень удобно. Я решил попробовать запустить Emacs в винде. Так как на многие мои вопросы ответы в интернете ищутся не по первой ссылке, я решил часть всего этого описать тут.</p>
+
+<h2 id="установка">Установка</h2>
+<p>Ну тут всё просто: идём на сайт <a href="https://www.gnu.org/software/emacs/">https://www.gnu.org/software/emacs/</a>, качаем, ставим.</p>
+
+<h2 id="складываем-конфиги">Складываем конфиги</h2>
+<p>По-умолчанию Emacs ищет конфиги не в <code class="highlighter-rouge">C:\Users\&lt;Username&gt;</code>, а в <code class="highlighter-rouge">C:\Users\&lt;Username&gt;\AppData\Roaming</code>. Туда их и сложим, чтобы не извращаться с особенностями винды.</p>
+
+<p>Так как я держу конфиги в Git, я склонировал репозиторий в <code class="highlighter-rouge">C:\Users\&lt;Username&gt;\Code\emacs_config</code>, а затем сделал символические ссылки в PowerShell (запущенном под админом):</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> C:\Users\Valen&gt; mkdir .emacs.d
+ C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value 'C:\Users\Valen\Code\emacs_config\.emacs'
+ C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\.emacs.d\ -Name settings -Value 'C:\Users\Valen\Code\emacs_config\.emacs.d\settings'
+</code></pre></div></div>
+
+<h2 id="меняем-домашнюю-директорию">Меняем домашнюю директорию</h2>
+<p>Так как emacs по-умолчанию считает домашней директорией <code class="highlighter-rouge">C:\Users\&lt;Username&gt;\AppData\Roaming</code>, открывать файлы в emacs не очень удобно (нужно постоянно возвращаться в <code class="highlighter-rouge">C:\Users\&lt;Username&gt;</code>). Чтобы с этим побороться есть несколько способов:</p>
+<ol>
+  <li>Перенастроить переменную HOME<br />
+Не мой вариант, потому что мне лень возиться с тем, чтобы объяснять Emacs’у, где у него HOME из винды</li>
+  <li>Переопределить переменную HOME<br />
+Вот это мой варик, тут мне всё понятно</li>
+</ol>
+
+<p>Для этого в конец .emacs дописываем следующий код:</p>
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">string=</span> <span class="nv">system-type</span> <span class="s">"windows-nt"</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">setenv</span> <span class="s">"HOME"</span> <span class="s">"C:\\Users\\Valen"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="emacs-daemon-и-emacsclient">emacs –daemon и emacsclient</h2>
+<p>Я достаточно долго (пару часов) гуглил, чтобы решить ряд непонятных ошибок, поэтому в этом разделе, думаю, самое ценное.</p>
+
+<p>Во-первых, мне бы хотелось пользоваться emacsclient, потому что в 2021 году emacs всё ещё стартует непозволительно долго.<br />
+Во-вторых, мне не хотелось запускать <code class="highlighter-rouge">emacs --daemon</code> при каждом старте системы. Ну просто потому что.</p>
+
+<p>Выход я нашёл следующий: если запускать emacsclient с ключом <code class="highlighter-rouge">-a</code> (который запускает альтернативный редактор, если emacsclient не запустился) равным пустой строке, то emacsclient сам пытается запустить <code class="highlighter-rouge">emacs --daemon</code> и подключиться к нему. Наш вариант!</p>
+
+<p>Для того, чтобы это всё заработало, надо удалить папку <code class="highlighter-rouge">C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-&lt;version&gt;</code>, в которой находятся ярлыки, созданные при установке Emacs.</p>
+
+<p>Далее в папке <code class="highlighter-rouge">C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs</code> нужно создать ярлык с названием Emacs и в свойстве <code class="highlighter-rouge">target</code> указать следующее:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"C:\Program Files\Emacs\x86_64\bin\emacsclient.exe" -c -n -f "c:\Users\Valen\.emacs.d\server\server" -a=
+</code></pre></div></div>
+<p>Где <code class="highlighter-rouge">-f "c:\Users\Valen\.emacs.d\server\server"</code> указывает на файл сокета. Помните, мы меняли домашнюю директорию? Так вот да, есть последствия.</p>
+
+<h2 id="перенастройка">Перенастройка</h2>
+<p>Linux’овый конфиг Emacs’а не давал нормально запускаться. Пришлось искать и лечить.</p>
+
+<p>В частности, пришлось отключить pinentry-интеграция (в винде она всё равно не актуальна):</p>
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">string=</span> <span class="nv">system-type</span> <span class="s">"gnu/linux"</span><span class="p">)</span>
+    <span class="p">(</span><span class="k">progn</span> <span class="p">(</span><span class="nv">setenv</span> <span class="s">"INSIDE_EMACS"</span> <span class="p">(</span><span class="nb">format</span> <span class="s">"%s,comint"</span> <span class="nv">emacs-version</span><span class="p">))</span>
+           <span class="p">(</span><span class="k">setq</span> <span class="nv">epa-pinentry-mode</span> <span class="ss">'loopback</span><span class="p">)</span>
+           <span class="p">(</span><span class="nv">pinentry-start</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h2 id="powershell">PowerShell</h2>
+<p>Для полного счастья не хватало только PowerShell в shell-mode. Делается это добавлением следующего в конфиг Emacs:</p>
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">string=</span> <span class="nv">system-type</span> <span class="s">"windows-nt"</span><span class="p">)</span>
+    <span class="p">(</span><span class="k">setq</span>
+     <span class="nv">shell-file-name</span> <span class="s">"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"</span>
+     <span class="nv">explicit-powershell.exe-args</span> <span class="o">'</span><span class="p">(</span><span class="s">"-InputFormat"</span> <span class="s">"Text"</span> <span class="s">"-NoLogo"</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Правда, автодополнение не завелось пока что.</p>
+
+<h2 id="что-ещё">Что ещё?</h2>
+<p>Очевидно, не завелись ни grep, ни silversearcher-ag, что печалит. Но наверняка найдётся выход и из этого положения.<br />
+Плюс я не занимался вопросом интеграции с git, потому что, очевидно, под виндой не занимаюсь написанием кода.</p>
+
+<h2 id="небольшое-заключение">Небольшое заключение</h2>
+<p>В WSL2 он (Emacs) всё ещё работает быстрее а пользоваться им удобнее. Поэтому я всё-таки сделал symlink <code class="highlighter-rouge">/mnt/c/Users/Valen → ~/winhome</code> и пользуюсь WSL’ным.</p>
+
+<p>А, да, на днях вышел анонс Surface Laptop Studio, так что я пожалел, что взял Lenovo Carbon. Но теперь я знаю, что на винде есть жизнь.</p>
+
+  </div>
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+  }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
