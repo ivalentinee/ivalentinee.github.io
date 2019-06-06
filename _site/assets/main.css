@@ -503,13 +503,3 @@ table {
     color: #008080; }
   .highlight .il {
     color: #099; }
-
-.language-selector {
-  padding: 15px;
-  width: 100%;
-  background-color: #e8e8e8;
-  font-size: 1.1em;
-  border-radius: 5px;
-  margin-bottom: 20px; }
-  .language-selector > * {
-    margin-right: 10px; }

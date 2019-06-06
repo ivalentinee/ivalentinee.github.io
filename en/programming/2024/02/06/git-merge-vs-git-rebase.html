@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>What’s the difference between git merge and git rebase? | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="What’s the difference between git merge and git rebase?" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Introduction Let me first give an answer to “Why?” Well, I’m interviewing Señor NodeJS developers for about 1.5 years (about half a year after I started using NodeJS myself, oh, the irony). And the only (well, not the only, but the only one technical) git-related question I ask is this one. Why this question? Because the answer tells me exactly how deep a candidate went into a rabbit hole of “git”. And there’s more than one possible answer from “I don’t know” to “Actually git makes diffs dynamically”. So, to provide some feedback on this topic to candidates I need to have some prepared text, but I failed to I managed in a half an hour of googling! to find a proper article. Thus I think I should fix elaborate on this topic a bit. Let’s go through some possible answers and get to the ultimate one. Weak answers “I don’t know” “Move along, there’s nothing to see here”. If you don’t know – you should go and find out. Maybe read this article (yeah, I’m hilarious, I know). “Merge combines the code while rebase applies it on top” Well, yep, that’s technically correct since merge tries to, well, merge (do you still remember I’m hilarious?) two branches into one, while rebase applies (not re-bases, got ya!) commits on top of another branch. Still not enough of an explanation. “Rebase changes history” If only it could undo that particular embarassing moment you think everyone still remembers. Jokes aside this answer is, again, technically correct, but if you care about non-changing commit history just go use Mercurial. Still not enough of an explanation. “Merge combines the code once while rebase applies commits one-by-one” That one is way more interesting but still does not point to, ahem, pain points pointed by the question (I’m still funny, a’right?). But that is waaaay closer to the real problem. Indeed, git does calculate diff only once for merge by comparing the latest state for both branches, while rebase does this for every commit of a branch you’re rebasing. “Diff is calculated differently for merge and rebase: merge resolves conflicts in a merge-commit, while rebase resolves ‘em for every commit one-by-one” Well, we’re miles closer to the truth. But there’s a nuance, which makes me to ask the next question: “What does that lead to?” “What does that lead to?” “Different git blame” So, the first answer to “What does that lead to?”. Explanation is pretty simple here (but not like evebody knows that): if there’re any conflicts, resolved code (even an automatically calculated one) would be placed into a merge commit for merge, but will stay in related commits for rebase. To demonstrate this fact on a 2-hour workshop I made a small repo with examples. Go take a look if you have some time. And (if you don’t know that fact) I’m a huge advocate for git-blame-driven approach, so I’d like to see some questionable line git blame to trace to an actual commit it relates to instead of some meaningless Merge branch &#39;feature/fix-some-bug&#39; into &#39;master&#39;. This makes me an advocate for another questionable approach: devs should rebase their branch onto master right before merging that branch into master to both have proper history and a merge-commit to denote the fact of merging a branch. “Different code” This one is mindblowing. Other “reasons” have nothing to do with an actual code, just git history. This one is really dangerous (no joke, but remember, I’m still funny). Let’s take a look. I’ll provide a full listing so you can go and find out what’s going on yourself: # Initialize a git repo git init . # Make the first commit with a single file echo &quot;some string&quot; &gt; file.txt git add file.txt git commit -m &quot;Initial commit&quot; # Create two branches to play with git branch branch-1 git branch branch-2 # Change that one line in &quot;branch-1&quot; git checkout branch-1 echo &quot;some string // changed&quot; &gt; file.txt git add file.txt git commit -m &quot;Changed line 2 on branch 1&quot; # Change that one line in &quot;branch-2&quot; git checkout branch-2 echo &quot;some string // changed&quot; &gt; file.txt git add file.txt git commit -m &quot;Changed line 2 on branch 2&quot; # Rewind that one line in &quot;branch-2&quot; echo &quot;some string&quot; &gt; file.txt git add file.txt git commit -m &quot;Reverted line 2 on branch 2&quot; # Copy &quot;branch-2&quot; to try both merge and rebase git branch branch-2-non-modified # Try &quot;git merge&quot; git merge --no-edit branch-1 cat file.txt # Getting &quot;some string // changed&quot; # Reset &quot;branch-2&quot; to non-merged state git reset --hard branch-2-non-modified # Try &quot;git rebase&quot; git rebase branch-1 cat file.txt # Getting &quot;some string&quot; Exciting? It is! Especially so if told by a candidate. Why that happens? Well, go think, google – I’m too lazy (but still hilarious!) to write an explanation. Especially considering that I do not ask for an explanation on an interview – if a candidate knows the fact then I know for a fact (yep, I’m still funny! Double Triple fact!) they got deep enough digging git." />
+<meta property="og:description" content="Introduction Let me first give an answer to “Why?” Well, I’m interviewing Señor NodeJS developers for about 1.5 years (about half a year after I started using NodeJS myself, oh, the irony). And the only (well, not the only, but the only one technical) git-related question I ask is this one. Why this question? Because the answer tells me exactly how deep a candidate went into a rabbit hole of “git”. And there’s more than one possible answer from “I don’t know” to “Actually git makes diffs dynamically”. So, to provide some feedback on this topic to candidates I need to have some prepared text, but I failed to I managed in a half an hour of googling! to find a proper article. Thus I think I should fix elaborate on this topic a bit. Let’s go through some possible answers and get to the ultimate one. Weak answers “I don’t know” “Move along, there’s nothing to see here”. If you don’t know – you should go and find out. Maybe read this article (yeah, I’m hilarious, I know). “Merge combines the code while rebase applies it on top” Well, yep, that’s technically correct since merge tries to, well, merge (do you still remember I’m hilarious?) two branches into one, while rebase applies (not re-bases, got ya!) commits on top of another branch. Still not enough of an explanation. “Rebase changes history” If only it could undo that particular embarassing moment you think everyone still remembers. Jokes aside this answer is, again, technically correct, but if you care about non-changing commit history just go use Mercurial. Still not enough of an explanation. “Merge combines the code once while rebase applies commits one-by-one” That one is way more interesting but still does not point to, ahem, pain points pointed by the question (I’m still funny, a’right?). But that is waaaay closer to the real problem. Indeed, git does calculate diff only once for merge by comparing the latest state for both branches, while rebase does this for every commit of a branch you’re rebasing. “Diff is calculated differently for merge and rebase: merge resolves conflicts in a merge-commit, while rebase resolves ‘em for every commit one-by-one” Well, we’re miles closer to the truth. But there’s a nuance, which makes me to ask the next question: “What does that lead to?” “What does that lead to?” “Different git blame” So, the first answer to “What does that lead to?”. Explanation is pretty simple here (but not like evebody knows that): if there’re any conflicts, resolved code (even an automatically calculated one) would be placed into a merge commit for merge, but will stay in related commits for rebase. To demonstrate this fact on a 2-hour workshop I made a small repo with examples. Go take a look if you have some time. And (if you don’t know that fact) I’m a huge advocate for git-blame-driven approach, so I’d like to see some questionable line git blame to trace to an actual commit it relates to instead of some meaningless Merge branch &#39;feature/fix-some-bug&#39; into &#39;master&#39;. This makes me an advocate for another questionable approach: devs should rebase their branch onto master right before merging that branch into master to both have proper history and a merge-commit to denote the fact of merging a branch. “Different code” This one is mindblowing. Other “reasons” have nothing to do with an actual code, just git history. This one is really dangerous (no joke, but remember, I’m still funny). Let’s take a look. I’ll provide a full listing so you can go and find out what’s going on yourself: # Initialize a git repo git init . # Make the first commit with a single file echo &quot;some string&quot; &gt; file.txt git add file.txt git commit -m &quot;Initial commit&quot; # Create two branches to play with git branch branch-1 git branch branch-2 # Change that one line in &quot;branch-1&quot; git checkout branch-1 echo &quot;some string // changed&quot; &gt; file.txt git add file.txt git commit -m &quot;Changed line 2 on branch 1&quot; # Change that one line in &quot;branch-2&quot; git checkout branch-2 echo &quot;some string // changed&quot; &gt; file.txt git add file.txt git commit -m &quot;Changed line 2 on branch 2&quot; # Rewind that one line in &quot;branch-2&quot; echo &quot;some string&quot; &gt; file.txt git add file.txt git commit -m &quot;Reverted line 2 on branch 2&quot; # Copy &quot;branch-2&quot; to try both merge and rebase git branch branch-2-non-modified # Try &quot;git merge&quot; git merge --no-edit branch-1 cat file.txt # Getting &quot;some string // changed&quot; # Reset &quot;branch-2&quot; to non-merged state git reset --hard branch-2-non-modified # Try &quot;git rebase&quot; git rebase branch-1 cat file.txt # Getting &quot;some string&quot; Exciting? It is! Especially so if told by a candidate. Why that happens? Well, go think, google – I’m too lazy (but still hilarious!) to write an explanation. Especially considering that I do not ask for an explanation on an interview – if a candidate knows the fact then I know for a fact (yep, I’m still funny! Double Triple fact!) they got deep enough digging git." />
+<link rel="canonical" href="https://ivalentinee.github.io/en/programming/2024/02/06/git-merge-vs-git-rebase.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/en/programming/2024/02/06/git-merge-vs-git-rebase.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2024-02-06T00:00:00+00:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/en/programming/2024/02/06/git-merge-vs-git-rebase.html"},"description":"Introduction Let me first give an answer to “Why?” Well, I’m interviewing Señor NodeJS developers for about 1.5 years (about half a year after I started using NodeJS myself, oh, the irony). And the only (well, not the only, but the only one technical) git-related question I ask is this one. Why this question? Because the answer tells me exactly how deep a candidate went into a rabbit hole of “git”. And there’s more than one possible answer from “I don’t know” to “Actually git makes diffs dynamically”. So, to provide some feedback on this topic to candidates I need to have some prepared text, but I failed to I managed in a half an hour of googling! to find a proper article. Thus I think I should fix elaborate on this topic a bit. Let’s go through some possible answers and get to the ultimate one. Weak answers “I don’t know” “Move along, there’s nothing to see here”. If you don’t know – you should go and find out. Maybe read this article (yeah, I’m hilarious, I know). “Merge combines the code while rebase applies it on top” Well, yep, that’s technically correct since merge tries to, well, merge (do you still remember I’m hilarious?) two branches into one, while rebase applies (not re-bases, got ya!) commits on top of another branch. Still not enough of an explanation. “Rebase changes history” If only it could undo that particular embarassing moment you think everyone still remembers. Jokes aside this answer is, again, technically correct, but if you care about non-changing commit history just go use Mercurial. Still not enough of an explanation. “Merge combines the code once while rebase applies commits one-by-one” That one is way more interesting but still does not point to, ahem, pain points pointed by the question (I’m still funny, a’right?). But that is waaaay closer to the real problem. Indeed, git does calculate diff only once for merge by comparing the latest state for both branches, while rebase does this for every commit of a branch you’re rebasing. “Diff is calculated differently for merge and rebase: merge resolves conflicts in a merge-commit, while rebase resolves ‘em for every commit one-by-one” Well, we’re miles closer to the truth. But there’s a nuance, which makes me to ask the next question: “What does that lead to?” “What does that lead to?” “Different git blame” So, the first answer to “What does that lead to?”. Explanation is pretty simple here (but not like evebody knows that): if there’re any conflicts, resolved code (even an automatically calculated one) would be placed into a merge commit for merge, but will stay in related commits for rebase. To demonstrate this fact on a 2-hour workshop I made a small repo with examples. Go take a look if you have some time. And (if you don’t know that fact) I’m a huge advocate for git-blame-driven approach, so I’d like to see some questionable line git blame to trace to an actual commit it relates to instead of some meaningless Merge branch &#39;feature/fix-some-bug&#39; into &#39;master&#39;. This makes me an advocate for another questionable approach: devs should rebase their branch onto master right before merging that branch into master to both have proper history and a merge-commit to denote the fact of merging a branch. “Different code” This one is mindblowing. Other “reasons” have nothing to do with an actual code, just git history. This one is really dangerous (no joke, but remember, I’m still funny). Let’s take a look. I’ll provide a full listing so you can go and find out what’s going on yourself: # Initialize a git repo git init . # Make the first commit with a single file echo &quot;some string&quot; &gt; file.txt git add file.txt git commit -m &quot;Initial commit&quot; # Create two branches to play with git branch branch-1 git branch branch-2 # Change that one line in &quot;branch-1&quot; git checkout branch-1 echo &quot;some string // changed&quot; &gt; file.txt git add file.txt git commit -m &quot;Changed line 2 on branch 1&quot; # Change that one line in &quot;branch-2&quot; git checkout branch-2 echo &quot;some string // changed&quot; &gt; file.txt git add file.txt git commit -m &quot;Changed line 2 on branch 2&quot; # Rewind that one line in &quot;branch-2&quot; echo &quot;some string&quot; &gt; file.txt git add file.txt git commit -m &quot;Reverted line 2 on branch 2&quot; # Copy &quot;branch-2&quot; to try both merge and rebase git branch branch-2-non-modified # Try &quot;git merge&quot; git merge --no-edit branch-1 cat file.txt # Getting &quot;some string // changed&quot; # Reset &quot;branch-2&quot; to non-merged state git reset --hard branch-2-non-modified # Try &quot;git rebase&quot; git rebase branch-1 cat file.txt # Getting &quot;some string&quot; Exciting? It is! Especially so if told by a candidate. Why that happens? Well, go think, google – I’m too lazy (but still hilarious!) to write an explanation. Especially considering that I do not ask for an explanation on an interview – if a candidate knows the fact then I know for a fact (yep, I’m still funny! Double Triple fact!) they got deep enough digging git.","@type":"BlogPosting","url":"https://ivalentinee.github.io/en/programming/2024/02/06/git-merge-vs-git-rebase.html","headline":"What’s the difference between git merge and git rebase?","dateModified":"2024-02-06T00:00:00+00:00","datePublished":"2024-02-06T00:00:00+00:00","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/en/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/en/about/">About</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">What&#39;s the difference between git merge and git rebase?</h1>
+    <p class="post-meta">
+      <time datetime="2024-02-06T00:00:00+00:00" itemprop="datePublished">
+        
+        Feb 6, 2024
+      </time>
+      </p>
+  </header>
+
+          <div class="language-selector">
+          <span class="language-selector-link">English</span><span class="language-selector-separator">|</span><a href="/ru/programming/2024/02/06/git-merge-vs-git-rebase.html" class="language-selector-link">Русский</a>
+        </div>
+
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="introduction">Introduction</h2>
+<p>Let me first give an answer to “Why?”</p>
+
+<p>Well, I’m interviewing <em>Señor NodeJS developers</em> for about 1.5 years (about half a year after I started using NodeJS myself, <em>oh, the irony</em>). And the only (well, not the only, but the only one technical) git-related question I ask is this one.</p>
+
+<p>Why this question? Because the answer tells me exactly how deep a candidate went into a rabbit hole of “git”. And there’s more than one possible answer from “I don’t know” to “Actually git makes diffs dynamically”.</p>
+
+<p>So, to provide some feedback on this topic to candidates I need to have some prepared text, but I <del>failed to</del> <a href="https://www.edwardthomson.com/blog/merge_vs_rebase.html">I managed in a half an hour of googling!</a> to find a proper article. Thus I think I should <del>fix</del> elaborate on this topic a bit.</p>
+
+<p>Let’s go through some possible answers and get to the ultimate one.</p>
+
+<h2 id="weak-answers">Weak answers</h2>
+
+<h3 id="i-dont-know">“I don’t know”</h3>
+<p>“Move along, there’s nothing to see here”. If you don’t know – you should go and find out. Maybe read this article (yeah, I’m hilarious, I know).</p>
+
+<h3 id="merge-combines-the-code-while-rebase-applies-it-on-top">“Merge combines the code while rebase applies it on top”</h3>
+<p>Well, yep, that’s technically correct since <code class="highlighter-rouge">merge</code> tries to, well, <em>merge</em> (do you still remember I’m hilarious?) two branches into one, while <code class="highlighter-rouge">rebase</code> <strong>applies</strong> (not <em>re-bases</em>, got ya!) commits on top of another branch. Still not enough of an explanation.</p>
+
+<h3 id="rebase-changes-history">“Rebase changes history”</h3>
+<p>If only it could undo <em>that particular embarassing moment you think everyone still remembers</em>.<br />
+Jokes aside this answer is, again, technically correct, but if you care about non-changing commit history just go use <a href="https://en.wikipedia.org/wiki/Mercurial">Mercurial</a>. Still not enough of an explanation.</p>
+
+<h3 id="merge-combines-the-code-once-while-rebase-applies-commits-one-by-one">“Merge combines the code once while rebase applies commits one-by-one”</h3>
+<p>That one is way more interesting but still does not point to, <em>ahem</em>, pain points <em>pointed</em> by the question (I’m still funny, a’right?).</p>
+
+<p>But that is waaaay closer to the real problem. Indeed, git does calculate diff <strong>only once</strong> for <code class="highlighter-rouge">merge</code> by comparing <strong>the latest state</strong> for both branches, while <code class="highlighter-rouge">rebase</code> does this <strong>for every commit</strong> of a branch you’re rebasing.</p>
+
+<h2 id="diff-is-calculated-differently-for-merge-and-rebase-merge-resolves-conflicts-in-a-merge-commit-while-rebase-resolves-em-for-every-commit-one-by-one">“Diff is calculated differently for <code class="highlighter-rouge">merge</code> and <code class="highlighter-rouge">rebase</code>: <code class="highlighter-rouge">merge</code> resolves conflicts in a merge-commit, while rebase resolves ‘em for every commit <a href="https://youtu.be/gUaFD4JFU8c">one-by-one</a>”</h2>
+<p>Well, we’re miles closer to <a href="https://en.wikipedia.org/wiki/The_X-Files"><em>the truth</em></a>. But there’s a nuance, which makes me to ask the next question: “What does that lead to?”</p>
+
+<h3 id="what-does-that-lead-to">“What does that lead to?”</h3>
+
+<h4 id="different-git-blame">“Different git blame”</h4>
+<p>So, the first answer to “What does that lead to?”.</p>
+
+<p>Explanation is pretty simple here (but not like evebody knows that): if there’re any conflicts, resolved code (<strong>even an automatically calculated one</strong>) would be placed into a merge commit for <code class="highlighter-rouge">merge</code>, but will stay in related commits for <code class="highlighter-rouge">rebase</code>.</p>
+
+<p>To demonstrate this fact on a 2-hour workshop I made <a href="https://github.com/ivalentinee/git-workshop/blob/master/manual/INDEX.md">a small repo with examples</a>. Go take a look if you have some time.</p>
+
+<p>And (if you don’t know that fact) I’m a huge advocate for <strong>git-blame-driven</strong> approach, so I’d like to see some questionable line git blame to trace to an actual commit it relates to instead of some meaningless <code class="highlighter-rouge">Merge branch 'feature/fix-some-bug' into 'master'</code>.</p>
+
+<p>This makes me an advocate for <em>another questionable approach</em>: devs should <code class="highlighter-rouge">rebase</code> their branch <em>onto</em> <code class="highlighter-rouge">master</code> right before merging that branch <em>into</em> master to both have proper history <strong>and</strong> a merge-commit to denote the fact of merging a branch.</p>
+
+<h4 id="different-code">“Different code”</h4>
+<p>This one is mindblowing. Other “reasons” have nothing to do with an actual code, just git history. This one is really dangerous (no joke, but remember, I’m still funny).</p>
+
+<p>Let’s take a look.<br />
+I’ll provide a full listing so you can go and find out what’s going on yourself:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Initialize a git repo</span>
+git init <span class="nb">.</span>
+
+<span class="c"># Make the first commit with a single file</span>
+<span class="nb">echo</span> <span class="s2">"some string"</span> <span class="o">&gt;</span> file.txt
+git add file.txt
+git commit <span class="nt">-m</span> <span class="s2">"Initial commit"</span>
+
+<span class="c"># Create two branches to play with</span>
+git branch branch-1
+git branch branch-2
+
+<span class="c"># Change that one line in "branch-1"</span>
+git checkout branch-1
+<span class="nb">echo</span> <span class="s2">"some string // changed"</span> <span class="o">&gt;</span> file.txt
+git add file.txt
+git commit <span class="nt">-m</span> <span class="s2">"Changed line 2 on branch 1"</span>
+
+<span class="c"># Change that one line in "branch-2"</span>
+git checkout branch-2
+<span class="nb">echo</span> <span class="s2">"some string // changed"</span> <span class="o">&gt;</span> file.txt
+git add file.txt
+git commit <span class="nt">-m</span> <span class="s2">"Changed line 2 on branch 2"</span>
+
+<span class="c"># Rewind that one line in "branch-2"</span>
+<span class="nb">echo</span> <span class="s2">"some string"</span> <span class="o">&gt;</span> file.txt
+git add file.txt
+git commit <span class="nt">-m</span> <span class="s2">"Reverted line 2 on branch 2"</span>
+
+<span class="c"># Copy "branch-2" to try both merge and rebase</span>
+git branch branch-2-non-modified
+
+<span class="c"># Try "git merge"</span>
+git merge <span class="nt">--no-edit</span> branch-1
+<span class="nb">cat </span>file.txt
+<span class="c"># Getting "some string // changed"</span>
+
+<span class="c"># Reset "branch-2" to non-merged state</span>
+git reset <span class="nt">--hard</span> branch-2-non-modified
+
+<span class="c"># Try "git rebase"</span>
+git rebase branch-1
+<span class="nb">cat </span>file.txt
+<span class="c"># Getting "some string"</span>
+</code></pre></div></div>
+
+<p>Exciting? It is! Especially so if told by a candidate.</p>
+
+<p>Why that happens? Well, go think, google – I’m too lazy (but still hilarious!) to write an explanation. Especially considering that I do not ask for an explanation on an interview – if a candidate knows the fact then I know for a fact (yep, I’m still funny! <del>Double</del> Triple fact!) they got deep enough digging git.</p>
+
+  </div>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
