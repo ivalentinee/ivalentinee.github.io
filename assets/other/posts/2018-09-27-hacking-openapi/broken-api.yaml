@@ -1,0 +1,58 @@
+openapi: 3.0.0
+info:
+  title: «Broken» API
+  version: v1
+components:
+  schemas:
+    Product:
+      type: object
+      description: Product
+      properties:
+        name:
+          type: string
+          description: Name
+        description:
+          type: string
+          description: Description
+        vendor_code:
+          type: number
+          description: Vendor code
+        picture:
+          type: string
+          format: binary
+          description: Picture
+paths:
+  /api/products:
+    post:
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              "$ref": "#/components/schemas/Product"
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Product ID
+  /api/products/{id}:
+    get:
+      summary: Create product
+      parameters:
+        - name: id
+          in: query
+          description: Product ID
+          schema:
+            type: string
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"

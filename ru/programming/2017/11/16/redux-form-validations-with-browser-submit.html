@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Redux-form с валидациями и сабмитом из браузера | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Redux-form с валидациями и сабмитом из браузера" />
+<meta property="og:locale" content="ru" />
+<meta name="description" content="Проблема Надо было сделать мне форму для объекта product. Причём в отношении инпутов (селекты, текст) нужна была долбанутая логика, при этом нужно было всё ещё и с файлами (multipart/form-data), которые потом скармливаем, например, CarrierWave’у. Да ещё это и с рельсами завернуть, плюс основную часть данных загружать нужно в jsonb (потому что структура может быть динамической), а некоторые значения надо было в обычные поля (varchar, text) в базу сохранять. Ввиду необходимости впиливать сложную логику, валидации и нормализации и простой человеческой привычке (ну привык я с этим пакетом работать), я решил использовать redux-form. Хороший пакет для форм, всем рекомендую. Но в некоторых местах его не особо “похачишь”, многое спрятано внутрь, увы. Я принял решение, что не хочу возиться с сериализацией и отправкой всех данных (включая файлы), поэтому submit надо использовать обычный браузерный (не из redux-form). Данное решение — жуткий костыль! Так лучше не делать! Но мне было настолько лень придумывать, как сделать по-нормальному, что я решил не думать пошёл на компромисс. Исходные данные Пускай основным полем у нас будет data, который в postgresql сохраняется в jsonb, вторым будет поле attachment для файла, а третьим — description, который по неизвестным причинам мы будем сохранять в отдельное поле типа text. При этом для поля data надо было динамически собирать инпуты и делать валидации. По этой причине и впилил реакт с redux-form, ибо делать это всё на зашкварии — так себе занятие. Немного кода из Rails Исходя из предположения, что используется strong parameters, код в рельсах будет примерно такой: # app/controllers/admin/products_controller.rb class Admin::ProductsController &lt; Admin::ApplicationController def new @product = Product.new end def create @product = Product.new(product_params) if @product.save redirect_to admin_products_path else render :new end end private def product_params data = JSON.parse(params.require(:product).require(:data)) params.require(:product).permit(:attachment, :description).merge( data: data ) end end Ввиду того, что Content-Type: multipart/form-data у нас не application/json, парсить data приходится руками. Грустно, но что поделаешь. Иначе рельсы сохранят строкой в jsonb. Ну и немного кода под react_on_rails, если по этому будут какие-то вопросы: -# app/views/admin/products/new.haml %h1 Создание продукта = react_component(&quot;Product.Form&quot;, props: { method: &#39;post&#39;, data: @product.data || {}, url: admin_products_path, authenticityToken: form_authenticity_token }) А теперь про фронт Надеюсь на то, что читатели знают, что такое redux-form, и как с ним управляться. Поэтому сразу к мякотке: // Код условный, у нас в конторе принят свой способ написания валидаций для redux-form, откуда можно получить список валидируемых полей const validatedFields = [&#39;title&#39;, &#39;price&#39;]; class Form extends Component { // ... // Вот щас будет самое оно submit = (e) =&gt; { const { dispatch, asyncValidate, valid, touch } = this.props; // диспатчим touch, чтобы поля подсветились после проверки validatedFields.forEach(attribute =&gt; dispatch(touch(attribute))); // вызываем валидацию asyncValidate(); if (!valid) { // тормозим Event(&#39;submit&#39;), если валидации не пройдены e.preventDefault(); } } render = () =&gt; ( &lt;form onSubmit={this.submit} action={this.props.url} encType=&quot;multipart/form-data&quot; acceptCharset=&quot;UTF-8&quot; method=&quot;POST&quot;&gt; &lt;input name=&quot;utf8&quot; value=&quot;✓&quot; type=&quot;hidden&quot; /&gt; &lt;input type=&quot;hidden&quot; name=&quot;_method&quot; value={this.props.method} /&gt; &lt;input name=&quot;authenticity_token&quot; value={this.props.authenticityToken} type=&quot;hidden&quot; /&gt; {/* вот тут мы сохраняем сериализованные параметры в поле data (хорошо я придумал, а?) */} &lt;input name=&quot;product[data]&quot; value={JSON.stringify(this.props.formValues)} type=&quot;hidden&quot; /&gt; &lt;Field name=&quot;title&quot; component=&quot;input&quot; type=&quot;text&quot; /&gt; &lt;Field name=&quot;price&quot; component=&quot;input&quot; type=&quot;text&quot; /&gt; &lt;Field name=&quot;disabled&quot; component=&quot;input&quot; type=&quot;checkbox&quot; /&gt; {/* тут можно было бы прикрутить даже wysiwyg (ckeditor?), но риякт не даст таких вольностей, конечно =) */} &lt;input name=&quot;product[description]&quot; type=&quot;text&quot; /&gt; &lt;input name=&quot;product[attachment]&quot; type=&quot;file&quot; /&gt; &lt;button type=&quot;submit&quot;&gt;Сохранить товар&lt;/button&gt; &lt;/form&gt; ) } const ConnectedForm = reduxForm({ form: &#39;product&#39;, validate: someValidationCallback(validatedFields), })(Form); const FormWrapper = props =&gt; ( &lt;div&gt; &lt;ConnectedForm {...props} initialValues={props.data} /&gt; &lt;/div&gt; ); export default FormWrapper; Замечу, что formValues — это текущие значения формы. Получаю их в редуксовом контейнере через getFormValues. Как и в любой другой подобной ситуации, главная проблема такого подхода — приходится дёргать всё руками: Получать список полей. Я надеюсь, что у redux-form есть какой-то способ получить список полей, но я его не нашёл. Приходится забирать его из списка валидаций, что уже нехорошо. Руками запускать валидации, когда в обычном сценарии за меня это сделал бы submit из redux-form. if (!valid) e.preventDefault() — ну, такое. Хотя, конечно, работает =) Если надо что-то делать на форме, то тут рельсы с их килограммами хелперов тут не помогут, надо протаскивать все данные руками через props и верстать в jsx. Вместо выводов Данное решение — костыль. И можно сделать по-нормальному. Следует избегать таких подходов. Кстати, может кто-нибудь знает, можно ли как-то нормально jsx подсвечивать в jekyll?" />
+<meta property="og:description" content="Проблема Надо было сделать мне форму для объекта product. Причём в отношении инпутов (селекты, текст) нужна была долбанутая логика, при этом нужно было всё ещё и с файлами (multipart/form-data), которые потом скармливаем, например, CarrierWave’у. Да ещё это и с рельсами завернуть, плюс основную часть данных загружать нужно в jsonb (потому что структура может быть динамической), а некоторые значения надо было в обычные поля (varchar, text) в базу сохранять. Ввиду необходимости впиливать сложную логику, валидации и нормализации и простой человеческой привычке (ну привык я с этим пакетом работать), я решил использовать redux-form. Хороший пакет для форм, всем рекомендую. Но в некоторых местах его не особо “похачишь”, многое спрятано внутрь, увы. Я принял решение, что не хочу возиться с сериализацией и отправкой всех данных (включая файлы), поэтому submit надо использовать обычный браузерный (не из redux-form). Данное решение — жуткий костыль! Так лучше не делать! Но мне было настолько лень придумывать, как сделать по-нормальному, что я решил не думать пошёл на компромисс. Исходные данные Пускай основным полем у нас будет data, который в postgresql сохраняется в jsonb, вторым будет поле attachment для файла, а третьим — description, который по неизвестным причинам мы будем сохранять в отдельное поле типа text. При этом для поля data надо было динамически собирать инпуты и делать валидации. По этой причине и впилил реакт с redux-form, ибо делать это всё на зашкварии — так себе занятие. Немного кода из Rails Исходя из предположения, что используется strong parameters, код в рельсах будет примерно такой: # app/controllers/admin/products_controller.rb class Admin::ProductsController &lt; Admin::ApplicationController def new @product = Product.new end def create @product = Product.new(product_params) if @product.save redirect_to admin_products_path else render :new end end private def product_params data = JSON.parse(params.require(:product).require(:data)) params.require(:product).permit(:attachment, :description).merge( data: data ) end end Ввиду того, что Content-Type: multipart/form-data у нас не application/json, парсить data приходится руками. Грустно, но что поделаешь. Иначе рельсы сохранят строкой в jsonb. Ну и немного кода под react_on_rails, если по этому будут какие-то вопросы: -# app/views/admin/products/new.haml %h1 Создание продукта = react_component(&quot;Product.Form&quot;, props: { method: &#39;post&#39;, data: @product.data || {}, url: admin_products_path, authenticityToken: form_authenticity_token }) А теперь про фронт Надеюсь на то, что читатели знают, что такое redux-form, и как с ним управляться. Поэтому сразу к мякотке: // Код условный, у нас в конторе принят свой способ написания валидаций для redux-form, откуда можно получить список валидируемых полей const validatedFields = [&#39;title&#39;, &#39;price&#39;]; class Form extends Component { // ... // Вот щас будет самое оно submit = (e) =&gt; { const { dispatch, asyncValidate, valid, touch } = this.props; // диспатчим touch, чтобы поля подсветились после проверки validatedFields.forEach(attribute =&gt; dispatch(touch(attribute))); // вызываем валидацию asyncValidate(); if (!valid) { // тормозим Event(&#39;submit&#39;), если валидации не пройдены e.preventDefault(); } } render = () =&gt; ( &lt;form onSubmit={this.submit} action={this.props.url} encType=&quot;multipart/form-data&quot; acceptCharset=&quot;UTF-8&quot; method=&quot;POST&quot;&gt; &lt;input name=&quot;utf8&quot; value=&quot;✓&quot; type=&quot;hidden&quot; /&gt; &lt;input type=&quot;hidden&quot; name=&quot;_method&quot; value={this.props.method} /&gt; &lt;input name=&quot;authenticity_token&quot; value={this.props.authenticityToken} type=&quot;hidden&quot; /&gt; {/* вот тут мы сохраняем сериализованные параметры в поле data (хорошо я придумал, а?) */} &lt;input name=&quot;product[data]&quot; value={JSON.stringify(this.props.formValues)} type=&quot;hidden&quot; /&gt; &lt;Field name=&quot;title&quot; component=&quot;input&quot; type=&quot;text&quot; /&gt; &lt;Field name=&quot;price&quot; component=&quot;input&quot; type=&quot;text&quot; /&gt; &lt;Field name=&quot;disabled&quot; component=&quot;input&quot; type=&quot;checkbox&quot; /&gt; {/* тут можно было бы прикрутить даже wysiwyg (ckeditor?), но риякт не даст таких вольностей, конечно =) */} &lt;input name=&quot;product[description]&quot; type=&quot;text&quot; /&gt; &lt;input name=&quot;product[attachment]&quot; type=&quot;file&quot; /&gt; &lt;button type=&quot;submit&quot;&gt;Сохранить товар&lt;/button&gt; &lt;/form&gt; ) } const ConnectedForm = reduxForm({ form: &#39;product&#39;, validate: someValidationCallback(validatedFields), })(Form); const FormWrapper = props =&gt; ( &lt;div&gt; &lt;ConnectedForm {...props} initialValues={props.data} /&gt; &lt;/div&gt; ); export default FormWrapper; Замечу, что formValues — это текущие значения формы. Получаю их в редуксовом контейнере через getFormValues. Как и в любой другой подобной ситуации, главная проблема такого подхода — приходится дёргать всё руками: Получать список полей. Я надеюсь, что у redux-form есть какой-то способ получить список полей, но я его не нашёл. Приходится забирать его из списка валидаций, что уже нехорошо. Руками запускать валидации, когда в обычном сценарии за меня это сделал бы submit из redux-form. if (!valid) e.preventDefault() — ну, такое. Хотя, конечно, работает =) Если надо что-то делать на форме, то тут рельсы с их килограммами хелперов тут не помогут, надо протаскивать все данные руками через props и верстать в jsx. Вместо выводов Данное решение — костыль. И можно сделать по-нормальному. Следует избегать таких подходов. Кстати, может кто-нибудь знает, можно ли как-то нормально jsx подсвечивать в jekyll?" />
+<link rel="canonical" href="https://ivalentinee.github.io/ru/programming/2017/11/16/redux-form-validations-with-browser-submit.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/ru/programming/2017/11/16/redux-form-validations-with-browser-submit.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2017-11-16T00:00:00+00:00" />
+<script type="application/ld+json">
+{"headline":"Redux-form с валидациями и сабмитом из браузера","dateModified":"2017-11-16T00:00:00+00:00","datePublished":"2017-11-16T00:00:00+00:00","description":"Проблема Надо было сделать мне форму для объекта product. Причём в отношении инпутов (селекты, текст) нужна была долбанутая логика, при этом нужно было всё ещё и с файлами (multipart/form-data), которые потом скармливаем, например, CarrierWave’у. Да ещё это и с рельсами завернуть, плюс основную часть данных загружать нужно в jsonb (потому что структура может быть динамической), а некоторые значения надо было в обычные поля (varchar, text) в базу сохранять. Ввиду необходимости впиливать сложную логику, валидации и нормализации и простой человеческой привычке (ну привык я с этим пакетом работать), я решил использовать redux-form. Хороший пакет для форм, всем рекомендую. Но в некоторых местах его не особо “похачишь”, многое спрятано внутрь, увы. Я принял решение, что не хочу возиться с сериализацией и отправкой всех данных (включая файлы), поэтому submit надо использовать обычный браузерный (не из redux-form). Данное решение — жуткий костыль! Так лучше не делать! Но мне было настолько лень придумывать, как сделать по-нормальному, что я решил не думать пошёл на компромисс. Исходные данные Пускай основным полем у нас будет data, который в postgresql сохраняется в jsonb, вторым будет поле attachment для файла, а третьим — description, который по неизвестным причинам мы будем сохранять в отдельное поле типа text. При этом для поля data надо было динамически собирать инпуты и делать валидации. По этой причине и впилил реакт с redux-form, ибо делать это всё на зашкварии — так себе занятие. Немного кода из Rails Исходя из предположения, что используется strong parameters, код в рельсах будет примерно такой: # app/controllers/admin/products_controller.rb class Admin::ProductsController &lt; Admin::ApplicationController def new @product = Product.new end def create @product = Product.new(product_params) if @product.save redirect_to admin_products_path else render :new end end private def product_params data = JSON.parse(params.require(:product).require(:data)) params.require(:product).permit(:attachment, :description).merge( data: data ) end end Ввиду того, что Content-Type: multipart/form-data у нас не application/json, парсить data приходится руками. Грустно, но что поделаешь. Иначе рельсы сохранят строкой в jsonb. Ну и немного кода под react_on_rails, если по этому будут какие-то вопросы: -# app/views/admin/products/new.haml %h1 Создание продукта = react_component(&quot;Product.Form&quot;, props: { method: &#39;post&#39;, data: @product.data || {}, url: admin_products_path, authenticityToken: form_authenticity_token }) А теперь про фронт Надеюсь на то, что читатели знают, что такое redux-form, и как с ним управляться. Поэтому сразу к мякотке: // Код условный, у нас в конторе принят свой способ написания валидаций для redux-form, откуда можно получить список валидируемых полей const validatedFields = [&#39;title&#39;, &#39;price&#39;]; class Form extends Component { // ... // Вот щас будет самое оно submit = (e) =&gt; { const { dispatch, asyncValidate, valid, touch } = this.props; // диспатчим touch, чтобы поля подсветились после проверки validatedFields.forEach(attribute =&gt; dispatch(touch(attribute))); // вызываем валидацию asyncValidate(); if (!valid) { // тормозим Event(&#39;submit&#39;), если валидации не пройдены e.preventDefault(); } } render = () =&gt; ( &lt;form onSubmit={this.submit} action={this.props.url} encType=&quot;multipart/form-data&quot; acceptCharset=&quot;UTF-8&quot; method=&quot;POST&quot;&gt; &lt;input name=&quot;utf8&quot; value=&quot;✓&quot; type=&quot;hidden&quot; /&gt; &lt;input type=&quot;hidden&quot; name=&quot;_method&quot; value={this.props.method} /&gt; &lt;input name=&quot;authenticity_token&quot; value={this.props.authenticityToken} type=&quot;hidden&quot; /&gt; {/* вот тут мы сохраняем сериализованные параметры в поле data (хорошо я придумал, а?) */} &lt;input name=&quot;product[data]&quot; value={JSON.stringify(this.props.formValues)} type=&quot;hidden&quot; /&gt; &lt;Field name=&quot;title&quot; component=&quot;input&quot; type=&quot;text&quot; /&gt; &lt;Field name=&quot;price&quot; component=&quot;input&quot; type=&quot;text&quot; /&gt; &lt;Field name=&quot;disabled&quot; component=&quot;input&quot; type=&quot;checkbox&quot; /&gt; {/* тут можно было бы прикрутить даже wysiwyg (ckeditor?), но риякт не даст таких вольностей, конечно =) */} &lt;input name=&quot;product[description]&quot; type=&quot;text&quot; /&gt; &lt;input name=&quot;product[attachment]&quot; type=&quot;file&quot; /&gt; &lt;button type=&quot;submit&quot;&gt;Сохранить товар&lt;/button&gt; &lt;/form&gt; ) } const ConnectedForm = reduxForm({ form: &#39;product&#39;, validate: someValidationCallback(validatedFields), })(Form); const FormWrapper = props =&gt; ( &lt;div&gt; &lt;ConnectedForm {...props} initialValues={props.data} /&gt; &lt;/div&gt; ); export default FormWrapper; Замечу, что formValues — это текущие значения формы. Получаю их в редуксовом контейнере через getFormValues. Как и в любой другой подобной ситуации, главная проблема такого подхода — приходится дёргать всё руками: Получать список полей. Я надеюсь, что у redux-form есть какой-то способ получить список полей, но я его не нашёл. Приходится забирать его из списка валидаций, что уже нехорошо. Руками запускать валидации, когда в обычном сценарии за меня это сделал бы submit из redux-form. if (!valid) e.preventDefault() — ну, такое. Хотя, конечно, работает =) Если надо что-то делать на форме, то тут рельсы с их килограммами хелперов тут не помогут, надо протаскивать все данные руками через props и верстать в jsx. Вместо выводов Данное решение — костыль. И можно сделать по-нормальному. Следует избегать таких подходов. Кстати, может кто-нибудь знает, можно ли как-то нормально jsx подсвечивать в jekyll?","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2017/11/16/redux-form-validations-with-browser-submit.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2017/11/16/redux-form-validations-with-browser-submit.html","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/ru/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/ru/about/">Обо мне</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Redux-form с валидациями и сабмитом из браузера</h1>
+    <p class="post-meta">
+      <time datetime="2017-11-16T00:00:00+00:00" itemprop="datePublished">
+        
+        Nov 16, 2017
+      </time>
+      </p>
+  </header>
+
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="проблема">Проблема</h2>
+
+<p>Надо было сделать мне форму для объекта <code class="highlighter-rouge">product</code>. Причём в отношении инпутов (селекты, текст) нужна была долбанутая логика, при этом нужно было всё ещё и с файлами (<code class="highlighter-rouge">multipart/form-data</code>), которые потом скармливаем, например, <a href="https://github.com/carrierwaveuploader/carrierwave">CarrierWave’у</a>. Да ещё это и с рельсами завернуть, плюс основную часть данных загружать нужно в jsonb (потому что структура может быть динамической), а некоторые значения надо было в обычные поля (<code class="highlighter-rouge">varchar</code>, <code class="highlighter-rouge">text</code>) в базу сохранять.</p>
+
+<p>Ввиду необходимости впиливать сложную логику, валидации и нормализации и простой человеческой привычке (ну привык я с этим пакетом работать), я решил использовать <a href="https://redux-form.com/">redux-form</a>. Хороший пакет для форм, всем рекомендую. Но в некоторых местах его не особо “похачишь”, многое спрятано внутрь, увы.</p>
+
+<p>Я принял решение, что не хочу возиться с сериализацией и отправкой <strong>всех</strong> данных (включая файлы), поэтому <code class="highlighter-rouge">submit</code> надо использовать обычный браузерный (не из redux-form).</p>
+
+<p>Данное решение — жуткий костыль! Так лучше не делать! Но мне было настолько лень придумывать, как сделать по-нормальному, что я <del>решил не думать</del> пошёл на компромисс.</p>
+
+<h2 id="исходные-данные">Исходные данные</h2>
+
+<p>Пускай основным полем у нас будет <code class="highlighter-rouge">data</code>, который в postgresql сохраняется в jsonb, вторым будет поле <code class="highlighter-rouge">attachment</code> для файла, а третьим — <code class="highlighter-rouge">description</code>, который по неизвестным причинам мы будем сохранять в отдельное поле типа <code class="highlighter-rouge">text</code>.</p>
+
+<p>При этом для поля <code class="highlighter-rouge">data</code> надо было динамически собирать инпуты и делать валидации. По этой причине и впилил реакт с redux-form, ибо делать это всё на зашкварии — так себе занятие.</p>
+
+<h2 id="немного-кода-из-rails">Немного кода из Rails</h2>
+<p>Исходя из предположения, что используется <a href="https://github.com/rails/strong_parameters">strong parameters</a>, код в рельсах будет примерно такой:</p>
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># app/controllers/admin/products_controller.rb</span>
+<span class="k">class</span> <span class="nc">Admin</span><span class="o">::</span><span class="no">ProductsController</span> <span class="o">&lt;</span> <span class="no">Admin</span><span class="o">::</span><span class="no">ApplicationController</span>
+  <span class="k">def</span> <span class="nf">new</span>
+    <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="p">.</span><span class="nf">new</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">create</span>
+    <span class="vi">@product</span> <span class="o">=</span> <span class="no">Product</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="n">product_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="vi">@product</span><span class="p">.</span><span class="nf">save</span>
+      <span class="n">redirect_to</span> <span class="n">admin_products_path</span>
+    <span class="k">else</span>
+      <span class="n">render</span> <span class="ss">:new</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="kp">private</span>
+
+  <span class="k">def</span> <span class="nf">product_params</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="no">JSON</span><span class="p">.</span><span class="nf">parse</span><span class="p">(</span><span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:product</span><span class="p">).</span><span class="nf">require</span><span class="p">(</span><span class="ss">:data</span><span class="p">))</span>
+    <span class="n">params</span><span class="p">.</span><span class="nf">require</span><span class="p">(</span><span class="ss">:product</span><span class="p">).</span><span class="nf">permit</span><span class="p">(</span><span class="ss">:attachment</span><span class="p">,</span> <span class="ss">:description</span><span class="p">).</span><span class="nf">merge</span><span class="p">(</span>
+      <span class="ss">data: </span><span class="n">data</span>
+    <span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Ввиду того, что <code class="highlighter-rouge">Content-Type: multipart/form-data</code> у нас не <code class="highlighter-rouge">application/json</code>, парсить <code class="highlighter-rouge">data</code> приходится руками. Грустно, но что поделаешь. Иначе рельсы сохранят строкой в jsonb.</p>
+
+<p>Ну и немного кода под <a href="https://github.com/shakacode/react_on_rails">react_on_rails</a>, если по этому будут какие-то вопросы:</p>
+<div class="language-haml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">-# app/views/admin/products/new.haml
+</span><span class="nt">%h1</span> Создание продукта
+<span class="p">=</span> <span class="n">react_component</span><span class="p">(</span><span class="s2">"Product.Form"</span><span class="p">,</span> <span class="ss">props: </span><span class="p">{</span> <span class="ss">method: </span><span class="s1">'post'</span><span class="p">,</span> <span class="ss">data: </span><span class="vi">@product</span><span class="p">.</span><span class="nf">data</span> <span class="o">||</span> <span class="p">{},</span> <span class="ss">url: </span><span class="n">admin_products_path</span><span class="p">,</span> <span class="ss">authenticityToken: </span><span class="n">form_authenticity_token</span> <span class="p">})</span>
+</code></pre></div></div>
+
+<h2 id="а-теперь-про-фронт">А теперь про фронт</h2>
+
+<p>Надеюсь на то, что читатели знают, что такое <a href="https://redux-form.com/"><strong>redux-form</strong></a>, и как с ним управляться. Поэтому сразу к мякотке:</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Код условный, у нас в конторе принят свой способ написания валидаций для redux-form, откуда можно получить список валидируемых полей</span>
+<span class="kd">const</span> <span class="nx">validatedFields</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'title'</span><span class="p">,</span> <span class="s1">'price'</span><span class="p">];</span>
+
+<span class="kd">class</span> <span class="nx">Form</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="c1">// ...</span>
+
+  <span class="c1">// Вот щас будет самое оно</span>
+  <span class="nx">submit</span> <span class="o">=</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">dispatch</span><span class="p">,</span> <span class="nx">asyncValidate</span><span class="p">,</span> <span class="nx">valid</span><span class="p">,</span> <span class="nx">touch</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+    <span class="c1">// диспатчим touch, чтобы поля подсветились после проверки</span>
+    <span class="nx">validatedFields</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">attribute</span> <span class="o">=&gt;</span> <span class="nx">dispatch</span><span class="p">(</span><span class="nx">touch</span><span class="p">(</span><span class="nx">attribute</span><span class="p">)));</span>
+    <span class="c1">// вызываем валидацию</span>
+    <span class="nx">asyncValidate</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">valid</span><span class="p">)</span> <span class="p">{</span>
+      <span class="c1">// тормозим Event('submit'), если валидации не пройдены</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">render</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">(</span>
+    <span class="o">&lt;</span><span class="nx">form</span> <span class="nx">onSubmit</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">submit</span><span class="p">}</span> <span class="nx">action</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">url</span><span class="p">}</span> <span class="nx">encType</span><span class="o">=</span><span class="s2">"multipart/form-data"</span> <span class="nx">acceptCharset</span><span class="o">=</span><span class="s2">"UTF-8"</span> <span class="nx">method</span><span class="o">=</span><span class="s2">"POST"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"utf8"</span> <span class="nx">value</span><span class="o">=</span><span class="s2">"✓"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"hidden"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"hidden"</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"_method"</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">method</span><span class="p">}</span> <span class="sr">/</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"authenticity_token"</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">authenticityToken</span><span class="p">}</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"hidden"</span> <span class="o">/&gt;</span>
+      <span class="p">{</span><span class="cm">/* вот тут мы сохраняем сериализованные параметры в поле data (хорошо я придумал, а?) */</span><span class="p">}</span>
+      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"product[data]"</span> <span class="nx">value</span><span class="o">=</span><span class="p">{</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">.</span><span class="nx">formValues</span><span class="p">)}</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"hidden"</span> <span class="o">/&gt;</span>
+
+      <span class="o">&lt;</span><span class="nx">Field</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"title"</span> <span class="nx">component</span><span class="o">=</span><span class="s2">"input"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="nx">Field</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"price"</span> <span class="nx">component</span><span class="o">=</span><span class="s2">"input"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="nx">Field</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"disabled"</span> <span class="nx">component</span><span class="o">=</span><span class="s2">"input"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"checkbox"</span> <span class="o">/&gt;</span>
+      <span class="p">{</span><span class="cm">/* тут можно было бы прикрутить даже wysiwyg (ckeditor?), но риякт не даст таких вольностей, конечно =) */</span><span class="p">}</span>
+      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"product[description]"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"text"</span> <span class="o">/&gt;</span>
+      <span class="o">&lt;</span><span class="nx">input</span> <span class="nx">name</span><span class="o">=</span><span class="s2">"product[attachment]"</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"file"</span> <span class="o">/&gt;</span>
+
+      <span class="o">&lt;</span><span class="nx">button</span> <span class="nx">type</span><span class="o">=</span><span class="s2">"submit"</span><span class="o">&gt;</span><span class="err">Сохранить</span> <span class="err">товар</span><span class="o">&lt;</span><span class="sr">/button</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/form</span><span class="err">&gt;
+</span>  <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="kd">const</span> <span class="nx">ConnectedForm</span> <span class="o">=</span> <span class="nx">reduxForm</span><span class="p">({</span>
+  <span class="na">form</span><span class="p">:</span> <span class="s1">'product'</span><span class="p">,</span>
+  <span class="na">validate</span><span class="p">:</span> <span class="nx">someValidationCallback</span><span class="p">(</span><span class="nx">validatedFields</span><span class="p">),</span>
+<span class="p">})(</span><span class="nx">Form</span><span class="p">);</span>
+
+<span class="kd">const</span> <span class="nx">FormWrapper</span> <span class="o">=</span> <span class="nx">props</span> <span class="o">=&gt;</span> <span class="p">(</span>
+  <span class="o">&lt;</span><span class="nx">div</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">ConnectedForm</span>
+      <span class="p">{...</span><span class="nx">props</span><span class="p">}</span>
+      <span class="nx">initialValues</span><span class="o">=</span><span class="p">{</span><span class="nx">props</span><span class="p">.</span><span class="nx">data</span><span class="p">}</span>
+    <span class="sr">/</span><span class="err">&gt;
+</span>  <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span><span class="p">);</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="nx">FormWrapper</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Замечу, что <code class="highlighter-rouge">formValues</code> — это текущие значения формы. Получаю их в редуксовом контейнере через <a href="https://redux-form.com/7.1.2/docs/api/selectors.md/#-code-getformvalues-formname-string-code-returns-code-state-gt-formvalues-object-code-"><code class="highlighter-rouge">getFormValues</code></a>.</p>
+
+<p>Как и в любой другой подобной ситуации, главная проблема такого подхода — приходится дёргать всё руками:</p>
+<ul>
+  <li>Получать список полей. Я надеюсь, что у redux-form есть какой-то способ получить список полей, но я его не нашёл. Приходится забирать его из списка валидаций, что уже нехорошо.</li>
+  <li>Руками запускать валидации, когда в обычном сценарии за меня это сделал бы <code class="highlighter-rouge">submit</code> из redux-form.</li>
+  <li><code class="highlighter-rouge">if (!valid) e.preventDefault()</code> — ну, такое. Хотя, конечно, работает =)</li>
+  <li>Если надо что-то делать на форме, то тут рельсы с их килограммами хелперов тут не помогут, надо протаскивать все данные руками через <code class="highlighter-rouge">props</code> и верстать в jsx.</li>
+</ul>
+
+<h2 id="вместо-выводов">Вместо выводов</h2>
+
+<p>Данное решение — костыль. И можно сделать по-нормальному. Следует избегать таких подходов.</p>
+
+<p>Кстати, может кто-нибудь знает, можно ли как-то нормально jsx подсвечивать в jekyll?</p>
+
+  </div>
+
+  
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://ivalentinee.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Презентеры для моделей Ecto | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Презентеры для моделей Ecto" />
+<meta property="og:locale" content="ru" />
+<meta name="description" content="Предисловие Продолжение статьи про организацию файлов в типичном Phoenix-проекте. Время идёт, проекты разрастаются, появляются новые подходы. Расскажу про ещё один. Перед прочтением рекомендую ознакомиться с предыдущим постом (но это не обязательно). Проблема На написание “презентера” меня побудила следующая проблема: в нескольких разных модулях потребовались одни и те же данные. Но не хранимые в БД, а вычисляемые на основе них. В качестве примера возьмём два случая: Какой-нибудь вычисляемый статус. Допустим, все люди, которые больше 1.8 метров высотой, считаются высокими: def height_status(human) do if human.height &gt; 180, do: &quot;tall&quot;, else: &quot;short&quot; end Переводы. В поставке Phoenix есть библиотека Gettext, поэтому речь примерно про это: def gender_text(human) do Gettext.dgettext(App.Gettext, &quot;human&quot;, human.gender, []) end Куда этот код можно положить Есть два исходных варианта. И один новый. В модель (в понимании Ecto) # lib/app/models/human.ex defmodule App.Models.Human do use Ecto.Schema schema &quot;humans&quot; do field(:height, :string) field(:gender, :string) end # ... def height_status(human) do # ... def gender_text(human) do # ... end Не самый плохой вариант. По крайней мере лучше, чем дублировать эти методы. Но в результате: Модель становится “толстой” Модель отвечает не только за хранение данных Повышается связность в проекте, потому что функции моделей используются ещё и в слое отображения (прямое следствие предыдущего пункта) В контекст # lib/app/contexts/humans.ex defmodule App.Contexts.Humans do def list() do # ... def get() do # ... def create() do # ... def update() do # ... def delete() do # ... def height_status(human) do # ... def gender_text(human) do # ... end Тоже не самый плохой вариант. Уже лучше, чем в модель. Но все те же проблемы в результате: Контекст также как и модель становится “толстым” Контекст отвечает не только за операции (изменение/получение) над данными, но и за вывод Повышается связность в проекте, потому что функции контекстов используются ещё и в слое отображения (прямое следствие предыдущего пункта) В презентер Сразу оговорюсь, что, ввиду отсутствия в erlang/elixir ООП “с классами” презентер (или декоратор) не использует наследование. Поэтому всё сильно упрощается: # lib/app/presenters/human.ex defmodule App.Presenters.Human do def height_status(human) do # ... def gender_text(human) do # ... end И у нас появляется модуль, ответственный за вычисление данных для отображения. По привычке называю его “презентер”. И, думаю, это подходящее название. Модели и контексты не толстеют, буква S из SOLID‘а соблюдена. Немного про ограничения и антипаттерны Ввиду того, что модуль этот был сделан исключительно для отображения, использование его для других целей будет нарушением принципа SOLID (всё ещё первой буквы). Поясняю: если презентер по какой-то причине используется в модели или контексте, значит на основе вычисляемых данных будет совершаться получение и/или изменение в БД. Что делает операции зависимыми от отображения. В результате вместе с SOLID’ом есть высокая вероятность нарушения принципа наименьшего удивления. Куда девать код, который относится и к отображению и к операциям и к хранению? Не знаю. Ещё не придумал. Но когда-нибудь напишу ответ и на этот вопрос." />
+<meta property="og:description" content="Предисловие Продолжение статьи про организацию файлов в типичном Phoenix-проекте. Время идёт, проекты разрастаются, появляются новые подходы. Расскажу про ещё один. Перед прочтением рекомендую ознакомиться с предыдущим постом (но это не обязательно). Проблема На написание “презентера” меня побудила следующая проблема: в нескольких разных модулях потребовались одни и те же данные. Но не хранимые в БД, а вычисляемые на основе них. В качестве примера возьмём два случая: Какой-нибудь вычисляемый статус. Допустим, все люди, которые больше 1.8 метров высотой, считаются высокими: def height_status(human) do if human.height &gt; 180, do: &quot;tall&quot;, else: &quot;short&quot; end Переводы. В поставке Phoenix есть библиотека Gettext, поэтому речь примерно про это: def gender_text(human) do Gettext.dgettext(App.Gettext, &quot;human&quot;, human.gender, []) end Куда этот код можно положить Есть два исходных варианта. И один новый. В модель (в понимании Ecto) # lib/app/models/human.ex defmodule App.Models.Human do use Ecto.Schema schema &quot;humans&quot; do field(:height, :string) field(:gender, :string) end # ... def height_status(human) do # ... def gender_text(human) do # ... end Не самый плохой вариант. По крайней мере лучше, чем дублировать эти методы. Но в результате: Модель становится “толстой” Модель отвечает не только за хранение данных Повышается связность в проекте, потому что функции моделей используются ещё и в слое отображения (прямое следствие предыдущего пункта) В контекст # lib/app/contexts/humans.ex defmodule App.Contexts.Humans do def list() do # ... def get() do # ... def create() do # ... def update() do # ... def delete() do # ... def height_status(human) do # ... def gender_text(human) do # ... end Тоже не самый плохой вариант. Уже лучше, чем в модель. Но все те же проблемы в результате: Контекст также как и модель становится “толстым” Контекст отвечает не только за операции (изменение/получение) над данными, но и за вывод Повышается связность в проекте, потому что функции контекстов используются ещё и в слое отображения (прямое следствие предыдущего пункта) В презентер Сразу оговорюсь, что, ввиду отсутствия в erlang/elixir ООП “с классами” презентер (или декоратор) не использует наследование. Поэтому всё сильно упрощается: # lib/app/presenters/human.ex defmodule App.Presenters.Human do def height_status(human) do # ... def gender_text(human) do # ... end И у нас появляется модуль, ответственный за вычисление данных для отображения. По привычке называю его “презентер”. И, думаю, это подходящее название. Модели и контексты не толстеют, буква S из SOLID‘а соблюдена. Немного про ограничения и антипаттерны Ввиду того, что модуль этот был сделан исключительно для отображения, использование его для других целей будет нарушением принципа SOLID (всё ещё первой буквы). Поясняю: если презентер по какой-то причине используется в модели или контексте, значит на основе вычисляемых данных будет совершаться получение и/или изменение в БД. Что делает операции зависимыми от отображения. В результате вместе с SOLID’ом есть высокая вероятность нарушения принципа наименьшего удивления. Куда девать код, который относится и к отображению и к операциям и к хранению? Не знаю. Ещё не придумал. Но когда-нибудь напишу ответ и на этот вопрос." />
+<link rel="canonical" href="https://ivalentinee.github.io/ru/programming/2019/04/30/ecto-presenters.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/ru/programming/2019/04/30/ecto-presenters.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-04-30T00:00:00+00:00" />
+<script type="application/ld+json">
+{"headline":"Презентеры для моделей Ecto","dateModified":"2019-04-30T00:00:00+00:00","datePublished":"2019-04-30T00:00:00+00:00","description":"Предисловие Продолжение статьи про организацию файлов в типичном Phoenix-проекте. Время идёт, проекты разрастаются, появляются новые подходы. Расскажу про ещё один. Перед прочтением рекомендую ознакомиться с предыдущим постом (но это не обязательно). Проблема На написание “презентера” меня побудила следующая проблема: в нескольких разных модулях потребовались одни и те же данные. Но не хранимые в БД, а вычисляемые на основе них. В качестве примера возьмём два случая: Какой-нибудь вычисляемый статус. Допустим, все люди, которые больше 1.8 метров высотой, считаются высокими: def height_status(human) do if human.height &gt; 180, do: &quot;tall&quot;, else: &quot;short&quot; end Переводы. В поставке Phoenix есть библиотека Gettext, поэтому речь примерно про это: def gender_text(human) do Gettext.dgettext(App.Gettext, &quot;human&quot;, human.gender, []) end Куда этот код можно положить Есть два исходных варианта. И один новый. В модель (в понимании Ecto) # lib/app/models/human.ex defmodule App.Models.Human do use Ecto.Schema schema &quot;humans&quot; do field(:height, :string) field(:gender, :string) end # ... def height_status(human) do # ... def gender_text(human) do # ... end Не самый плохой вариант. По крайней мере лучше, чем дублировать эти методы. Но в результате: Модель становится “толстой” Модель отвечает не только за хранение данных Повышается связность в проекте, потому что функции моделей используются ещё и в слое отображения (прямое следствие предыдущего пункта) В контекст # lib/app/contexts/humans.ex defmodule App.Contexts.Humans do def list() do # ... def get() do # ... def create() do # ... def update() do # ... def delete() do # ... def height_status(human) do # ... def gender_text(human) do # ... end Тоже не самый плохой вариант. Уже лучше, чем в модель. Но все те же проблемы в результате: Контекст также как и модель становится “толстым” Контекст отвечает не только за операции (изменение/получение) над данными, но и за вывод Повышается связность в проекте, потому что функции контекстов используются ещё и в слое отображения (прямое следствие предыдущего пункта) В презентер Сразу оговорюсь, что, ввиду отсутствия в erlang/elixir ООП “с классами” презентер (или декоратор) не использует наследование. Поэтому всё сильно упрощается: # lib/app/presenters/human.ex defmodule App.Presenters.Human do def height_status(human) do # ... def gender_text(human) do # ... end И у нас появляется модуль, ответственный за вычисление данных для отображения. По привычке называю его “презентер”. И, думаю, это подходящее название. Модели и контексты не толстеют, буква S из SOLID‘а соблюдена. Немного про ограничения и антипаттерны Ввиду того, что модуль этот был сделан исключительно для отображения, использование его для других целей будет нарушением принципа SOLID (всё ещё первой буквы). Поясняю: если презентер по какой-то причине используется в модели или контексте, значит на основе вычисляемых данных будет совершаться получение и/или изменение в БД. Что делает операции зависимыми от отображения. В результате вместе с SOLID’ом есть высокая вероятность нарушения принципа наименьшего удивления. Куда девать код, который относится и к отображению и к операциям и к хранению? Не знаю. Ещё не придумал. Но когда-нибудь напишу ответ и на этот вопрос.","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2019/04/30/ecto-presenters.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2019/04/30/ecto-presenters.html","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/ru/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/ru/about/">Обо мне</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Презентеры для моделей Ecto</h1>
+    <p class="post-meta">
+      <time datetime="2019-04-30T00:00:00+00:00" itemprop="datePublished">
+        
+        Apr 30, 2019
+      </time>
+      </p>
+  </header>
+
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="предисловие">Предисловие</h2>
+<p>Продолжение статьи про <a href="/ru/programming/2018/11/12/alternative-phoenix-contexts-approach.html">организацию файлов в типичном Phoenix-проекте</a>.</p>
+
+<p>Время идёт, проекты разрастаются, появляются новые подходы. Расскажу про ещё один.</p>
+
+<p>Перед прочтением рекомендую ознакомиться с <a href="/ru/programming/2018/11/12/alternative-phoenix-contexts-approach.html">предыдущим постом</a> (но это не обязательно).</p>
+
+<h2 id="проблема">Проблема</h2>
+<p>На написание “презентера” меня побудила следующая проблема: в нескольких разных модулях потребовались одни и те же данные. Но не хранимые в БД, а вычисляемые на основе них.</p>
+
+<p>В качестве примера возьмём два случая:</p>
+<ol>
+  <li>Какой-нибудь вычисляемый статус. Допустим, все люди, которые больше 1.8 метров высотой, считаются высокими:
+    <div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="n">height_status</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">if</span> <span class="n">human</span><span class="o">.</span><span class="n">height</span> <span class="o">&gt;</span> <span class="m">180</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="sd">"</span><span class="s2">tall"</span><span class="p">,</span> <span class="k">else</span><span class="p">:</span> <span class="sd">"</span><span class="s2">short"</span>
+<span class="k">end</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Переводы. В поставке Phoenix есть библиотека Gettext, поэтому речь примерно про это:
+    <div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="n">gender_text</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span>
+  <span class="no">Gettext</span><span class="o">.</span><span class="n">dgettext</span><span class="p">(</span><span class="no">App</span><span class="o">.</span><span class="no">Gettext</span><span class="p">,</span> <span class="sd">"</span><span class="s2">human"</span><span class="p">,</span> <span class="n">human</span><span class="o">.</span><span class="n">gender</span><span class="p">,</span> <span class="p">[])</span>
+<span class="k">end</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<h2 id="куда-этот-код-можно-положить">Куда этот код можно положить</h2>
+<p>Есть два исходных варианта. И один новый.</p>
+
+<h3 id="в-модель-в-понимании-ecto">В модель (в понимании Ecto)</h3>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/app/models/human.ex</span>
+
+<span class="k">defmodule</span> <span class="no">App</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Human</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Schema</span>
+
+  <span class="n">schema</span> <span class="sd">"</span><span class="s2">humans"</span> <span class="k">do</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:height</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:gender</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="c1"># ...</span>
+
+  <span class="k">def</span> <span class="n">height_status</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">gender_text</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Не самый плохой вариант. По крайней мере лучше, чем дублировать эти методы.</p>
+
+<p>Но в результате:</p>
+<ol>
+  <li>Модель становится “толстой”</li>
+  <li>Модель отвечает не только за хранение данных</li>
+  <li>Повышается связность в проекте, потому что функции моделей используются ещё и в слое отображения (прямое следствие предыдущего пункта)</li>
+</ol>
+
+<h3 id="в-контекст">В контекст</h3>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/app/contexts/humans.ex</span>
+
+<span class="k">defmodule</span> <span class="no">App</span><span class="o">.</span><span class="no">Contexts</span><span class="o">.</span><span class="no">Humans</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">list</span><span class="p">()</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">get</span><span class="p">()</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">create</span><span class="p">()</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">update</span><span class="p">()</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="p">()</span> <span class="k">do</span> <span class="c1"># ...</span>
+
+  <span class="k">def</span> <span class="n">height_status</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">gender_text</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>Тоже не самый плохой вариант. Уже лучше, чем в модель.</p>
+
+<p>Но все те же проблемы в результате:</p>
+<ol>
+  <li>Контекст также как и модель становится “толстым”</li>
+  <li>Контекст отвечает не только за операции (изменение/получение) над данными, но и за вывод</li>
+  <li>Повышается связность в проекте, потому что функции контекстов используются ещё и в слое отображения (прямое следствие предыдущего пункта)</li>
+</ol>
+
+<h3 id="в-презентер">В презентер</h3>
+<p>Сразу оговорюсь, что, ввиду отсутствия в erlang/elixir ООП “с классами” презентер (или <em>декоратор</em>) не использует наследование.
+Поэтому всё сильно упрощается:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/app/presenters/human.ex</span>
+
+<span class="k">defmodule</span> <span class="no">App</span><span class="o">.</span><span class="no">Presenters</span><span class="o">.</span><span class="no">Human</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">height_status</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="n">gender_text</span><span class="p">(</span><span class="n">human</span><span class="p">)</span> <span class="k">do</span> <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>И у нас появляется модуль, ответственный за вычисление данных для отображения.</p>
+
+<p>По привычке называю его “презентер”. И, думаю, это подходящее название.</p>
+
+<p>Модели и контексты не толстеют, буква <strong>S</strong> из <a href="https://ru.wikipedia.org/wiki/SOLID_(%D0%BE%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%BD%D0%BE-%D0%BE%D1%80%D0%B8%D0%B5%D0%BD%D1%82%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%BD%D0%BE%D0%B5_%D0%BF%D1%80%D0%BE%D0%B3%D1%80%D0%B0%D0%BC%D0%BC%D0%B8%D1%80%D0%BE%D0%B2%D0%B0%D0%BD%D0%B8%D0%B5)"><strong>SOLID</strong>‘а</a> соблюдена.</p>
+
+<h2 id="немного-про-ограничения-и-антипаттерны">Немного про ограничения и антипаттерны</h2>
+<p>Ввиду того, что модуль этот был сделан исключительно для отображения, использование его для других целей будет нарушением принципа <strong>SOLID</strong> (всё ещё первой буквы).</p>
+
+<p>Поясняю: если презентер по какой-то причине используется в модели или контексте, значит на основе вычисляемых данных будет совершаться получение и/или изменение в БД. Что делает <strong>операции</strong> зависимыми от <strong>отображения</strong>. В результате вместе с SOLID’ом есть высокая вероятность нарушения <strong>принципа наименьшего удивления</strong>.</p>
+
+<p>Куда девать код, который относится и к отображению и к операциям и к хранению? Не знаю. Ещё не придумал. Но когда-нибудь напишу ответ и на этот вопрос.</p>
+
+  </div>
+
+  
+  <div id="disqus_thread"></div>
+<script>
+
+/**
+*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+/*
+var disqus_config = function () {
+this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+};
+*/
+(function() { // DON'T EDIT BELOW THIS LINE
+var d = document, s = d.createElement('script');
+s.src = 'https://ivalentinee.disqus.com/embed.js';
+s.setAttribute('data-timestamp', +new Date());
+(d.head || d.body).appendChild(s);
+})();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
