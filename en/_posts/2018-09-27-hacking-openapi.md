@@ -92,7 +92,7 @@ Seems legit? Well, yes, but no.
 [Broken API Example](/assets/other/posts/2018-09-27-hacking-openapi/broken-api.html)
 
 ## What's wrong?
-In real world scenario no one is going to build an API that consumes file as binary date (as part of `multipart/form-data`) and returns file as binary date (as part of `application/json`).
+In real world scenario no one is going to build an API that consumes file as binary data (as part of `multipart/form-data`) and returns file as binary data (as part of `application/json`).
 Response will most probably look like:
 ```yaml
 picture:
