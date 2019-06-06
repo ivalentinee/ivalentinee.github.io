@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ru"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Еликсиръ в кубернетисах | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Еликсиръ в кубернетисах" />
+<meta property="og:locale" content="ru" />
+<meta name="description" content="Зачем? Потому что могу. Потому что это был самый адекватный организовать общение между сервисами. А так как я пейсатель на еликсиряхъ, то пояснения буду приводить на них (шучу, примеров кода не будет). Исходники Для организации подхода использовались статьи: Erlang (and Elixir) distribution without epmd (больше для понимания происходящего) Clustering Elixir/Erlang applications in Kubernetes (как пример организации) Начнём Итак, ситуация: готовое приложение на N сервисов (где N ≤ 10), развёрнутое в кубернетисах (на самом деле в шифтах, но не суть) в качестве набора deploymentconfig’ов, на нужные сервисы развёрнуты service’ы (слово “сервис” буду использовать для частей приложения, а “service” — для сущности kubernetes’а) и маршруты. Сервисы складывают общую информацию в redis/memcached/postgresql/kafka/whatever, за счёт чего и происходит косвенное взаимодействие. И тут появилась необходимость прямого взаимодействия между сервисами. Благодаря тому, что приложение написано на elixir’е, вариантов оказалось не один, а два, а именно: Общение через реализацию протоколов (grpc и co.) Общение через OTP На второй вариант выбор пал по двум причинам: Лень Некогда имплементить (или прикручивать готовую реализацию) всяких grpc. Ну ерланги жеж, надо всё как у модных людей, в конце концов. И если на уровне erlang’а всё оказалось очень просто, то на уровне инфраструктуры пришлось городить всякое разное. Идеальный мир Итак, для идеального мира нам нужно иметь заранее известные DN для всех инстансов всех сервисов, которые автоматически доставляются куда нужно и как нужно, а между сервисами есть полная сетевая связность (можно установить tcp-соединение между любыми приложениями по любому порту). После чего остаётся только запустить ноду: ERL_OPTIONS=&quot;-name ${SNAME}@${HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Ну и в самой ноде можно спокойно выполнить: Node.ping(:&quot;some_other_node@some.other.domain.name&quot;) # =&gt; :pong Но приложение наше развёрнуто было не в идеальном мире с понями и вежливыми девопсами, а в кубернетисах. Увы. Доступность по доменным именам Итак, первая проблема: доменные имена при использовании deploymentconfig’ов динамические. Причём discovery-сервис не очень получится использовать, потому что erlang-ноде нужно знать внешний адрес при старте. Ну то есть не совсем. Если мы используем service’ы, то мы можем получить один DN для конкретного deploymentconfig’а. Но что если мы какой-то dc замасштабируем? Куда пойдёт соединение? Для этого сервисы необходимо разделить на две группы: Ожидающие соединения Инициирующие соединие Ожидающие соединения Тут всё достаточно просто, но тупо и с ограничениями. Ожидающие соединения сервисы мы не масштабируем. Таком образом единственный инстанс будет доступен по DN service’а вроде вот такого: exclusive-service.project.svc.cluster.local. Далее запускаем приложение с заранее известным DN (в данном случае я решил не переназначать HOSTNAME, а использовать отдельную переменную CLUSTER_HOSTNAME): ERL_OPTIONS=&quot;-name ${SNAME}@${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Инициирующие соединение Тут всё ещё проще: достаточно запустить процесс с любым FQDN (чтобы erlang запустился в FQDN-режиме). Но я предпочёл оставить дырку для дебага. Конкретные поды доступны (через service’ы) по адресам &lt;pod-name&gt;.&lt;service-dn&gt;, например pod-12345-qwerty.non-exclusive-service.project.svc.cluster.local. Но заранее мы знаем только service-dn, а pod-name прилетает при старте в переменной HOSTNAME. Что делаем? Составляем эффективный DN при старте: ERL_OPTIONS=&quot;-name ${SNAME}@${HOSTNAME}.${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Таким образом если за одним сервисом окажется два инстанса, мы сможем обратиться к каждому по конкретному имени. Можно использовать эту технику с service-discovery. Я использую этот способ просто для дебага (залезть с одной ноды на другую и чего-нибудь дёрнуть). Порты Проблема вторая: проброс портов. Порта нам нужно пробросить два: один для empd, второй для erlang-процесса. empd Тут всё просто. epmd использует для входящих соединений порт 4369. Его-то в service’ах и открываем: apiVersion: v1 kind: Service # ... spec: ports: - name: epmd port: 4369 protocol: TCP targetPort: 4369 selector: deploymentconfig: some-service # ... Erlang-процесс Тут всё интереснее. Каждый erlang-процесс при старте начинает слушать на каком-то случайном порту входящие OTP-соединения и регистрируется в epmd. При исходящих соединениях erlang-процесс коннектится к epmd на целевой машине и спрашивает: “На каком порту у тебя работает такой-то процесс?” И если с подключением к epmd вопрос решён, то со “случайным” портом нужно что-то придумывать. Увы, открыть все 65535 портов — такая себе идея. По крайней мере я не нашёл в документации способа написать “а вот тут открой вообще все порты”. Только отображение один-в-один. Для того, чтобы обеспечить возможность соединения необходимо открыть какой-нибудь один порт и заставить erlang-процесс слушать именно на нём. Первое делается достаточно просто: apiVersion: v1 kind: Service # ... spec: ports: - name: erlang-process port: 43691 protocol: TCP targetPort: 43691 selector: deploymentconfig: some-service # ... А для второго используем опции запуска inet_dist_listen_min и inet_dist_listen_max, которые задают диапазон используемых портов, чтобы оставить один единственный порт: ERL_PORT=43691 ERL_KERNEL_OPTIONS=&quot;-kernel inet_dist_listen_min ${ERL_PORT} inet_dist_listen_max ${ERL_PORT}&quot; ERL_OPTIONS=&quot;-name ${SNAME}@${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE} ${ERL_KERNEL_OPTIONS}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt И вуаля, erlang-процессы запущены и могут связаться друг с другом! Очевидно, что с таким подходом запустить неизвестное заранее количество erlang-процессов в одном контейнере мы не сможем. Но для того контейнеры и нужны же, чтобы один процесс запускать. Конечно, в случае одного заранее известного процесса можно жить и вообще без epmd, но для этого нужно было бы писать (копипастить) лишний код. Заключение Данный подход расписан для случая с deploymentconfig’ами. Есть подход с использованием StatefulSet’ов (как пример организации), который в теории круче, но у меня уже было готовое приложение и на его пересборку с даунтаймом никто бы не подписался." />
+<meta property="og:description" content="Зачем? Потому что могу. Потому что это был самый адекватный организовать общение между сервисами. А так как я пейсатель на еликсиряхъ, то пояснения буду приводить на них (шучу, примеров кода не будет). Исходники Для организации подхода использовались статьи: Erlang (and Elixir) distribution without epmd (больше для понимания происходящего) Clustering Elixir/Erlang applications in Kubernetes (как пример организации) Начнём Итак, ситуация: готовое приложение на N сервисов (где N ≤ 10), развёрнутое в кубернетисах (на самом деле в шифтах, но не суть) в качестве набора deploymentconfig’ов, на нужные сервисы развёрнуты service’ы (слово “сервис” буду использовать для частей приложения, а “service” — для сущности kubernetes’а) и маршруты. Сервисы складывают общую информацию в redis/memcached/postgresql/kafka/whatever, за счёт чего и происходит косвенное взаимодействие. И тут появилась необходимость прямого взаимодействия между сервисами. Благодаря тому, что приложение написано на elixir’е, вариантов оказалось не один, а два, а именно: Общение через реализацию протоколов (grpc и co.) Общение через OTP На второй вариант выбор пал по двум причинам: Лень Некогда имплементить (или прикручивать готовую реализацию) всяких grpc. Ну ерланги жеж, надо всё как у модных людей, в конце концов. И если на уровне erlang’а всё оказалось очень просто, то на уровне инфраструктуры пришлось городить всякое разное. Идеальный мир Итак, для идеального мира нам нужно иметь заранее известные DN для всех инстансов всех сервисов, которые автоматически доставляются куда нужно и как нужно, а между сервисами есть полная сетевая связность (можно установить tcp-соединение между любыми приложениями по любому порту). После чего остаётся только запустить ноду: ERL_OPTIONS=&quot;-name ${SNAME}@${HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Ну и в самой ноде можно спокойно выполнить: Node.ping(:&quot;some_other_node@some.other.domain.name&quot;) # =&gt; :pong Но приложение наше развёрнуто было не в идеальном мире с понями и вежливыми девопсами, а в кубернетисах. Увы. Доступность по доменным именам Итак, первая проблема: доменные имена при использовании deploymentconfig’ов динамические. Причём discovery-сервис не очень получится использовать, потому что erlang-ноде нужно знать внешний адрес при старте. Ну то есть не совсем. Если мы используем service’ы, то мы можем получить один DN для конкретного deploymentconfig’а. Но что если мы какой-то dc замасштабируем? Куда пойдёт соединение? Для этого сервисы необходимо разделить на две группы: Ожидающие соединения Инициирующие соединие Ожидающие соединения Тут всё достаточно просто, но тупо и с ограничениями. Ожидающие соединения сервисы мы не масштабируем. Таком образом единственный инстанс будет доступен по DN service’а вроде вот такого: exclusive-service.project.svc.cluster.local. Далее запускаем приложение с заранее известным DN (в данном случае я решил не переназначать HOSTNAME, а использовать отдельную переменную CLUSTER_HOSTNAME): ERL_OPTIONS=&quot;-name ${SNAME}@${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Инициирующие соединение Тут всё ещё проще: достаточно запустить процесс с любым FQDN (чтобы erlang запустился в FQDN-режиме). Но я предпочёл оставить дырку для дебага. Конкретные поды доступны (через service’ы) по адресам &lt;pod-name&gt;.&lt;service-dn&gt;, например pod-12345-qwerty.non-exclusive-service.project.svc.cluster.local. Но заранее мы знаем только service-dn, а pod-name прилетает при старте в переменной HOSTNAME. Что делаем? Составляем эффективный DN при старте: ERL_OPTIONS=&quot;-name ${SNAME}@${HOSTNAME}.${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Таким образом если за одним сервисом окажется два инстанса, мы сможем обратиться к каждому по конкретному имени. Можно использовать эту технику с service-discovery. Я использую этот способ просто для дебага (залезть с одной ноды на другую и чего-нибудь дёрнуть). Порты Проблема вторая: проброс портов. Порта нам нужно пробросить два: один для empd, второй для erlang-процесса. empd Тут всё просто. epmd использует для входящих соединений порт 4369. Его-то в service’ах и открываем: apiVersion: v1 kind: Service # ... spec: ports: - name: epmd port: 4369 protocol: TCP targetPort: 4369 selector: deploymentconfig: some-service # ... Erlang-процесс Тут всё интереснее. Каждый erlang-процесс при старте начинает слушать на каком-то случайном порту входящие OTP-соединения и регистрируется в epmd. При исходящих соединениях erlang-процесс коннектится к epmd на целевой машине и спрашивает: “На каком порту у тебя работает такой-то процесс?” И если с подключением к epmd вопрос решён, то со “случайным” портом нужно что-то придумывать. Увы, открыть все 65535 портов — такая себе идея. По крайней мере я не нашёл в документации способа написать “а вот тут открой вообще все порты”. Только отображение один-в-один. Для того, чтобы обеспечить возможность соединения необходимо открыть какой-нибудь один порт и заставить erlang-процесс слушать именно на нём. Первое делается достаточно просто: apiVersion: v1 kind: Service # ... spec: ports: - name: erlang-process port: 43691 protocol: TCP targetPort: 43691 selector: deploymentconfig: some-service # ... А для второго используем опции запуска inet_dist_listen_min и inet_dist_listen_max, которые задают диапазон используемых портов, чтобы оставить один единственный порт: ERL_PORT=43691 ERL_KERNEL_OPTIONS=&quot;-kernel inet_dist_listen_min ${ERL_PORT} inet_dist_listen_max ${ERL_PORT}&quot; ERL_OPTIONS=&quot;-name ${SNAME}@${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE} ${ERL_KERNEL_OPTIONS}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt И вуаля, erlang-процессы запущены и могут связаться друг с другом! Очевидно, что с таким подходом запустить неизвестное заранее количество erlang-процессов в одном контейнере мы не сможем. Но для того контейнеры и нужны же, чтобы один процесс запускать. Конечно, в случае одного заранее известного процесса можно жить и вообще без epmd, но для этого нужно было бы писать (копипастить) лишний код. Заключение Данный подход расписан для случая с deploymentconfig’ами. Есть подход с использованием StatefulSet’ов (как пример организации), который в теории круче, но у меня уже было готовое приложение и на его пересборку с даунтаймом никто бы не подписался." />
+<link rel="canonical" href="https://ivalentinee.github.io/ru/programming/2019/10/01/elixir-in-kubernetes.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/ru/programming/2019/10/01/elixir-in-kubernetes.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-10-01T00:00:00+00:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2019/10/01/elixir-in-kubernetes.html"},"description":"Зачем? Потому что могу. Потому что это был самый адекватный организовать общение между сервисами. А так как я пейсатель на еликсиряхъ, то пояснения буду приводить на них (шучу, примеров кода не будет). Исходники Для организации подхода использовались статьи: Erlang (and Elixir) distribution without epmd (больше для понимания происходящего) Clustering Elixir/Erlang applications in Kubernetes (как пример организации) Начнём Итак, ситуация: готовое приложение на N сервисов (где N ≤ 10), развёрнутое в кубернетисах (на самом деле в шифтах, но не суть) в качестве набора deploymentconfig’ов, на нужные сервисы развёрнуты service’ы (слово “сервис” буду использовать для частей приложения, а “service” — для сущности kubernetes’а) и маршруты. Сервисы складывают общую информацию в redis/memcached/postgresql/kafka/whatever, за счёт чего и происходит косвенное взаимодействие. И тут появилась необходимость прямого взаимодействия между сервисами. Благодаря тому, что приложение написано на elixir’е, вариантов оказалось не один, а два, а именно: Общение через реализацию протоколов (grpc и co.) Общение через OTP На второй вариант выбор пал по двум причинам: Лень Некогда имплементить (или прикручивать готовую реализацию) всяких grpc. Ну ерланги жеж, надо всё как у модных людей, в конце концов. И если на уровне erlang’а всё оказалось очень просто, то на уровне инфраструктуры пришлось городить всякое разное. Идеальный мир Итак, для идеального мира нам нужно иметь заранее известные DN для всех инстансов всех сервисов, которые автоматически доставляются куда нужно и как нужно, а между сервисами есть полная сетевая связность (можно установить tcp-соединение между любыми приложениями по любому порту). После чего остаётся только запустить ноду: ERL_OPTIONS=&quot;-name ${SNAME}@${HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Ну и в самой ноде можно спокойно выполнить: Node.ping(:&quot;some_other_node@some.other.domain.name&quot;) # =&gt; :pong Но приложение наше развёрнуто было не в идеальном мире с понями и вежливыми девопсами, а в кубернетисах. Увы. Доступность по доменным именам Итак, первая проблема: доменные имена при использовании deploymentconfig’ов динамические. Причём discovery-сервис не очень получится использовать, потому что erlang-ноде нужно знать внешний адрес при старте. Ну то есть не совсем. Если мы используем service’ы, то мы можем получить один DN для конкретного deploymentconfig’а. Но что если мы какой-то dc замасштабируем? Куда пойдёт соединение? Для этого сервисы необходимо разделить на две группы: Ожидающие соединения Инициирующие соединие Ожидающие соединения Тут всё достаточно просто, но тупо и с ограничениями. Ожидающие соединения сервисы мы не масштабируем. Таком образом единственный инстанс будет доступен по DN service’а вроде вот такого: exclusive-service.project.svc.cluster.local. Далее запускаем приложение с заранее известным DN (в данном случае я решил не переназначать HOSTNAME, а использовать отдельную переменную CLUSTER_HOSTNAME): ERL_OPTIONS=&quot;-name ${SNAME}@${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Инициирующие соединение Тут всё ещё проще: достаточно запустить процесс с любым FQDN (чтобы erlang запустился в FQDN-режиме). Но я предпочёл оставить дырку для дебага. Конкретные поды доступны (через service’ы) по адресам &lt;pod-name&gt;.&lt;service-dn&gt;, например pod-12345-qwerty.non-exclusive-service.project.svc.cluster.local. Но заранее мы знаем только service-dn, а pod-name прилетает при старте в переменной HOSTNAME. Что делаем? Составляем эффективный DN при старте: ERL_OPTIONS=&quot;-name ${SNAME}@${HOSTNAME}.${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt Таким образом если за одним сервисом окажется два инстанса, мы сможем обратиться к каждому по конкретному имени. Можно использовать эту технику с service-discovery. Я использую этот способ просто для дебага (залезть с одной ноды на другую и чего-нибудь дёрнуть). Порты Проблема вторая: проброс портов. Порта нам нужно пробросить два: один для empd, второй для erlang-процесса. empd Тут всё просто. epmd использует для входящих соединений порт 4369. Его-то в service’ах и открываем: apiVersion: v1 kind: Service # ... spec: ports: - name: epmd port: 4369 protocol: TCP targetPort: 4369 selector: deploymentconfig: some-service # ... Erlang-процесс Тут всё интереснее. Каждый erlang-процесс при старте начинает слушать на каком-то случайном порту входящие OTP-соединения и регистрируется в epmd. При исходящих соединениях erlang-процесс коннектится к epmd на целевой машине и спрашивает: “На каком порту у тебя работает такой-то процесс?” И если с подключением к epmd вопрос решён, то со “случайным” портом нужно что-то придумывать. Увы, открыть все 65535 портов — такая себе идея. По крайней мере я не нашёл в документации способа написать “а вот тут открой вообще все порты”. Только отображение один-в-один. Для того, чтобы обеспечить возможность соединения необходимо открыть какой-нибудь один порт и заставить erlang-процесс слушать именно на нём. Первое делается достаточно просто: apiVersion: v1 kind: Service # ... spec: ports: - name: erlang-process port: 43691 protocol: TCP targetPort: 43691 selector: deploymentconfig: some-service # ... А для второго используем опции запуска inet_dist_listen_min и inet_dist_listen_max, которые задают диапазон используемых портов, чтобы оставить один единственный порт: ERL_PORT=43691 ERL_KERNEL_OPTIONS=&quot;-kernel inet_dist_listen_min ${ERL_PORT} inet_dist_listen_max ${ERL_PORT}&quot; ERL_OPTIONS=&quot;-name ${SNAME}@${CLUSTER_HOSTNAME} -setcookie ${ERLANG_COOKIE} ${ERL_KERNEL_OPTIONS}&quot; elixir --erl &quot;${ERL_OPTIONS}&quot; -S mix run --no-halt И вуаля, erlang-процессы запущены и могут связаться друг с другом! Очевидно, что с таким подходом запустить неизвестное заранее количество erlang-процессов в одном контейнере мы не сможем. Но для того контейнеры и нужны же, чтобы один процесс запускать. Конечно, в случае одного заранее известного процесса можно жить и вообще без epmd, но для этого нужно было бы писать (копипастить) лишний код. Заключение Данный подход расписан для случая с deploymentconfig’ами. Есть подход с использованием StatefulSet’ов (как пример организации), который в теории круче, но у меня уже было готовое приложение и на его пересборку с даунтаймом никто бы не подписался.","@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2019/10/01/elixir-in-kubernetes.html","headline":"Еликсиръ в кубернетисах","dateModified":"2019-10-01T00:00:00+00:00","datePublished":"2019-10-01T00:00:00+00:00","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/ru/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+            
+          
+            
+            
+              
+                <a class="page-link" href="/ru/about/">Обо мне</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Еликсиръ в кубернетисах</h1>
+    <p class="post-meta">
+      <time datetime="2019-10-01T00:00:00+00:00" itemprop="datePublished">
+        
+        Oct 1, 2019
+      </time>
+      </p>
+  </header>
+
+          <div class="language-selector">
+          <a href="/en/programming/2020/08/22/elixir-in-kubernetes.html" class="language-selector-link">English</a><span class="language-selector-separator">|</span><span class="language-selector-link">Русский</span>
+        </div>
+
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="зачем">Зачем?</h2>
+<p>Потому что могу. Потому что это был самый адекватный организовать общение между сервисами.</p>
+
+<p>А так как я пейсатель на еликсиряхъ, то пояснения буду приводить на них (шучу, примеров кода не будет).</p>
+
+<h2 id="исходники">Исходники</h2>
+<p>Для организации подхода использовались статьи:</p>
+<ul>
+  <li><a href="https://www.erlang-solutions.com/blog/erlang-and-elixir-distribution-without-epmd.html">Erlang (and Elixir) distribution without epmd</a> (больше для понимания происходящего)</li>
+  <li><a href="https://blog.ispirata.com/clustering-elixir-erlang-applications-in-kubernetes-part-1-the-theory-ca658acbf101">Clustering Elixir/Erlang applications in Kubernetes</a> (как пример организации)</li>
+</ul>
+
+<h2 id="начнём">Начнём</h2>
+<p>Итак, ситуация: готовое приложение на N сервисов (где N ≤ 10), развёрнутое в кубернетисах (на самом деле в <a href="https://www.openshift.com/">шифтах</a>, но не суть) в качестве набора deploymentconfig’ов, на нужные сервисы развёрнуты <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service’ы</a> (слово “сервис” буду использовать для частей приложения, а “service” — для сущности kubernetes’а) и <a href="https://docs.openshift.com/enterprise/3.0/architecture/core_concepts/routes.html">маршруты</a>. Сервисы складывают общую информацию в redis/memcached/postgresql/kafka/whatever, за счёт чего и происходит косвенное взаимодействие.</p>
+
+<p>И тут появилась необходимость прямого взаимодействия между сервисами. Благодаря тому, что приложение написано на elixir’е, вариантов оказалось не один, а два, а именно:</p>
+<ol>
+  <li>Общение через реализацию протоколов (grpc и co.)</li>
+  <li>Общение через <a href="https://ru.wikipedia.org/wiki/Open_Telecom_Platform">OTP</a></li>
+</ol>
+
+<p>На второй вариант выбор пал по двум причинам:</p>
+<ol>
+  <li><del>Лень</del> Некогда имплементить (или прикручивать готовую реализацию) всяких grpc.</li>
+  <li>Ну ерланги жеж, надо всё как у модных людей, в конце концов.</li>
+</ol>
+
+<p>И если на уровне erlang’а всё оказалось <a href="http://erlang.org/doc/reference_manual/distributed.html">очень просто</a>, то на уровне инфраструктуры пришлось городить всякое разное.</p>
+
+<h2 id="идеальный-мир">Идеальный мир</h2>
+<p>Итак, для идеального мира нам нужно иметь <strong>заранее известные</strong> <a href="https://en.wikipedia.org/wiki/Domain_name">DN</a> для всех инстансов всех сервисов, которые автоматически доставляются куда нужно и как нужно, а между сервисами есть полная сетевая связность (можно установить tcp-соединение между любыми приложениями по любому порту).</p>
+
+<p>После чего остаётся только запустить ноду:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ERL_OPTIONS</span><span class="o">=</span><span class="s2">"-name </span><span class="k">${</span><span class="nv">SNAME</span><span class="k">}</span><span class="s2">@</span><span class="k">${</span><span class="nv">HOSTNAME</span><span class="k">}</span><span class="s2"> -setcookie </span><span class="k">${</span><span class="nv">ERLANG_COOKIE</span><span class="k">}</span><span class="s2">"</span>
+elixir <span class="nt">--erl</span> <span class="s2">"</span><span class="k">${</span><span class="nv">ERL_OPTIONS</span><span class="k">}</span><span class="s2">"</span> <span class="nt">-S</span> mix run <span class="nt">--no-halt</span>
+</code></pre></div></div>
+
+<p>Ну и в самой ноде можно спокойно выполнить:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Node</span><span class="o">.</span><span class="n">ping</span><span class="p">(</span><span class="ss">:"some_other_node@some.other.domain.name"</span><span class="p">)</span>
+<span class="c1"># =&gt; :pong</span>
+</code></pre></div></div>
+
+<p>Но приложение наше развёрнуто было не в идеальном мире с понями и вежливыми девопсами, а в кубернетисах. Увы.</p>
+
+<h2 id="доступность-по-доменным-именам">Доступность по доменным именам</h2>
+<p>Итак, первая проблема: доменные имена при использовании deploymentconfig’ов <strong>динамические</strong>. Причём discovery-сервис не очень получится использовать, потому что erlang-ноде нужно знать внешний адрес при старте.</p>
+
+<p>Ну то есть не совсем.</p>
+
+<p>Если мы используем <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service’ы</a>, то мы можем получить один DN для конкретного deploymentconfig’а. Но что если мы какой-то dc замасштабируем? Куда пойдёт соединение?</p>
+
+<p>Для этого сервисы необходимо разделить на две группы:</p>
+<ol>
+  <li>Ожидающие соединения</li>
+  <li>Инициирующие соединие</li>
+</ol>
+
+<h3 id="ожидающие-соединения">Ожидающие соединения</h3>
+<p>Тут всё достаточно просто, но тупо и с ограничениями.</p>
+
+<p>Ожидающие соединения сервисы мы <strong>не масштабируем</strong>.</p>
+
+<p>Таком образом единственный инстанс будет доступен по DN <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service’а</a> вроде вот такого: <code class="highlighter-rouge">exclusive-service.project.svc.cluster.local</code>.</p>
+
+<p>Далее запускаем приложение с заранее известным DN (в данном случае я решил не переназначать <code class="highlighter-rouge">HOSTNAME</code>, а использовать отдельную переменную <code class="highlighter-rouge">CLUSTER_HOSTNAME</code>):</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ERL_OPTIONS</span><span class="o">=</span><span class="s2">"-name </span><span class="k">${</span><span class="nv">SNAME</span><span class="k">}</span><span class="s2">@</span><span class="k">${</span><span class="nv">CLUSTER_HOSTNAME</span><span class="k">}</span><span class="s2"> -setcookie </span><span class="k">${</span><span class="nv">ERLANG_COOKIE</span><span class="k">}</span><span class="s2">"</span>
+elixir <span class="nt">--erl</span> <span class="s2">"</span><span class="k">${</span><span class="nv">ERL_OPTIONS</span><span class="k">}</span><span class="s2">"</span> <span class="nt">-S</span> mix run <span class="nt">--no-halt</span>
+</code></pre></div></div>
+
+<h3 id="инициирующие-соединение">Инициирующие соединение</h3>
+<p>Тут всё ещё проще: достаточно запустить процесс с любым FQDN (чтобы erlang запустился в FQDN-режиме). Но я предпочёл оставить дырку для дебага.</p>
+
+<p>Конкретные <a href="https://kubernetes.io/docs/concepts/workloads/pods/pod/">поды</a> доступны (через <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service’ы</a>) по адресам <code class="highlighter-rouge">&lt;pod-name&gt;.&lt;service-dn&gt;</code>, например <code class="highlighter-rouge">pod-12345-qwerty.non-exclusive-service.project.svc.cluster.local</code>. Но заранее мы знаем только <code class="highlighter-rouge">service-dn</code>, а <code class="highlighter-rouge">pod-name</code> прилетает при старте в переменной <code class="highlighter-rouge">HOSTNAME</code>.</p>
+
+<p>Что делаем? Составляем эффективный DN при старте:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ERL_OPTIONS</span><span class="o">=</span><span class="s2">"-name </span><span class="k">${</span><span class="nv">SNAME</span><span class="k">}</span><span class="s2">@</span><span class="k">${</span><span class="nv">HOSTNAME</span><span class="k">}</span><span class="s2">.</span><span class="k">${</span><span class="nv">CLUSTER_HOSTNAME</span><span class="k">}</span><span class="s2"> -setcookie </span><span class="k">${</span><span class="nv">ERLANG_COOKIE</span><span class="k">}</span><span class="s2">"</span>
+elixir <span class="nt">--erl</span> <span class="s2">"</span><span class="k">${</span><span class="nv">ERL_OPTIONS</span><span class="k">}</span><span class="s2">"</span> <span class="nt">-S</span> mix run <span class="nt">--no-halt</span>
+</code></pre></div></div>
+
+<p>Таким образом если за одним сервисом окажется два инстанса, мы сможем обратиться к каждому по конкретному имени. Можно использовать эту технику с service-discovery. Я использую этот способ просто для дебага (залезть с одной ноды на другую и чего-нибудь дёрнуть).</p>
+
+<h2 id="порты">Порты</h2>
+<p>Проблема вторая: проброс портов. Порта нам нужно пробросить два: один для <a href="https://erlang.org/doc/man/epmd.html">empd</a>, второй для erlang-процесса.</p>
+
+<h3 id="empd">empd</h3>
+<p>Тут всё просто.</p>
+
+<p><a href="http://erlang.org/doc/man/epmd.html">epmd</a> использует для входящих соединений порт <code class="highlighter-rouge">4369</code>. Его-то в <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service’ах</a> и открываем:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="c1"># ...</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">epmd</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="s">4369</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">4369</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">deploymentconfig</span><span class="pi">:</span> <span class="s">some-service</span>
+<span class="c1"># ...</span>
+</code></pre></div></div>
+
+<h3 id="erlang-процесс">Erlang-процесс</h3>
+<p>Тут всё интереснее. Каждый erlang-процесс при старте начинает слушать на каком-то случайном порту входящие OTP-соединения и регистрируется в epmd. При исходящих соединениях erlang-процесс коннектится к epmd на целевой машине и спрашивает: “На каком порту у тебя работает такой-то процесс?”</p>
+
+<p>И если с подключением к epmd вопрос решён, то со “случайным” портом нужно что-то придумывать.</p>
+
+<p>Увы, открыть все 65535 портов — такая себе идея. По крайней мере я не нашёл в документации способа написать “а вот тут открой вообще все порты”. Только отображение один-в-один.</p>
+
+<p>Для того, чтобы обеспечить возможность соединения необходимо открыть какой-нибудь один порт и заставить erlang-процесс слушать именно на нём.</p>
+
+<p>Первое делается достаточно просто:</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">apiVersion</span><span class="pi">:</span> <span class="s">v1</span>
+<span class="na">kind</span><span class="pi">:</span> <span class="s">Service</span>
+<span class="c1"># ...</span>
+<span class="na">spec</span><span class="pi">:</span>
+  <span class="na">ports</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">erlang-process</span>
+      <span class="na">port</span><span class="pi">:</span> <span class="s">43691</span>
+      <span class="na">protocol</span><span class="pi">:</span> <span class="s">TCP</span>
+      <span class="na">targetPort</span><span class="pi">:</span> <span class="s">43691</span>
+  <span class="na">selector</span><span class="pi">:</span>
+    <span class="na">deploymentconfig</span><span class="pi">:</span> <span class="s">some-service</span>
+<span class="c1"># ...</span>
+</code></pre></div></div>
+
+<p>А для второго используем опции запуска <code class="highlighter-rouge">inet_dist_listen_min</code> и <code class="highlighter-rouge">inet_dist_listen_max</code>, которые задают диапазон используемых портов, чтобы оставить один единственный порт:</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">ERL_PORT</span><span class="o">=</span>43691
+<span class="nv">ERL_KERNEL_OPTIONS</span><span class="o">=</span><span class="s2">"-kernel inet_dist_listen_min </span><span class="k">${</span><span class="nv">ERL_PORT</span><span class="k">}</span><span class="s2"> inet_dist_listen_max </span><span class="k">${</span><span class="nv">ERL_PORT</span><span class="k">}</span><span class="s2">"</span>
+<span class="nv">ERL_OPTIONS</span><span class="o">=</span><span class="s2">"-name </span><span class="k">${</span><span class="nv">SNAME</span><span class="k">}</span><span class="s2">@</span><span class="k">${</span><span class="nv">CLUSTER_HOSTNAME</span><span class="k">}</span><span class="s2"> -setcookie </span><span class="k">${</span><span class="nv">ERLANG_COOKIE</span><span class="k">}</span><span class="s2"> </span><span class="k">${</span><span class="nv">ERL_KERNEL_OPTIONS</span><span class="k">}</span><span class="s2">"</span>
+elixir <span class="nt">--erl</span> <span class="s2">"</span><span class="k">${</span><span class="nv">ERL_OPTIONS</span><span class="k">}</span><span class="s2">"</span> <span class="nt">-S</span> mix run <span class="nt">--no-halt</span>
+</code></pre></div></div>
+
+<p>И вуаля, erlang-процессы запущены и могут связаться друг с другом!</p>
+
+<p>Очевидно, что с таким подходом запустить неизвестное заранее количество erlang-процессов в одном контейнере мы не сможем. Но для того контейнеры и нужны же, чтобы один процесс запускать.</p>
+
+<p>Конечно, в случае одного заранее известного процесса можно жить и <a href="https://www.erlang-solutions.com/blog/erlang-and-elixir-distribution-without-epmd.html">вообще без epmd</a>, но для этого нужно было бы писать (копипастить) лишний код.</p>
+
+<h2 id="заключение">Заключение</h2>
+<p>Данный подход расписан для случая с deploymentconfig’ами. Есть подход <a href="https://blog.ispirata.com/clustering-elixir-erlang-applications-in-kubernetes-part-1-the-theory-ca658acbf101">с использованием StatefulSet’ов</a> (как пример организации), который в теории круче, но у меня уже было готовое приложение и на его пересборку с даунтаймом никто бы не подписался.</p>
+
+  </div>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

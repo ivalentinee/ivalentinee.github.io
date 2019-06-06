@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Pipelining graph execution | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Pipelining graph execution" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Introduction There’re two things I need to describe before describing actual solution. Why graphs and optimization criteria are like this Because that’s a solution that I wanted to suggest at work (for a well-described problem), but the solution will probably be rejected. So the problem is not very abstract. Why don’t I refer to other solutions The problem at hand is very specific, and, despite it being (as I believe) very common for some systems (say, optimizations for compilers), finding any solutions will take a lot of time (and a lot of reading). I have just one week, and I’m not an expert on optimizing program execution. Also, as my solution won’t actually be used anywhere, why not to try to invent a wheel just to do a mental exercise? The problem Can be described as “execution graph pipelining and optimization”, but that’s just the tip of the iceberg. What graphs are Graphs to be discussed are what I call “execution graphs”. These graphs follow these rules: Graphs are not planar. Edges are directional There’s only one output (final result) node, but there’re many input nodes. Every possible path can only contain one reference to each node in that path. i.e. there’re no cyclic dependencies. Thus CFG-based solutions are not relevant – there’re no “control” nodes. Every node (except input nodes and output node) can have multiple inputs and multiple outputs. That makes it a bit different from common AST, because those have only one output per node. (This one is obvious, but) no node can start execution before all of it’s dependencies (node inputs) are resolved. Every node returns all values at once, so, once node finished executing – all it’s outputs are available. There’re “external nodes” (E-nodes), that could not be executed within the system. For example, filesystem reads or external execution systems. Some specifics Nodes operate on “reasonably” large chunks of data: ~100mb each, which makes passing them through like plain values (say, uint32 numbers) not an option and these chunks should be stored in (pre)allocated buffers. All chunks of data are of the same size (or could be easily padded to be) Each node internal memory and computation consumption is not considered. It’s rare that some graph contains more than 50 nodes, with potential cap at 100 nodes. For now. What I’m trying to achieve There’re multiple goals, described in order of importance Grouped E-node execution, so that context switching (between internal and external execution) is minimized. Static execution. No dynamic allocations, no dynamic execution. Strong execution plan and exact amount of memory preallocated. Memory optimization. Do not allocate memory for every node result, but only those required for next node(s) execution. Potentially parallelization. If some (sub)paths have the same input or external dependencies, but no interconnections, execute these subpaths concurrently. Potentially E-node result caching if these are considered expensive. There’s one thing to have in mind: compilation time and memory consumption is not pretty critical, because such compilation will be performed way less often than graph execution. The solution Grouping E-nodes and internal nodes (I-nodes) The simplest solution to the problem of static execution is graph linearization, because there’re too many algorythms designed for 1-dimensional structures (lists). But, without further analysis it could not be executed concurrently. Primitive linearization could be achieved by simply ordering nodes by dependencies like this: If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B). If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A). If neither node A nor node B depend on one another they are considered equal order-wise (A ⊥ B -&gt; A == B). By definition they could not depend on each other, so the rule above will ensure any node is executed after it’s dependencies. That condition could be further expanded to group E-nodes: If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B). If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A). If node A is an internal node and B is an E-node, node A should be placed after node B (A: E-node, B: I-node -&gt; A &gt; B). If node B is an internal node and A is an E-node, node B should be placed after node A (B: E-node, A: I-node -&gt; B &gt; A). If neither node A nor node B depend on one another and have the same type they are considered equal order-wise (A ⊥ B -&gt; A == B). Since input nodes are not fully “executed” (they only contain input values), they could be excluded from that ordering and put in any order at the beginning of the list. Since E-nodes are grouped, it makes sense to build plans for each internal-node block. So, top-level plan will contain alternating blocks of internal nodes (I-blocks) and E-nodes (E-blocks). Naive planning and memory management Obviously, memory management only should be done for I-blocks. At the beginning of every internal-node block data should be “imported” into memory from either some initial data or I-block results (which are stored), then, at the end of I-block, it should be exported from memory to storage (making it possible to either output final result or execute E-nodes). For naive case we assume, that every operation is non-destructive – does not change data in input buffers. Then, simplest method of getting some preallocated memory and strong plan would be to use dynamic “dry run” with these rules: Buffers will be managed by using “dynamic” pool to which we can add, but not remove. Initially it’s empty. Buffers containing data should be marked with node and output name the data came from. Empty buffers will be marked as “empty”. Every input node will put data into a new buffer (thus, +1 buffer per input node). The system will need to provide a buffer per each requested output for every node when executing that node (getting requested outputs is pretty simple – won’t describe it here). If there’re free buffers – these buffers should be used, otherwise a new buffer should be added to the pool. Every time buffer is not used as an input in non-finished I-block node it’s considered “free” and should be emptied – either by just marking it as free, or by explicitly running nullifying procedure on that buffer. Such check should be executed after each node execution. When all nodes are finished – nonempty buffers should be “exported” to storage as I-block result. When building the final plan, all allocations should be moved to the beginning. So, a simple set of commands could be used: Allocate buffer (id: $buffer_id) (or Allocate buffers if that is possible) Import (from: $node_id, output_name: $output_name, to: $buffer_id) Run node (inputs: {$input_name: $buffer_id, ...}, outputs: {$output_name: $buffer_id, ...}) Free buffer (buffer: $buffer_id), which will do nothing if all node implementations fully rewrite buffer content Export (from: $buffer_id, node_id: $node_id, output_name: $output_name) Where all $ marked values will be inlined by the compiler when performing dry run. Resulting plan for that graph will look like this: Allocate buffers | {&quot;count&quot;: 5} Import node data | {&quot;node&quot;: &quot;1&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 0} Import node data | {&quot;node&quot;: &quot;2&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 1} Import node data | {&quot;node&quot;: &quot;3&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 2} Run node | {&quot;node&quot;: &quot;4&quot;, &quot;input&quot;: {&quot;data&quot;: 0}, &quot;output&quot;: {&quot;another data&quot;: 3, &quot;data&quot;: 4}} Free buffer | {&quot;id&quot;: 0} Run node | {&quot;node&quot;: &quot;5&quot;, &quot;input&quot;: {&quot;data 1&quot;: 1, &quot;data 2&quot;: 2}, &quot;output&quot;: {&quot;data&quot;: 0}} Free buffer | {&quot;id&quot;: 1} Free buffer | {&quot;id&quot;: 2} Run node | {&quot;node&quot;: &quot;6&quot;, &quot;input&quot;: {&quot;data&quot;: 4}, &quot;output&quot;: {&quot;data&quot;: 1}} Free buffer | {&quot;id&quot;: 4} Run node | {&quot;node&quot;: &quot;7&quot;, &quot;input&quot;: {&quot;data&quot;: 3}, &quot;output&quot;: {&quot;data&quot;: 2}} Free buffer | {&quot;id&quot;: 3} Run node | {&quot;node&quot;: &quot;8&quot;, &quot;input&quot;: {&quot;data&quot;: 0}, &quot;output&quot;: {&quot;data&quot;: 3}} Free buffer | {&quot;id&quot;: 0} Run node | {&quot;node&quot;: &quot;9&quot;, &quot;input&quot;: {&quot;data&quot;: 1}, &quot;output&quot;: {&quot;data&quot;: 0}} Free buffer | {&quot;id&quot;: 1} Run node | {&quot;node&quot;: &quot;10&quot;, &quot;input&quot;: {&quot;data 1&quot;: 2, &quot;data 2&quot;: 3}, &quot;output&quot;: {&quot;data&quot;: 1}} Free buffer | {&quot;id&quot;: 2} Free buffer | {&quot;id&quot;: 3} Run node | {&quot;node&quot;: &quot;11&quot;, &quot;input&quot;: {&quot;data 1&quot;: 0, &quot;data 2&quot;: 1}, &quot;output&quot;: {&quot;data&quot;: 2}} Export node data | {&quot;from&quot;: 2, &quot;node&quot;: &quot;11&quot;, &quot;output_name&quot;: &quot;data&quot;} As you can see, it’s a bit unoptimal: there’s no need to free buffers at the end of execution, potentially too many buffers allocated, but that’s why it’s called “naive”: it does the thing the simplest way possible. Real planning and memory management Now, that’s really complicated. Each node can have multiple inputs and multiple outputs. Not only that, node behaviour per-input and per-output might be different depending on the implementation: Destructively put output to one of input buffers thus losing all the original data stored in input buffer. Generating such output does not require additional “output” buffer. Non-destructively put output to a new buffer. While original values are not overritten and could be used in another node, this will require additional buffer for that output. Both situations depending on requested outputs for a single node. The exact behaviour should then be described in node spec. That makes things messed up, because if, for example, there’re two nodes using some output destructively, the system should make a copy of an output to another buffer. If, on the other hand, no nodes use some output destructively, after all non-destructive nodes using the output are done, that output buffer should be reused. For now I do not have enough time to come up with appropriate solution, please use the “naive” one that does not support destructive nodes. TBD Do something on parallelization Support finite non-conditional (enumerated) loops." />
+<meta property="og:description" content="Introduction There’re two things I need to describe before describing actual solution. Why graphs and optimization criteria are like this Because that’s a solution that I wanted to suggest at work (for a well-described problem), but the solution will probably be rejected. So the problem is not very abstract. Why don’t I refer to other solutions The problem at hand is very specific, and, despite it being (as I believe) very common for some systems (say, optimizations for compilers), finding any solutions will take a lot of time (and a lot of reading). I have just one week, and I’m not an expert on optimizing program execution. Also, as my solution won’t actually be used anywhere, why not to try to invent a wheel just to do a mental exercise? The problem Can be described as “execution graph pipelining and optimization”, but that’s just the tip of the iceberg. What graphs are Graphs to be discussed are what I call “execution graphs”. These graphs follow these rules: Graphs are not planar. Edges are directional There’s only one output (final result) node, but there’re many input nodes. Every possible path can only contain one reference to each node in that path. i.e. there’re no cyclic dependencies. Thus CFG-based solutions are not relevant – there’re no “control” nodes. Every node (except input nodes and output node) can have multiple inputs and multiple outputs. That makes it a bit different from common AST, because those have only one output per node. (This one is obvious, but) no node can start execution before all of it’s dependencies (node inputs) are resolved. Every node returns all values at once, so, once node finished executing – all it’s outputs are available. There’re “external nodes” (E-nodes), that could not be executed within the system. For example, filesystem reads or external execution systems. Some specifics Nodes operate on “reasonably” large chunks of data: ~100mb each, which makes passing them through like plain values (say, uint32 numbers) not an option and these chunks should be stored in (pre)allocated buffers. All chunks of data are of the same size (or could be easily padded to be) Each node internal memory and computation consumption is not considered. It’s rare that some graph contains more than 50 nodes, with potential cap at 100 nodes. For now. What I’m trying to achieve There’re multiple goals, described in order of importance Grouped E-node execution, so that context switching (between internal and external execution) is minimized. Static execution. No dynamic allocations, no dynamic execution. Strong execution plan and exact amount of memory preallocated. Memory optimization. Do not allocate memory for every node result, but only those required for next node(s) execution. Potentially parallelization. If some (sub)paths have the same input or external dependencies, but no interconnections, execute these subpaths concurrently. Potentially E-node result caching if these are considered expensive. There’s one thing to have in mind: compilation time and memory consumption is not pretty critical, because such compilation will be performed way less often than graph execution. The solution Grouping E-nodes and internal nodes (I-nodes) The simplest solution to the problem of static execution is graph linearization, because there’re too many algorythms designed for 1-dimensional structures (lists). But, without further analysis it could not be executed concurrently. Primitive linearization could be achieved by simply ordering nodes by dependencies like this: If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B). If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A). If neither node A nor node B depend on one another they are considered equal order-wise (A ⊥ B -&gt; A == B). By definition they could not depend on each other, so the rule above will ensure any node is executed after it’s dependencies. That condition could be further expanded to group E-nodes: If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B). If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A). If node A is an internal node and B is an E-node, node A should be placed after node B (A: E-node, B: I-node -&gt; A &gt; B). If node B is an internal node and A is an E-node, node B should be placed after node A (B: E-node, A: I-node -&gt; B &gt; A). If neither node A nor node B depend on one another and have the same type they are considered equal order-wise (A ⊥ B -&gt; A == B). Since input nodes are not fully “executed” (they only contain input values), they could be excluded from that ordering and put in any order at the beginning of the list. Since E-nodes are grouped, it makes sense to build plans for each internal-node block. So, top-level plan will contain alternating blocks of internal nodes (I-blocks) and E-nodes (E-blocks). Naive planning and memory management Obviously, memory management only should be done for I-blocks. At the beginning of every internal-node block data should be “imported” into memory from either some initial data or I-block results (which are stored), then, at the end of I-block, it should be exported from memory to storage (making it possible to either output final result or execute E-nodes). For naive case we assume, that every operation is non-destructive – does not change data in input buffers. Then, simplest method of getting some preallocated memory and strong plan would be to use dynamic “dry run” with these rules: Buffers will be managed by using “dynamic” pool to which we can add, but not remove. Initially it’s empty. Buffers containing data should be marked with node and output name the data came from. Empty buffers will be marked as “empty”. Every input node will put data into a new buffer (thus, +1 buffer per input node). The system will need to provide a buffer per each requested output for every node when executing that node (getting requested outputs is pretty simple – won’t describe it here). If there’re free buffers – these buffers should be used, otherwise a new buffer should be added to the pool. Every time buffer is not used as an input in non-finished I-block node it’s considered “free” and should be emptied – either by just marking it as free, or by explicitly running nullifying procedure on that buffer. Such check should be executed after each node execution. When all nodes are finished – nonempty buffers should be “exported” to storage as I-block result. When building the final plan, all allocations should be moved to the beginning. So, a simple set of commands could be used: Allocate buffer (id: $buffer_id) (or Allocate buffers if that is possible) Import (from: $node_id, output_name: $output_name, to: $buffer_id) Run node (inputs: {$input_name: $buffer_id, ...}, outputs: {$output_name: $buffer_id, ...}) Free buffer (buffer: $buffer_id), which will do nothing if all node implementations fully rewrite buffer content Export (from: $buffer_id, node_id: $node_id, output_name: $output_name) Where all $ marked values will be inlined by the compiler when performing dry run. Resulting plan for that graph will look like this: Allocate buffers | {&quot;count&quot;: 5} Import node data | {&quot;node&quot;: &quot;1&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 0} Import node data | {&quot;node&quot;: &quot;2&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 1} Import node data | {&quot;node&quot;: &quot;3&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 2} Run node | {&quot;node&quot;: &quot;4&quot;, &quot;input&quot;: {&quot;data&quot;: 0}, &quot;output&quot;: {&quot;another data&quot;: 3, &quot;data&quot;: 4}} Free buffer | {&quot;id&quot;: 0} Run node | {&quot;node&quot;: &quot;5&quot;, &quot;input&quot;: {&quot;data 1&quot;: 1, &quot;data 2&quot;: 2}, &quot;output&quot;: {&quot;data&quot;: 0}} Free buffer | {&quot;id&quot;: 1} Free buffer | {&quot;id&quot;: 2} Run node | {&quot;node&quot;: &quot;6&quot;, &quot;input&quot;: {&quot;data&quot;: 4}, &quot;output&quot;: {&quot;data&quot;: 1}} Free buffer | {&quot;id&quot;: 4} Run node | {&quot;node&quot;: &quot;7&quot;, &quot;input&quot;: {&quot;data&quot;: 3}, &quot;output&quot;: {&quot;data&quot;: 2}} Free buffer | {&quot;id&quot;: 3} Run node | {&quot;node&quot;: &quot;8&quot;, &quot;input&quot;: {&quot;data&quot;: 0}, &quot;output&quot;: {&quot;data&quot;: 3}} Free buffer | {&quot;id&quot;: 0} Run node | {&quot;node&quot;: &quot;9&quot;, &quot;input&quot;: {&quot;data&quot;: 1}, &quot;output&quot;: {&quot;data&quot;: 0}} Free buffer | {&quot;id&quot;: 1} Run node | {&quot;node&quot;: &quot;10&quot;, &quot;input&quot;: {&quot;data 1&quot;: 2, &quot;data 2&quot;: 3}, &quot;output&quot;: {&quot;data&quot;: 1}} Free buffer | {&quot;id&quot;: 2} Free buffer | {&quot;id&quot;: 3} Run node | {&quot;node&quot;: &quot;11&quot;, &quot;input&quot;: {&quot;data 1&quot;: 0, &quot;data 2&quot;: 1}, &quot;output&quot;: {&quot;data&quot;: 2}} Export node data | {&quot;from&quot;: 2, &quot;node&quot;: &quot;11&quot;, &quot;output_name&quot;: &quot;data&quot;} As you can see, it’s a bit unoptimal: there’s no need to free buffers at the end of execution, potentially too many buffers allocated, but that’s why it’s called “naive”: it does the thing the simplest way possible. Real planning and memory management Now, that’s really complicated. Each node can have multiple inputs and multiple outputs. Not only that, node behaviour per-input and per-output might be different depending on the implementation: Destructively put output to one of input buffers thus losing all the original data stored in input buffer. Generating such output does not require additional “output” buffer. Non-destructively put output to a new buffer. While original values are not overritten and could be used in another node, this will require additional buffer for that output. Both situations depending on requested outputs for a single node. The exact behaviour should then be described in node spec. That makes things messed up, because if, for example, there’re two nodes using some output destructively, the system should make a copy of an output to another buffer. If, on the other hand, no nodes use some output destructively, after all non-destructive nodes using the output are done, that output buffer should be reused. For now I do not have enough time to come up with appropriate solution, please use the “naive” one that does not support destructive nodes. TBD Do something on parallelization Support finite non-conditional (enumerated) loops." />
+<link rel="canonical" href="https://ivalentinee.github.io/en/programming/2022/09/27/pipelining-graph-execution.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/en/programming/2022/09/27/pipelining-graph-execution.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-09-27T00:00:00+00:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/en/programming/2022/09/27/pipelining-graph-execution.html"},"description":"Introduction There’re two things I need to describe before describing actual solution. Why graphs and optimization criteria are like this Because that’s a solution that I wanted to suggest at work (for a well-described problem), but the solution will probably be rejected. So the problem is not very abstract. Why don’t I refer to other solutions The problem at hand is very specific, and, despite it being (as I believe) very common for some systems (say, optimizations for compilers), finding any solutions will take a lot of time (and a lot of reading). I have just one week, and I’m not an expert on optimizing program execution. Also, as my solution won’t actually be used anywhere, why not to try to invent a wheel just to do a mental exercise? The problem Can be described as “execution graph pipelining and optimization”, but that’s just the tip of the iceberg. What graphs are Graphs to be discussed are what I call “execution graphs”. These graphs follow these rules: Graphs are not planar. Edges are directional There’s only one output (final result) node, but there’re many input nodes. Every possible path can only contain one reference to each node in that path. i.e. there’re no cyclic dependencies. Thus CFG-based solutions are not relevant – there’re no “control” nodes. Every node (except input nodes and output node) can have multiple inputs and multiple outputs. That makes it a bit different from common AST, because those have only one output per node. (This one is obvious, but) no node can start execution before all of it’s dependencies (node inputs) are resolved. Every node returns all values at once, so, once node finished executing – all it’s outputs are available. There’re “external nodes” (E-nodes), that could not be executed within the system. For example, filesystem reads or external execution systems. Some specifics Nodes operate on “reasonably” large chunks of data: ~100mb each, which makes passing them through like plain values (say, uint32 numbers) not an option and these chunks should be stored in (pre)allocated buffers. All chunks of data are of the same size (or could be easily padded to be) Each node internal memory and computation consumption is not considered. It’s rare that some graph contains more than 50 nodes, with potential cap at 100 nodes. For now. What I’m trying to achieve There’re multiple goals, described in order of importance Grouped E-node execution, so that context switching (between internal and external execution) is minimized. Static execution. No dynamic allocations, no dynamic execution. Strong execution plan and exact amount of memory preallocated. Memory optimization. Do not allocate memory for every node result, but only those required for next node(s) execution. Potentially parallelization. If some (sub)paths have the same input or external dependencies, but no interconnections, execute these subpaths concurrently. Potentially E-node result caching if these are considered expensive. There’s one thing to have in mind: compilation time and memory consumption is not pretty critical, because such compilation will be performed way less often than graph execution. The solution Grouping E-nodes and internal nodes (I-nodes) The simplest solution to the problem of static execution is graph linearization, because there’re too many algorythms designed for 1-dimensional structures (lists). But, without further analysis it could not be executed concurrently. Primitive linearization could be achieved by simply ordering nodes by dependencies like this: If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B). If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A). If neither node A nor node B depend on one another they are considered equal order-wise (A ⊥ B -&gt; A == B). By definition they could not depend on each other, so the rule above will ensure any node is executed after it’s dependencies. That condition could be further expanded to group E-nodes: If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B). If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A). If node A is an internal node and B is an E-node, node A should be placed after node B (A: E-node, B: I-node -&gt; A &gt; B). If node B is an internal node and A is an E-node, node B should be placed after node A (B: E-node, A: I-node -&gt; B &gt; A). If neither node A nor node B depend on one another and have the same type they are considered equal order-wise (A ⊥ B -&gt; A == B). Since input nodes are not fully “executed” (they only contain input values), they could be excluded from that ordering and put in any order at the beginning of the list. Since E-nodes are grouped, it makes sense to build plans for each internal-node block. So, top-level plan will contain alternating blocks of internal nodes (I-blocks) and E-nodes (E-blocks). Naive planning and memory management Obviously, memory management only should be done for I-blocks. At the beginning of every internal-node block data should be “imported” into memory from either some initial data or I-block results (which are stored), then, at the end of I-block, it should be exported from memory to storage (making it possible to either output final result or execute E-nodes). For naive case we assume, that every operation is non-destructive – does not change data in input buffers. Then, simplest method of getting some preallocated memory and strong plan would be to use dynamic “dry run” with these rules: Buffers will be managed by using “dynamic” pool to which we can add, but not remove. Initially it’s empty. Buffers containing data should be marked with node and output name the data came from. Empty buffers will be marked as “empty”. Every input node will put data into a new buffer (thus, +1 buffer per input node). The system will need to provide a buffer per each requested output for every node when executing that node (getting requested outputs is pretty simple – won’t describe it here). If there’re free buffers – these buffers should be used, otherwise a new buffer should be added to the pool. Every time buffer is not used as an input in non-finished I-block node it’s considered “free” and should be emptied – either by just marking it as free, or by explicitly running nullifying procedure on that buffer. Such check should be executed after each node execution. When all nodes are finished – nonempty buffers should be “exported” to storage as I-block result. When building the final plan, all allocations should be moved to the beginning. So, a simple set of commands could be used: Allocate buffer (id: $buffer_id) (or Allocate buffers if that is possible) Import (from: $node_id, output_name: $output_name, to: $buffer_id) Run node (inputs: {$input_name: $buffer_id, ...}, outputs: {$output_name: $buffer_id, ...}) Free buffer (buffer: $buffer_id), which will do nothing if all node implementations fully rewrite buffer content Export (from: $buffer_id, node_id: $node_id, output_name: $output_name) Where all $ marked values will be inlined by the compiler when performing dry run. Resulting plan for that graph will look like this: Allocate buffers | {&quot;count&quot;: 5} Import node data | {&quot;node&quot;: &quot;1&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 0} Import node data | {&quot;node&quot;: &quot;2&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 1} Import node data | {&quot;node&quot;: &quot;3&quot;, &quot;output_name&quot;: &quot;data&quot;, &quot;to&quot;: 2} Run node | {&quot;node&quot;: &quot;4&quot;, &quot;input&quot;: {&quot;data&quot;: 0}, &quot;output&quot;: {&quot;another data&quot;: 3, &quot;data&quot;: 4}} Free buffer | {&quot;id&quot;: 0} Run node | {&quot;node&quot;: &quot;5&quot;, &quot;input&quot;: {&quot;data 1&quot;: 1, &quot;data 2&quot;: 2}, &quot;output&quot;: {&quot;data&quot;: 0}} Free buffer | {&quot;id&quot;: 1} Free buffer | {&quot;id&quot;: 2} Run node | {&quot;node&quot;: &quot;6&quot;, &quot;input&quot;: {&quot;data&quot;: 4}, &quot;output&quot;: {&quot;data&quot;: 1}} Free buffer | {&quot;id&quot;: 4} Run node | {&quot;node&quot;: &quot;7&quot;, &quot;input&quot;: {&quot;data&quot;: 3}, &quot;output&quot;: {&quot;data&quot;: 2}} Free buffer | {&quot;id&quot;: 3} Run node | {&quot;node&quot;: &quot;8&quot;, &quot;input&quot;: {&quot;data&quot;: 0}, &quot;output&quot;: {&quot;data&quot;: 3}} Free buffer | {&quot;id&quot;: 0} Run node | {&quot;node&quot;: &quot;9&quot;, &quot;input&quot;: {&quot;data&quot;: 1}, &quot;output&quot;: {&quot;data&quot;: 0}} Free buffer | {&quot;id&quot;: 1} Run node | {&quot;node&quot;: &quot;10&quot;, &quot;input&quot;: {&quot;data 1&quot;: 2, &quot;data 2&quot;: 3}, &quot;output&quot;: {&quot;data&quot;: 1}} Free buffer | {&quot;id&quot;: 2} Free buffer | {&quot;id&quot;: 3} Run node | {&quot;node&quot;: &quot;11&quot;, &quot;input&quot;: {&quot;data 1&quot;: 0, &quot;data 2&quot;: 1}, &quot;output&quot;: {&quot;data&quot;: 2}} Export node data | {&quot;from&quot;: 2, &quot;node&quot;: &quot;11&quot;, &quot;output_name&quot;: &quot;data&quot;} As you can see, it’s a bit unoptimal: there’s no need to free buffers at the end of execution, potentially too many buffers allocated, but that’s why it’s called “naive”: it does the thing the simplest way possible. Real planning and memory management Now, that’s really complicated. Each node can have multiple inputs and multiple outputs. Not only that, node behaviour per-input and per-output might be different depending on the implementation: Destructively put output to one of input buffers thus losing all the original data stored in input buffer. Generating such output does not require additional “output” buffer. Non-destructively put output to a new buffer. While original values are not overritten and could be used in another node, this will require additional buffer for that output. Both situations depending on requested outputs for a single node. The exact behaviour should then be described in node spec. That makes things messed up, because if, for example, there’re two nodes using some output destructively, the system should make a copy of an output to another buffer. If, on the other hand, no nodes use some output destructively, after all non-destructive nodes using the output are done, that output buffer should be reused. For now I do not have enough time to come up with appropriate solution, please use the “naive” one that does not support destructive nodes. TBD Do something on parallelization Support finite non-conditional (enumerated) loops.","@type":"BlogPosting","url":"https://ivalentinee.github.io/en/programming/2022/09/27/pipelining-graph-execution.html","headline":"Pipelining graph execution","dateModified":"2022-09-27T00:00:00+00:00","datePublished":"2022-09-27T00:00:00+00:00","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/en/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/en/about/">About</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Pipelining graph execution</h1>
+    <p class="post-meta">
+      <time datetime="2022-09-27T00:00:00+00:00" itemprop="datePublished">
+        
+        Sep 27, 2022
+      </time>
+      </p>
+  </header>
+
+  
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="introduction">Introduction</h2>
+<p>There’re two things I need to describe before describing actual solution.</p>
+
+<h3 id="why-graphs-and-optimization-criteria-are-like-this">Why graphs and optimization criteria are like this</h3>
+<p>Because that’s a solution that I wanted to suggest at work (for a well-described problem), but the solution will probably be rejected. So the problem is not very abstract.</p>
+
+<h3 id="why-dont-i-refer-to-other-solutions">Why don’t I refer to other solutions</h3>
+<p>The problem at hand is very specific, and, despite it being (as I believe) very common for some systems (say, optimizations for compilers), finding any solutions will take a lot of time (and a lot of reading). I have just one week, and I’m not an expert on optimizing program execution.</p>
+
+<p>Also, as my solution won’t actually be used anywhere, why not to try to invent a wheel just to do a mental exercise?</p>
+
+<h2 id="the-problem">The problem</h2>
+<p>Can be described as “execution graph pipelining and optimization”, but that’s just the tip of the iceberg.</p>
+
+<h3 id="what-graphs-are">What graphs are</h3>
+<p>Graphs to be discussed are what I call “execution graphs”.</p>
+
+<p>These graphs follow these rules:</p>
+<ul>
+  <li>Graphs are not planar.</li>
+  <li>Edges are directional</li>
+  <li>There’s only one output (final result) node, but there’re many input nodes.
+<img src="/assets/img/posts/2022-09-27-pipelining-graph-execution/example-default.png" alt="Sample graph" width="300" /></li>
+  <li>Every possible path can only contain one reference to each node in that path. i.e. there’re no cyclic dependencies. Thus <a href="https://en.wikipedia.org/wiki/Control-flow_graph">CFG</a>-based solutions are not relevant – there’re no “control” nodes.
+<img src="/assets/img/posts/2022-09-27-pipelining-graph-execution/example-path.png" alt="Sample graph with path" width="300" /></li>
+  <li>Every node (except input nodes and output node) can have multiple inputs and multiple outputs.
+That makes it a bit different from common <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">AST</a>, because those have only one output per node.</li>
+  <li>(This one is obvious, but) no node can start execution before all of it’s dependencies (node inputs) are resolved.</li>
+  <li>Every node returns all values at once, so, once node finished executing – all it’s outputs are available.</li>
+  <li>There’re “external nodes” (E-nodes), that could not be executed within the system. For example, filesystem reads or external execution systems.</li>
+</ul>
+
+<h3 id="some-specifics">Some specifics</h3>
+<ul>
+  <li>Nodes operate on “reasonably” large chunks of data: ~100mb each, which makes passing them through like plain values (say, uint32 numbers) not an option and these chunks should be stored in (pre)allocated buffers.</li>
+  <li>All chunks of data are of the same size (or could be easily padded to be)</li>
+  <li>Each node internal memory and computation consumption is not considered.</li>
+  <li>It’s rare that some graph contains more than 50 nodes, with potential cap at 100 nodes. For now.</li>
+</ul>
+
+<h3 id="what-im-trying-to-achieve">What I’m trying to achieve</h3>
+<p>There’re multiple goals, described in order of importance</p>
+
+<ol>
+  <li>Grouped E-node execution, so that context switching (between internal and external execution) is minimized.</li>
+  <li>Static execution. No dynamic allocations, no dynamic execution. Strong execution plan and exact amount of memory preallocated.</li>
+  <li>Memory optimization. Do not allocate memory for every node result, but only those required for next node(s) execution.</li>
+  <li>Potentially parallelization. If some (sub)paths have the same <em>input</em> or <em>external</em> dependencies, but no interconnections, execute these subpaths concurrently.</li>
+  <li>Potentially E-node result caching if these are considered expensive.</li>
+</ol>
+
+<p>There’s one thing to have in mind: compilation time and memory consumption is not pretty critical, because such compilation will be performed way less often than graph execution.</p>
+
+<h2 id="the-solution">The solution</h2>
+<h3 id="grouping-e-nodes-and-internal-nodes-i-nodes">Grouping E-nodes and internal nodes (I-nodes)</h3>
+<p>The simplest solution to the problem of static execution is graph linearization, because there’re too many algorythms designed for 1-dimensional structures (lists). But, without further analysis it could not be executed concurrently.</p>
+
+<p>Primitive linearization could be achieved by simply ordering nodes by dependencies like this:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B).
+If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A).
+If neither node A nor node B depend on one another they are considered equal order-wise (A ⊥ B -&gt; A == B).
+</code></pre></div></div>
+
+<p>By definition they could not depend on each other, so the rule above will ensure any node is executed after it’s dependencies.</p>
+
+<p>That condition could be further expanded to group E-nodes:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>If node A depends on node B, node A should be placed after node B (A depends on B -&gt; A &gt; B).
+If node B depends on node A, node B should be placed after node A (B depends on A -&gt; B &gt; A).
+If node A is an internal node and B is an E-node, node A should be placed after node B (A: E-node, B: I-node -&gt; A &gt; B).
+If node B is an internal node and A is an E-node, node B should be placed after node A (B: E-node, A: I-node -&gt; B &gt; A).
+If neither node A nor node B depend on one another and have the same type they are considered equal order-wise (A ⊥ B -&gt; A == B).
+</code></pre></div></div>
+
+<p>Since input nodes are not fully “executed” (they only contain input values), they could be excluded from that ordering and put in any order at the beginning of the list.</p>
+
+<p>Since E-nodes are grouped, it makes sense to build plans for each internal-node block.</p>
+
+<p>So, top-level plan will contain alternating blocks of internal nodes (I-blocks) and E-nodes (E-blocks).</p>
+
+<h3 id="naive-planning-and-memory-management">Naive planning and memory management</h3>
+<p>Obviously, memory management only should be done for I-blocks.</p>
+
+<p>At the beginning of every internal-node block data should be “imported” into memory from either some initial data or I-block results (which are stored), then, at the end of I-block, it should be exported from memory to storage (making it possible to either output final result or execute E-nodes).</p>
+
+<p>For naive case we assume, that every operation is non-destructive – does not change data in input buffers.</p>
+
+<p>Then, simplest method of getting some preallocated memory and strong plan would be to use dynamic “dry run” with these rules:</p>
+<ul>
+  <li>Buffers will be managed by using “dynamic” pool to which we can add, but not remove. Initially it’s empty.</li>
+  <li>Buffers containing data should be marked with node and output name the data came from. Empty buffers will be marked as “empty”.</li>
+  <li>Every input node will put data into a new buffer (thus, +1 buffer per input node).</li>
+  <li>The system will need to provide a buffer per each requested output for every node when executing that node (getting requested outputs is pretty simple – won’t describe it here). If there’re free buffers – these buffers should be used, otherwise a new buffer should be added to the pool.</li>
+  <li>Every time buffer is not used as an input in non-finished I-block node it’s considered “free” and should be emptied – either by just marking it as free, or by explicitly running nullifying procedure on that buffer. Such check should be executed after each node execution.</li>
+  <li>When all nodes are finished – nonempty buffers should be “exported” to storage as I-block result.</li>
+</ul>
+
+<p>When building the final plan, all allocations should be moved to the beginning.</p>
+
+<p>So, a simple set of commands could be used:</p>
+<ul>
+  <li><code class="highlighter-rouge">Allocate buffer (id: $buffer_id)</code> (or <code class="highlighter-rouge">Allocate buffers</code> if that is possible)</li>
+  <li><code class="highlighter-rouge">Import (from: $node_id, output_name: $output_name, to: $buffer_id)</code></li>
+  <li><code class="highlighter-rouge">Run node (inputs: {$input_name: $buffer_id, ...}, outputs: {$output_name: $buffer_id, ...})</code></li>
+  <li><code class="highlighter-rouge">Free buffer (buffer: $buffer_id)</code>, which will do nothing if all node implementations fully rewrite buffer content</li>
+  <li><code class="highlighter-rouge">Export (from: $buffer_id, node_id: $node_id, output_name: $output_name)</code></li>
+</ul>
+
+<p>Where all <code class="highlighter-rouge">$</code> marked values will be inlined by the compiler when performing dry run.</p>
+
+<p><img src="/assets/img/posts/2022-09-27-pipelining-graph-execution/example-naive-run.gif" alt="Naive dry run example" width="800" /></p>
+
+<p>Resulting plan for that graph will look like this:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Allocate buffers | {"count": 5}
+Import node data | {"node": "1", "output_name": "data", "to": 0}
+Import node data | {"node": "2", "output_name": "data", "to": 1}
+Import node data | {"node": "3", "output_name": "data", "to": 2}
+Run node         | {"node": "4", "input": {"data": 0}, "output": {"another data": 3, "data": 4}}
+Free buffer      | {"id": 0}
+Run node         | {"node": "5", "input": {"data 1": 1, "data 2": 2}, "output": {"data": 0}}
+Free buffer      | {"id": 1}
+Free buffer      | {"id": 2}
+Run node         | {"node": "6", "input": {"data": 4}, "output": {"data": 1}}
+Free buffer      | {"id": 4}
+Run node         | {"node": "7", "input": {"data": 3}, "output": {"data": 2}}
+Free buffer      | {"id": 3}
+Run node         | {"node": "8", "input": {"data": 0}, "output": {"data": 3}}
+Free buffer      | {"id": 0}
+Run node         | {"node": "9", "input": {"data": 1}, "output": {"data": 0}}
+Free buffer      | {"id": 1}
+Run node         | {"node": "10", "input": {"data 1": 2, "data 2": 3}, "output": {"data": 1}}
+Free buffer      | {"id": 2}
+Free buffer      | {"id": 3}
+Run node         | {"node": "11", "input": {"data 1": 0, "data 2": 1}, "output": {"data": 2}}
+Export node data | {"from": 2, "node": "11", "output_name": "data"}
+</code></pre></div></div>
+
+<p>As you can see, it’s a bit unoptimal: there’s no need to free buffers at the end of execution, potentially too many buffers allocated, but that’s why it’s called “naive”: it does the thing the simplest way possible.</p>
+
+<h3 id="real-planning-and-memory-management"><strong>Real</strong> planning and memory management</h3>
+<p>Now, that’s really complicated.</p>
+
+<p>Each node can have multiple inputs and multiple outputs. Not only that, node behaviour per-input and per-output might be different depending on the implementation:</p>
+<ul>
+  <li>Destructively put output to one of input buffers thus losing all the original data stored in input buffer. Generating such output does not require additional “output” buffer.</li>
+  <li>Non-destructively put output to a new buffer. While original values are not overritten and could be used in another node, this will require additional buffer for that output.</li>
+  <li>Both situations depending on requested outputs for a single node.</li>
+</ul>
+
+<p>The exact behaviour should then be described in node spec.</p>
+
+<p>That makes things messed up, because if, for example, there’re two nodes using some output destructively, the system should make a copy of an output to another buffer. If, on the other hand, no nodes use some output destructively, after all non-destructive nodes using the output are done, that output buffer should be reused.</p>
+
+<p><em>For now I do not have enough time to come up with appropriate solution, please use the “naive” one that does not support destructive nodes.</em></p>
+
+<h2 id="tbd">TBD</h2>
+<ul>
+  <li>Do something on parallelization</li>
+  <li>Support finite non-conditional (enumerated) loops.</li>
+</ul>
+
+  </div>
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+  }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

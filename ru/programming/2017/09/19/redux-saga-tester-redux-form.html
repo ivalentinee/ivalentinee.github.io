@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2017-09-19T00:00:00+00:00" />
 <script type="application/ld+json">
-{"headline":"Redux-saga-tester и redux-form (или как меня подвёл поиск на гитхабе)","dateModified":"2017-09-19T00:00:00+00:00","datePublished":"2017-09-19T00:00:00+00:00","description":"С чего началось А началось всё с того, что я полез в эти ваши чёртовы фронтенды. Как-то давно надоело мне ковырять рельсы, и теперь я ещё и на жабаскрипте пописываю иногда. И приспичило мне в саге сделать изменение в состоянии redux-form. Соединим всё это с моим стремлением к написанию всего через тесты, и приехали. Всё сломалось. Для особо нетерпеливых: можно сразу листать до раздела “решение”. Что, собственно, случилось Постарался привести максимально полный и приближённый к реальному код. Код, который тестирует import SagaTester from &#39;redux-saga-tester&#39;; import sinon from &#39;sinon&#39;; import { defer } from &#39;lodash&#39;; import { change } from &#39;redux-form&#39;; import getValueSaga from &#39;../getValueSaga&#39;; import SomeTypes from &#39;./SomeTypes&#39;; import * as SomeActions from &#39;./SomeActions&#39;; describe(&#39;getValueSaga test&#39;, () =&gt; { let sagaTester = null; let server = null; const path = &#39;/get-value&#39;; const response = { value: true }; beforeEach(() =&gt; { server = sinon.fakeServer.create(); sagaTester = new SagaTester({ initialState }); sagaTester.start(getValueSaga); }); afterEach(() =&gt; { server = server.restore(); }); it(&#39;should get value and add it to form state&#39;, async () =&gt; { server.respondWith([200, {}, JSON.stringify(response)]); sagaTester.dispatch(SomeActions.getValue()); defer(() =&gt; { server.respond(); }); await sagaTester.waitFor(SomeTypes.GET_VALUE_SUCCESS); const request = server.requests[0]; expect(request.url).toEqual(path); expect(request.method).toEqual(&#39;GET&#39;); expect(sagaTester.getCalledActions()).toContainEqual(change(&#39;some-form&#39;, &#39;value&#39;, response.value)); expect(sagaTester.getLatestCalledAction()).toEqual(SomeActions.getValueSuccess()); }); }); Код, который тестируется import { call, put, takeLatest } from &#39;redux-saga/effects&#39;; import { change } from &#39;redux-form&#39;; import SomeTypes from &#39;./SomeTypes&#39;; import * as SomeActions from &#39;./SomeActions&#39;; function sendRequest(params) { const url = &#39;/get-value&#39;; return axios.get(url).then(response =&gt; response.data); } function* getValueSaga(action) { try { const response = yield call(sendRequest); yield put(change(&#39;form-name&#39;, &#39;attribute-name&#39;, response.value)); yield put(SomeActions.getValueSuccess()); } catch (error) { // пропустим обработку ошибок } } export default function* watchGetValueSaga() { yield takeLatest(SomeTypes.GET_VALUE, getValueSaga); } Проблема Вот на этой строке тест ломается expect(sagaTester.getCalledActions()).toContainEqual(change(&#39;some-form&#39;, &#39;value&#39;, response.value)); С фразой “такой action не был вызван”. Wut? Ладно, пробуем проверять так: yield put({ type: &quot;@@redux-form/change&quot; }); Иии… Снова всё тоже, снова “такой action не был вызван”. Хмм… В результате долгих экспериментов я выяснил, что все action’ы, которые начинаются с @@redux куда-то исчезают. Совпадение? Не думаю. Решение Несколько часов (потому что я — идиот) поиска ключевой фразы сначала в redux, потом в redux-saga, потом в redux-form не дали ничего значимого. А вот поиск в redux-saga-tester дал интересный результат: if (ignoreReduxActions &amp;&amp; action.type.startsWith(&#39;@@redux&#39;)) { // Don&#39;t monitor redux actions И далее поиск приводит сюда: const sagaTester = new SagaTester({ignoreReduxActions: false}); И ни единой строчки про это в документации в redux-saga-tester, как и про то, что он вообще отбрасывает все action’ы, которые начинаются с @@redux. В результате, изменение соответствующей строки на такую: sagaTester = new SagaTester({ ignoreReduxActions: false, initialState }); решает проблему полностью. А при чём тут Github, собственно? А при том, что искать по строке @@redux он не даёт, как и не даёт искать вообще что-либо с символом @. В результате, протратив время на поиск в github по всем библиотекам, я был вынужден потом клонировать репозиторий каждой и грепать локально. Позор, Github!","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2017/09/19/redux-saga-tester-redux-form.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2017/09/19/redux-saga-tester-redux-form.html","@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2017/09/19/redux-saga-tester-redux-form.html"},"description":"С чего началось А началось всё с того, что я полез в эти ваши чёртовы фронтенды. Как-то давно надоело мне ковырять рельсы, и теперь я ещё и на жабаскрипте пописываю иногда. И приспичило мне в саге сделать изменение в состоянии redux-form. Соединим всё это с моим стремлением к написанию всего через тесты, и приехали. Всё сломалось. Для особо нетерпеливых: можно сразу листать до раздела “решение”. Что, собственно, случилось Постарался привести максимально полный и приближённый к реальному код. Код, который тестирует import SagaTester from &#39;redux-saga-tester&#39;; import sinon from &#39;sinon&#39;; import { defer } from &#39;lodash&#39;; import { change } from &#39;redux-form&#39;; import getValueSaga from &#39;../getValueSaga&#39;; import SomeTypes from &#39;./SomeTypes&#39;; import * as SomeActions from &#39;./SomeActions&#39;; describe(&#39;getValueSaga test&#39;, () =&gt; { let sagaTester = null; let server = null; const path = &#39;/get-value&#39;; const response = { value: true }; beforeEach(() =&gt; { server = sinon.fakeServer.create(); sagaTester = new SagaTester({ initialState }); sagaTester.start(getValueSaga); }); afterEach(() =&gt; { server = server.restore(); }); it(&#39;should get value and add it to form state&#39;, async () =&gt; { server.respondWith([200, {}, JSON.stringify(response)]); sagaTester.dispatch(SomeActions.getValue()); defer(() =&gt; { server.respond(); }); await sagaTester.waitFor(SomeTypes.GET_VALUE_SUCCESS); const request = server.requests[0]; expect(request.url).toEqual(path); expect(request.method).toEqual(&#39;GET&#39;); expect(sagaTester.getCalledActions()).toContainEqual(change(&#39;some-form&#39;, &#39;value&#39;, response.value)); expect(sagaTester.getLatestCalledAction()).toEqual(SomeActions.getValueSuccess()); }); }); Код, который тестируется import { call, put, takeLatest } from &#39;redux-saga/effects&#39;; import { change } from &#39;redux-form&#39;; import SomeTypes from &#39;./SomeTypes&#39;; import * as SomeActions from &#39;./SomeActions&#39;; function sendRequest(params) { const url = &#39;/get-value&#39;; return axios.get(url).then(response =&gt; response.data); } function* getValueSaga(action) { try { const response = yield call(sendRequest); yield put(change(&#39;form-name&#39;, &#39;attribute-name&#39;, response.value)); yield put(SomeActions.getValueSuccess()); } catch (error) { // пропустим обработку ошибок } } export default function* watchGetValueSaga() { yield takeLatest(SomeTypes.GET_VALUE, getValueSaga); } Проблема Вот на этой строке тест ломается expect(sagaTester.getCalledActions()).toContainEqual(change(&#39;some-form&#39;, &#39;value&#39;, response.value)); С фразой “такой action не был вызван”. Wut? Ладно, пробуем проверять так: yield put({ type: &quot;@@redux-form/change&quot; }); Иии… Снова всё тоже, снова “такой action не был вызван”. Хмм… В результате долгих экспериментов я выяснил, что все action’ы, которые начинаются с @@redux куда-то исчезают. Совпадение? Не думаю. Решение Несколько часов (потому что я — идиот) поиска ключевой фразы сначала в redux, потом в redux-saga, потом в redux-form не дали ничего значимого. А вот поиск в redux-saga-tester дал интересный результат: if (ignoreReduxActions &amp;&amp; action.type.startsWith(&#39;@@redux&#39;)) { // Don&#39;t monitor redux actions И далее поиск приводит сюда: const sagaTester = new SagaTester({ignoreReduxActions: false}); И ни единой строчки про это в документации в redux-saga-tester, как и про то, что он вообще отбрасывает все action’ы, которые начинаются с @@redux. В результате, изменение соответствующей строки на такую: sagaTester = new SagaTester({ ignoreReduxActions: false, initialState }); решает проблему полностью. А при чём тут Github, собственно? А при том, что искать по строке @@redux он не даёт, как и не даёт искать вообще что-либо с символом @. В результате, протратив время на поиск в github по всем библиотекам, я был вынужден потом клонировать репозиторий каждой и грепать локально. Позор, Github!","@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2017/09/19/redux-saga-tester-redux-form.html","headline":"Redux-saga-tester и redux-form (или как меня подвёл поиск на гитхабе)","dateModified":"2017-09-19T00:00:00+00:00","datePublished":"2017-09-19T00:00:00+00:00","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
 <body><header class="site-header" role="banner">
@@ -43,6 +43,11 @@
             
             
               
+            
+          
+            
+            
+              
                 <a class="page-link" href="/ru/about/">Обо мне</a>
               
             
@@ -64,6 +69,13 @@
           
             
             
+              
+            
+          
+            
+            
+              
+            
           
             
             
@@ -77,6 +89,44 @@
             
           
             
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
             
           
             
@@ -226,28 +276,6 @@
 <p>В результате, протратив время на поиск в github по всем библиотекам, я был вынужден потом клонировать репозиторий каждой и грепать локально. Позор, Github!</p>
 
   </div>
-
-  
-  <div id="disqus_thread"></div>
-<script>
-
-/**
-*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-/*
-var disqus_config = function () {
-this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-*/
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://ivalentinee.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
   
 

@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2016-10-17T00:00:00+00:00" />
 <script type="application/ld+json">
-{"headline":"Rails ActionCable и почему он у меня сразу не запустился","dateModified":"2016-10-17T00:00:00+00:00","datePublished":"2016-10-17T00:00:00+00:00","description":"Предисловие ActionCable — надстройка над рельсами для websocket. Содержит в себе как frontend (js) так и backend части. Документацию описывать не буду, примеры кода приводить тоже не буду, но опишу проблему, с которой я столкнулся и на которую потратил больше часа времени. Проблема Как это обычно бывает, сделал “как в документации”, но при попытке подписаться в логах unicorn’а, ответственного за ActionCable я увидел вот это: web-sockets_1 | Rack::Lint::LintError: Status must be &gt;=100 seen as integer web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:20:in `assert&#39; web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:620:in `check_status&#39; web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:51:in `_call&#39; web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:37:in `call&#39; ... WTF? Гугление сначала указывает на проблемы с faye, что нам совершенно не интересно. Но дальше в поиске я обнаружил вот этот issue. Если вкратце, то ActionCable устанавливает статус ответа в -1, а включенный unicorn’ом в development-окружении Rack::Lint требует status.to_i &gt;= 100 Решение Я для себя выбрал более простой и бездумный путь: использовать Puma. Просто потому что puma не включает в себя Rack::Lint. Найти способ отключить Rack::Lint я не смог, хотя и не искал особо долго.","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/rails/2016/10/17/rails-action-cable-puma.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/rails/2016/10/17/rails-action-cable-puma.html","@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/rails/2016/10/17/rails-action-cable-puma.html"},"description":"Предисловие ActionCable — надстройка над рельсами для websocket. Содержит в себе как frontend (js) так и backend части. Документацию описывать не буду, примеры кода приводить тоже не буду, но опишу проблему, с которой я столкнулся и на которую потратил больше часа времени. Проблема Как это обычно бывает, сделал “как в документации”, но при попытке подписаться в логах unicorn’а, ответственного за ActionCable я увидел вот это: web-sockets_1 | Rack::Lint::LintError: Status must be &gt;=100 seen as integer web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:20:in `assert&#39; web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:620:in `check_status&#39; web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:51:in `_call&#39; web-sockets_1 | /usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:37:in `call&#39; ... WTF? Гугление сначала указывает на проблемы с faye, что нам совершенно не интересно. Но дальше в поиске я обнаружил вот этот issue. Если вкратце, то ActionCable устанавливает статус ответа в -1, а включенный unicorn’ом в development-окружении Rack::Lint требует status.to_i &gt;= 100 Решение Я для себя выбрал более простой и бездумный путь: использовать Puma. Просто потому что puma не включает в себя Rack::Lint. Найти способ отключить Rack::Lint я не смог, хотя и не искал особо долго.","@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/rails/2016/10/17/rails-action-cable-puma.html","headline":"Rails ActionCable и почему он у меня сразу не запустился","dateModified":"2016-10-17T00:00:00+00:00","datePublished":"2016-10-17T00:00:00+00:00","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
 <body><header class="site-header" role="banner">
@@ -43,6 +43,11 @@
             
             
               
+            
+          
+            
+            
+              
                 <a class="page-link" href="/ru/about/">Обо мне</a>
               
             
@@ -64,6 +69,13 @@
           
             
             
+              
+            
+          
+            
+            
+              
+            
           
             
             
@@ -77,6 +89,44 @@
             
           
             
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
             
           
             
@@ -128,28 +178,6 @@ web-sockets_1 | 	/usr/local/bundle/gems/rack-2.0.1/lib/rack/lint.rb:37:in `call'
 <p>Найти способ отключить Rack::Lint я не смог, хотя и не искал особо долго.</p>
 
   </div>
-
-  
-  <div id="disqus_thread"></div>
-<script>
-
-/**
-*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-/*
-var disqus_config = function () {
-this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-*/
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://ivalentinee.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
   
 

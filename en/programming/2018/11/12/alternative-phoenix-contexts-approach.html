@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Alternative Phoenix Context approach | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Alternative Phoenix Context approach" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="Intro For those who don’t know what phoenix contexts are here’s link. The reason for this approach was a need to use the same model in different contexts. I could have gone with alias MyApp.AnotherContext.MyModel but that didn’t look good. This approach is a small step towards architecture layer separation. Not like it gets us there, but Rome wasn’t built in a day. There’ll be more code listings than descriptions. Top-level Contexts go to contexts directory, models go to models directory, everything using Ecto.Query goes to models too. I know that’s too short, so here is explanation a bunch of examples. Models go to models That’s the most important one. Everything else is more of a consequence. By “models” a mean files with schema definitions (Ecto.Schema) and changesets (more on that later): # lib/my_app/models/pizza.ex defmodule MyApp.Models.Pizza do use Ecto.Schema import Ecto.Changeset schema &quot;pizzas&quot; do field(:name, :string) field(:description, :string) field(:discounted, :boolean) timestamps() end def changeset(struct, params) do struct |&gt; cast(attrs, [:name, :description]) |&gt; validate_required([:name]) end end That move allowes us to extract storage layer (definitions to be used by ORM). And solves the problem of using models in multiple contexts. Create file for DB queries As “storage” layer is moved out of contexts, is is moved completely: # lib/my_app/models/pizza/query.ex defmodule MyApp.Models.Pizza.Query do import Ecto.Query, warn: false require Ecto.Query def discounted(query) do from(q in query, where: discounted == true) end def non_discounted(query) do from(q in query, where: discounted != true) end def by_id(query) do from(q in query, order_by: [desc: q.id]) end end About changesets Changesets could be put into separate file (or even files) so schema file is not bloated. Like lib/my_app/models/pizza/changesets.ex. Use that in contexts Contexts go to contexts folder forming data processing layer (can’t call it “business logic”). # lib/my_app/contexts/pizzas.ex defmodule MyApp.Contexts.Pizzas do alias MyApp.Models.Pizza alias MyApp.Models.Pizza.Query alias MyApp.Repo def list do list_query() |&gt; Query.non_discounted() |&gt; Repo.all() end def get!(id) do Pizza |&gt; Query.non_discounted() |&gt; Repo.get!(id) end def get_by!(clauses) do Pizza |&gt; Query.non_discounted() |&gt; Repo.get_by!(clauses) end def create(params) do changeset = Pizza.changeset(%Pizza{}, params) Repo.insert(changeset) end def update(%Pizza{} = pizza, params) do pizza |&gt; Pizza.changeset(params) |&gt; Repo.update() end end More on changesets (UPD 2021-10-05) Apart from schemaless changesets my experience with Ecto tells me of two types of changesets: for storing and for processing. Storing changesets These are used to handle DB errors not as exceptions but as changeset errors. Main usage for these changesets are validate_required for fields which are non-nullable in DB and applying handlers like unique_constraint, check_constraint and foreign_key_constraint. Should these changesets have casts? That’s an open question for me, because it makes no sense to require fields without filling them in. But combining two types of changesets allows us to move casts out of storing changesets. There should be only one such changeset per model, accepting only other changesets as an argument (which explicitly tells to put cast somewhere else). Example: # lib/my_app/models/pizza.ex defmodule MyApp.Models.Pizza do use Ecto.Schema alias Ecto.Changeset import Ecto.Changeset schema &quot;pizzas&quot; do field(:name, :string) field(:description, :string) field(:discounted, :boolean) timestamps() end def db_changeset(%Changeset{} = changeset) do changeset |&gt; validate_required([:name]) |&gt; unique_constraint(:name, name: :unique_name_index) end end Processing changesets That’s where it gets interesting. These changesets should go to contexts that use them and go before (and with) storing changesets. For example we have to set :name and :description at one place but only :description at another: defmodule MyApp.Contexts.Admin.Pizzas do alias Ecto.Changeset alias MyApp.Models.Pizza alias MyApp.Repo def update(%Pizza{} = pizza, params) do pizza |&gt; changeset(params) |&gt; Repo.update() end def changeset(%Pizza{} = pizza, params) do pizza |&gt; Changeset.cast(params, [:name, :description]) |&gt; Pizza.db_changeset() end end defmodule MyApp.Contexts.Manager.Pizzas do alias Ecto.Changeset alias MyApp.Models.Pizza alias MyApp.Repo def update(%Pizza{} = pizza, params) do pizza |&gt; changeset(params) |&gt; Repo.update() end def changeset(%Pizza{} = pizza, params) do pizza |&gt; Changeset.cast(params, [:description]) |&gt; Changeset.validate_required([:description]) |&gt; Pizza.db_changeset() end end So instead of bloating storage layer with processing definitions like def admin_changeset(struct, params) and def manager_changeset(struct, params) we put ‘em to user story definition that uses that exact changeset. That does not look very good Because we use the same word “changeset” (and even implementation under the hood) for two different things: DB handling and user input validation and normalization. The only thing I can think of to make it better is to name these changesets so it would be clear which changeset is for what. Gateways (UPD 2021-10-10) More on project structure! Some systems have to communicate with other systems (HTTP, MQ, etc). That “communications” layer has to be separated from everything else (IMHO). I usually go with “lib/my_app/gateways” folder. Example: # lib/my_app/gateways/some_other_service.ex defmodule MyApp.Gateways.SomeOtherService do @items_url &quot;http://example.com/items&quot; def get_items do request = {@items_url, []} with {:ok, { {_, 200, _}, _, raw_response}} &lt;- :httpc.request(:get, request, [], []), {:ok, response} &lt;- Jason.decode(raw_response) do response[&quot;items&quot;] end end end # lib/my_app/contexts/items.ex defmodule MyApp.Contexts.Items do alias MyApp.Gateways.SomeOtherService, as: SomeOtherServiceGateway def load_items do case SomeOtherServiceGateway.get_items() do {:ok, items} -&gt; save_items(items) error -&gt; error end end def save_items do # save items to DB end end Dependency inversion Sort of. More often than not it’s impossible to reach other service from local machine, so some kind of fake service implementation has to be used. In that case instead of using gateway modules one can just get preconfigured module by calling a function like this: # config/dev.exs # ... config :my_app, :use_fake_other_service, true # ... # lib/my_app/gateways.ex defmodule MyApp.Gateways do alias MyApp.Gateways.OtherService alias MyApp.Gateways.OtherService.Fake, as: FakeOtherService def other_service do if Application.get_env(:my_app, :use_fake_other_service) do FakeOtherService else OtherService end end end # lib/my_app/gateways/other_service/fake.ex defmodule MyApp.Gateways.OtherService.Fake do def get_items, do: {:ok, [1, 2, 3, 4, 5]} end # lib/my_app/contexts/items.ex defmodule MyApp.Contexts.Items do alias MyApp.Gateways def load_items do case Gateways.other_service().get_items() do {:ok, items} -&gt; save_items(items) error -&gt; error end end def save_items do # save items to DB end end" />
+<meta property="og:description" content="Intro For those who don’t know what phoenix contexts are here’s link. The reason for this approach was a need to use the same model in different contexts. I could have gone with alias MyApp.AnotherContext.MyModel but that didn’t look good. This approach is a small step towards architecture layer separation. Not like it gets us there, but Rome wasn’t built in a day. There’ll be more code listings than descriptions. Top-level Contexts go to contexts directory, models go to models directory, everything using Ecto.Query goes to models too. I know that’s too short, so here is explanation a bunch of examples. Models go to models That’s the most important one. Everything else is more of a consequence. By “models” a mean files with schema definitions (Ecto.Schema) and changesets (more on that later): # lib/my_app/models/pizza.ex defmodule MyApp.Models.Pizza do use Ecto.Schema import Ecto.Changeset schema &quot;pizzas&quot; do field(:name, :string) field(:description, :string) field(:discounted, :boolean) timestamps() end def changeset(struct, params) do struct |&gt; cast(attrs, [:name, :description]) |&gt; validate_required([:name]) end end That move allowes us to extract storage layer (definitions to be used by ORM). And solves the problem of using models in multiple contexts. Create file for DB queries As “storage” layer is moved out of contexts, is is moved completely: # lib/my_app/models/pizza/query.ex defmodule MyApp.Models.Pizza.Query do import Ecto.Query, warn: false require Ecto.Query def discounted(query) do from(q in query, where: discounted == true) end def non_discounted(query) do from(q in query, where: discounted != true) end def by_id(query) do from(q in query, order_by: [desc: q.id]) end end About changesets Changesets could be put into separate file (or even files) so schema file is not bloated. Like lib/my_app/models/pizza/changesets.ex. Use that in contexts Contexts go to contexts folder forming data processing layer (can’t call it “business logic”). # lib/my_app/contexts/pizzas.ex defmodule MyApp.Contexts.Pizzas do alias MyApp.Models.Pizza alias MyApp.Models.Pizza.Query alias MyApp.Repo def list do list_query() |&gt; Query.non_discounted() |&gt; Repo.all() end def get!(id) do Pizza |&gt; Query.non_discounted() |&gt; Repo.get!(id) end def get_by!(clauses) do Pizza |&gt; Query.non_discounted() |&gt; Repo.get_by!(clauses) end def create(params) do changeset = Pizza.changeset(%Pizza{}, params) Repo.insert(changeset) end def update(%Pizza{} = pizza, params) do pizza |&gt; Pizza.changeset(params) |&gt; Repo.update() end end More on changesets (UPD 2021-10-05) Apart from schemaless changesets my experience with Ecto tells me of two types of changesets: for storing and for processing. Storing changesets These are used to handle DB errors not as exceptions but as changeset errors. Main usage for these changesets are validate_required for fields which are non-nullable in DB and applying handlers like unique_constraint, check_constraint and foreign_key_constraint. Should these changesets have casts? That’s an open question for me, because it makes no sense to require fields without filling them in. But combining two types of changesets allows us to move casts out of storing changesets. There should be only one such changeset per model, accepting only other changesets as an argument (which explicitly tells to put cast somewhere else). Example: # lib/my_app/models/pizza.ex defmodule MyApp.Models.Pizza do use Ecto.Schema alias Ecto.Changeset import Ecto.Changeset schema &quot;pizzas&quot; do field(:name, :string) field(:description, :string) field(:discounted, :boolean) timestamps() end def db_changeset(%Changeset{} = changeset) do changeset |&gt; validate_required([:name]) |&gt; unique_constraint(:name, name: :unique_name_index) end end Processing changesets That’s where it gets interesting. These changesets should go to contexts that use them and go before (and with) storing changesets. For example we have to set :name and :description at one place but only :description at another: defmodule MyApp.Contexts.Admin.Pizzas do alias Ecto.Changeset alias MyApp.Models.Pizza alias MyApp.Repo def update(%Pizza{} = pizza, params) do pizza |&gt; changeset(params) |&gt; Repo.update() end def changeset(%Pizza{} = pizza, params) do pizza |&gt; Changeset.cast(params, [:name, :description]) |&gt; Pizza.db_changeset() end end defmodule MyApp.Contexts.Manager.Pizzas do alias Ecto.Changeset alias MyApp.Models.Pizza alias MyApp.Repo def update(%Pizza{} = pizza, params) do pizza |&gt; changeset(params) |&gt; Repo.update() end def changeset(%Pizza{} = pizza, params) do pizza |&gt; Changeset.cast(params, [:description]) |&gt; Changeset.validate_required([:description]) |&gt; Pizza.db_changeset() end end So instead of bloating storage layer with processing definitions like def admin_changeset(struct, params) and def manager_changeset(struct, params) we put ‘em to user story definition that uses that exact changeset. That does not look very good Because we use the same word “changeset” (and even implementation under the hood) for two different things: DB handling and user input validation and normalization. The only thing I can think of to make it better is to name these changesets so it would be clear which changeset is for what. Gateways (UPD 2021-10-10) More on project structure! Some systems have to communicate with other systems (HTTP, MQ, etc). That “communications” layer has to be separated from everything else (IMHO). I usually go with “lib/my_app/gateways” folder. Example: # lib/my_app/gateways/some_other_service.ex defmodule MyApp.Gateways.SomeOtherService do @items_url &quot;http://example.com/items&quot; def get_items do request = {@items_url, []} with {:ok, { {_, 200, _}, _, raw_response}} &lt;- :httpc.request(:get, request, [], []), {:ok, response} &lt;- Jason.decode(raw_response) do response[&quot;items&quot;] end end end # lib/my_app/contexts/items.ex defmodule MyApp.Contexts.Items do alias MyApp.Gateways.SomeOtherService, as: SomeOtherServiceGateway def load_items do case SomeOtherServiceGateway.get_items() do {:ok, items} -&gt; save_items(items) error -&gt; error end end def save_items do # save items to DB end end Dependency inversion Sort of. More often than not it’s impossible to reach other service from local machine, so some kind of fake service implementation has to be used. In that case instead of using gateway modules one can just get preconfigured module by calling a function like this: # config/dev.exs # ... config :my_app, :use_fake_other_service, true # ... # lib/my_app/gateways.ex defmodule MyApp.Gateways do alias MyApp.Gateways.OtherService alias MyApp.Gateways.OtherService.Fake, as: FakeOtherService def other_service do if Application.get_env(:my_app, :use_fake_other_service) do FakeOtherService else OtherService end end end # lib/my_app/gateways/other_service/fake.ex defmodule MyApp.Gateways.OtherService.Fake do def get_items, do: {:ok, [1, 2, 3, 4, 5]} end # lib/my_app/contexts/items.ex defmodule MyApp.Contexts.Items do alias MyApp.Gateways def load_items do case Gateways.other_service().get_items() do {:ok, items} -&gt; save_items(items) error -&gt; error end end def save_items do # save items to DB end end" />
+<link rel="canonical" href="https://ivalentinee.github.io/en/programming/2018/11/12/alternative-phoenix-contexts-approach.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/en/programming/2018/11/12/alternative-phoenix-contexts-approach.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2018-11-12T00:00:00+00:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/en/programming/2018/11/12/alternative-phoenix-contexts-approach.html"},"description":"Intro For those who don’t know what phoenix contexts are here’s link. The reason for this approach was a need to use the same model in different contexts. I could have gone with alias MyApp.AnotherContext.MyModel but that didn’t look good. This approach is a small step towards architecture layer separation. Not like it gets us there, but Rome wasn’t built in a day. There’ll be more code listings than descriptions. Top-level Contexts go to contexts directory, models go to models directory, everything using Ecto.Query goes to models too. I know that’s too short, so here is explanation a bunch of examples. Models go to models That’s the most important one. Everything else is more of a consequence. By “models” a mean files with schema definitions (Ecto.Schema) and changesets (more on that later): # lib/my_app/models/pizza.ex defmodule MyApp.Models.Pizza do use Ecto.Schema import Ecto.Changeset schema &quot;pizzas&quot; do field(:name, :string) field(:description, :string) field(:discounted, :boolean) timestamps() end def changeset(struct, params) do struct |&gt; cast(attrs, [:name, :description]) |&gt; validate_required([:name]) end end That move allowes us to extract storage layer (definitions to be used by ORM). And solves the problem of using models in multiple contexts. Create file for DB queries As “storage” layer is moved out of contexts, is is moved completely: # lib/my_app/models/pizza/query.ex defmodule MyApp.Models.Pizza.Query do import Ecto.Query, warn: false require Ecto.Query def discounted(query) do from(q in query, where: discounted == true) end def non_discounted(query) do from(q in query, where: discounted != true) end def by_id(query) do from(q in query, order_by: [desc: q.id]) end end About changesets Changesets could be put into separate file (or even files) so schema file is not bloated. Like lib/my_app/models/pizza/changesets.ex. Use that in contexts Contexts go to contexts folder forming data processing layer (can’t call it “business logic”). # lib/my_app/contexts/pizzas.ex defmodule MyApp.Contexts.Pizzas do alias MyApp.Models.Pizza alias MyApp.Models.Pizza.Query alias MyApp.Repo def list do list_query() |&gt; Query.non_discounted() |&gt; Repo.all() end def get!(id) do Pizza |&gt; Query.non_discounted() |&gt; Repo.get!(id) end def get_by!(clauses) do Pizza |&gt; Query.non_discounted() |&gt; Repo.get_by!(clauses) end def create(params) do changeset = Pizza.changeset(%Pizza{}, params) Repo.insert(changeset) end def update(%Pizza{} = pizza, params) do pizza |&gt; Pizza.changeset(params) |&gt; Repo.update() end end More on changesets (UPD 2021-10-05) Apart from schemaless changesets my experience with Ecto tells me of two types of changesets: for storing and for processing. Storing changesets These are used to handle DB errors not as exceptions but as changeset errors. Main usage for these changesets are validate_required for fields which are non-nullable in DB and applying handlers like unique_constraint, check_constraint and foreign_key_constraint. Should these changesets have casts? That’s an open question for me, because it makes no sense to require fields without filling them in. But combining two types of changesets allows us to move casts out of storing changesets. There should be only one such changeset per model, accepting only other changesets as an argument (which explicitly tells to put cast somewhere else). Example: # lib/my_app/models/pizza.ex defmodule MyApp.Models.Pizza do use Ecto.Schema alias Ecto.Changeset import Ecto.Changeset schema &quot;pizzas&quot; do field(:name, :string) field(:description, :string) field(:discounted, :boolean) timestamps() end def db_changeset(%Changeset{} = changeset) do changeset |&gt; validate_required([:name]) |&gt; unique_constraint(:name, name: :unique_name_index) end end Processing changesets That’s where it gets interesting. These changesets should go to contexts that use them and go before (and with) storing changesets. For example we have to set :name and :description at one place but only :description at another: defmodule MyApp.Contexts.Admin.Pizzas do alias Ecto.Changeset alias MyApp.Models.Pizza alias MyApp.Repo def update(%Pizza{} = pizza, params) do pizza |&gt; changeset(params) |&gt; Repo.update() end def changeset(%Pizza{} = pizza, params) do pizza |&gt; Changeset.cast(params, [:name, :description]) |&gt; Pizza.db_changeset() end end defmodule MyApp.Contexts.Manager.Pizzas do alias Ecto.Changeset alias MyApp.Models.Pizza alias MyApp.Repo def update(%Pizza{} = pizza, params) do pizza |&gt; changeset(params) |&gt; Repo.update() end def changeset(%Pizza{} = pizza, params) do pizza |&gt; Changeset.cast(params, [:description]) |&gt; Changeset.validate_required([:description]) |&gt; Pizza.db_changeset() end end So instead of bloating storage layer with processing definitions like def admin_changeset(struct, params) and def manager_changeset(struct, params) we put ‘em to user story definition that uses that exact changeset. That does not look very good Because we use the same word “changeset” (and even implementation under the hood) for two different things: DB handling and user input validation and normalization. The only thing I can think of to make it better is to name these changesets so it would be clear which changeset is for what. Gateways (UPD 2021-10-10) More on project structure! Some systems have to communicate with other systems (HTTP, MQ, etc). That “communications” layer has to be separated from everything else (IMHO). I usually go with “lib/my_app/gateways” folder. Example: # lib/my_app/gateways/some_other_service.ex defmodule MyApp.Gateways.SomeOtherService do @items_url &quot;http://example.com/items&quot; def get_items do request = {@items_url, []} with {:ok, { {_, 200, _}, _, raw_response}} &lt;- :httpc.request(:get, request, [], []), {:ok, response} &lt;- Jason.decode(raw_response) do response[&quot;items&quot;] end end end # lib/my_app/contexts/items.ex defmodule MyApp.Contexts.Items do alias MyApp.Gateways.SomeOtherService, as: SomeOtherServiceGateway def load_items do case SomeOtherServiceGateway.get_items() do {:ok, items} -&gt; save_items(items) error -&gt; error end end def save_items do # save items to DB end end Dependency inversion Sort of. More often than not it’s impossible to reach other service from local machine, so some kind of fake service implementation has to be used. In that case instead of using gateway modules one can just get preconfigured module by calling a function like this: # config/dev.exs # ... config :my_app, :use_fake_other_service, true # ... # lib/my_app/gateways.ex defmodule MyApp.Gateways do alias MyApp.Gateways.OtherService alias MyApp.Gateways.OtherService.Fake, as: FakeOtherService def other_service do if Application.get_env(:my_app, :use_fake_other_service) do FakeOtherService else OtherService end end end # lib/my_app/gateways/other_service/fake.ex defmodule MyApp.Gateways.OtherService.Fake do def get_items, do: {:ok, [1, 2, 3, 4, 5]} end # lib/my_app/contexts/items.ex defmodule MyApp.Contexts.Items do alias MyApp.Gateways def load_items do case Gateways.other_service().get_items() do {:ok, items} -&gt; save_items(items) error -&gt; error end end def save_items do # save items to DB end end","@type":"BlogPosting","url":"https://ivalentinee.github.io/en/programming/2018/11/12/alternative-phoenix-contexts-approach.html","headline":"Alternative Phoenix Context approach","dateModified":"2018-11-12T00:00:00+00:00","datePublished":"2018-11-12T00:00:00+00:00","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/en/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/en/about/">About</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Alternative Phoenix Context approach</h1>
+    <p class="post-meta">
+      <time datetime="2018-11-12T00:00:00+00:00" itemprop="datePublished">
+        
+        Nov 12, 2018
+      </time>
+      </p>
+  </header>
+
+          <div class="language-selector">
+          <span class="language-selector-link">English</span><span class="language-selector-separator">|</span><a href="/ru/programming/2018/11/12/alternative-phoenix-contexts-approach.html" class="language-selector-link">Русский</a>
+        </div>
+
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="intro">Intro</h2>
+<p>For those who don’t know what phoenix <em>contexts</em> are here’s <a href="https://hexdocs.pm/phoenix/contexts.html">link</a>.</p>
+
+<p>The reason for this approach was a need to use the same model in different contexts. I could have gone with <code class="highlighter-rouge">alias MyApp.AnotherContext.MyModel</code> but that didn’t look good.</p>
+
+<p>This approach is a small step towards <a href="http://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">architecture layer separation</a>. Not like it gets us there, but Rome wasn’t built in a day.</p>
+
+<p>There’ll be more code listings than descriptions.</p>
+
+<h2 id="top-level">Top-level</h2>
+<p>Contexts go to <code class="highlighter-rouge">contexts</code> directory, models go to <code class="highlighter-rouge">models</code> directory, everything using <code class="highlighter-rouge">Ecto.Query</code> goes to <code class="highlighter-rouge">models</code> too.</p>
+
+<p>I know that’s too short, so here is <del>explanation</del> a bunch of examples.</p>
+
+<h2 id="models-go-to-models">Models go to <code class="highlighter-rouge">models</code></h2>
+<p>That’s the most important one. Everything else is more of a consequence.</p>
+
+<p>By “models” a mean files with <strong>schema definitions</strong> (<code class="highlighter-rouge">Ecto.Schema</code>) and <strong>changesets</strong> (more on that later):</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/models/pizza.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Schema</span>
+
+  <span class="kn">import</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Changeset</span>
+
+  <span class="n">schema</span> <span class="sd">"</span><span class="s2">pizzas"</span> <span class="k">do</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:description</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:discounted</span><span class="p">,</span> <span class="ss">:boolean</span><span class="p">)</span>
+    <span class="n">timestamps</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">changeset</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">struct</span>
+    <span class="o">|&gt;</span> <span class="n">cast</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="p">[</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:description</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="n">validate_required</span><span class="p">([</span><span class="ss">:name</span><span class="p">])</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>That move allowes us to extract storage layer (definitions to be used by ORM). And solves the problem of using models in multiple contexts.</p>
+
+<h3 id="create-file-for-db-queries">Create file for DB queries</h3>
+<p>As “storage” layer is moved out of contexts, is is moved completely:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/models/pizza/query.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span><span class="o">.</span><span class="no">Query</span> <span class="k">do</span>
+  <span class="kn">import</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="p">,</span> <span class="ss">warn:</span> <span class="no">false</span>
+  <span class="kn">require</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span>
+
+  <span class="k">def</span> <span class="n">discounted</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">from</span><span class="p">(</span><span class="n">q</span> <span class="ow">in</span> <span class="n">query</span><span class="p">,</span> <span class="ss">where:</span> <span class="n">discounted</span> <span class="o">==</span> <span class="no">true</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">non_discounted</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">from</span><span class="p">(</span><span class="n">q</span> <span class="ow">in</span> <span class="n">query</span><span class="p">,</span> <span class="ss">where:</span> <span class="n">discounted</span> <span class="o">!=</span> <span class="no">true</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">by_id</span><span class="p">(</span><span class="n">query</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">from</span><span class="p">(</span><span class="n">q</span> <span class="ow">in</span> <span class="n">query</span><span class="p">,</span> <span class="ss">order_by:</span> <span class="p">[</span><span class="ss">desc:</span> <span class="n">q</span><span class="o">.</span><span class="n">id</span><span class="p">])</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="about-changesets">About changesets</h3>
+<p>Changesets could be put into separate file (or even files) so schema file is not bloated. Like <code class="highlighter-rouge">lib/my_app/models/pizza/changesets.ex</code>.</p>
+
+<h2 id="use-that-in-contexts">Use that in contexts</h2>
+<p>Contexts go to <code class="highlighter-rouge">contexts</code> folder forming <em>data processing</em> layer (can’t call it “business logic”).</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/contexts/pizzas.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Contexts</span><span class="o">.</span><span class="no">Pizzas</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span><span class="o">.</span><span class="no">Query</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span>
+
+  <span class="k">def</span> <span class="n">list</span> <span class="k">do</span>
+    <span class="n">list_query</span><span class="p">()</span>
+    <span class="o">|&gt;</span> <span class="no">Query</span><span class="o">.</span><span class="n">non_discounted</span><span class="p">()</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">get!</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Pizza</span>
+    <span class="o">|&gt;</span> <span class="no">Query</span><span class="o">.</span><span class="n">non_discounted</span><span class="p">()</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">get!</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">get_by!</span><span class="p">(</span><span class="n">clauses</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Pizza</span>
+    <span class="o">|&gt;</span> <span class="no">Query</span><span class="o">.</span><span class="n">non_discounted</span><span class="p">()</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">get_by!</span><span class="p">(</span><span class="n">clauses</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">changeset</span> <span class="o">=</span> <span class="no">Pizza</span><span class="o">.</span><span class="n">changeset</span><span class="p">(%</span><span class="no">Pizza</span><span class="p">{},</span> <span class="n">params</span><span class="p">)</span>
+    <span class="no">Repo</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">changeset</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">update</span><span class="p">(%</span><span class="no">Pizza</span><span class="p">{}</span> <span class="o">=</span> <span class="n">pizza</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pizza</span>
+    <span class="o">|&gt;</span> <span class="no">Pizza</span><span class="o">.</span><span class="n">changeset</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h2 id="more-on-changesets-upd-2021-10-05">More on changesets (UPD 2021-10-05)</h2>
+<p>Apart from schemaless changesets my experience with Ecto tells me of two types of changesets: for <em>storing</em> and for <em>processing</em>.</p>
+
+<h3 id="storing-changesets">Storing changesets</h3>
+<p>These are used to handle DB errors not as exceptions but as changeset errors.</p>
+
+<p>Main usage for these changesets are <a href="https://hexdocs.pm/ecto/Ecto.Changeset.html#validate_required/3"><code class="highlighter-rouge">validate_required</code></a> for fields which are non-nullable in DB and applying handlers like <a href="https://hexdocs.pm/ecto/Ecto.Changeset.html#unique_constraint/3"><code class="highlighter-rouge">unique_constraint</code></a>, <a href="https://hexdocs.pm/ecto/Ecto.Changeset.html#check_constraint/3"><code class="highlighter-rouge">check_constraint</code></a> and <a href="https://hexdocs.pm/ecto/Ecto.Changeset.html#foreign_key_constraint/3"><code class="highlighter-rouge">foreign_key_constraint</code></a>.</p>
+
+<p>Should these changesets have casts? That’s an open question for me, because it makes no sense to require fields without filling them in. But combining two types of changesets allows us to move <code class="highlighter-rouge">cast</code>s out of storing changesets.</p>
+
+<p>There should be only one such changeset per model, accepting only other changesets as an argument (which explicitly tells to put <code class="highlighter-rouge">cast</code> somewhere else).</p>
+
+<p>Example:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/models/pizza.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Schema</span>
+
+  <span class="n">alias</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Changeset</span>
+  <span class="kn">import</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Changeset</span>
+
+  <span class="n">schema</span> <span class="sd">"</span><span class="s2">pizzas"</span> <span class="k">do</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:description</span><span class="p">,</span> <span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span><span class="p">(</span><span class="ss">:discounted</span><span class="p">,</span> <span class="ss">:boolean</span><span class="p">)</span>
+    <span class="n">timestamps</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">db_changeset</span><span class="p">(%</span><span class="no">Changeset</span><span class="p">{}</span> <span class="o">=</span> <span class="n">changeset</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">changeset</span>
+    <span class="o">|&gt;</span> <span class="n">validate_required</span><span class="p">([</span><span class="ss">:name</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="n">unique_constraint</span><span class="p">(</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">name:</span> <span class="ss">:unique_name_index</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="processing-changesets">Processing changesets</h3>
+<p>That’s where it gets interesting.</p>
+
+<p>These changesets should go to contexts that use them and go before (and with) storing changesets.</p>
+
+<p>For example we have to set <code class="highlighter-rouge">:name</code> and <code class="highlighter-rouge">:description</code> at one place but only <code class="highlighter-rouge">:description</code> at another:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Contexts</span><span class="o">.</span><span class="no">Admin</span><span class="o">.</span><span class="no">Pizzas</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Changeset</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span>
+
+  <span class="k">def</span> <span class="n">update</span><span class="p">(%</span><span class="no">Pizza</span><span class="p">{}</span> <span class="o">=</span> <span class="n">pizza</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pizza</span>
+    <span class="o">|&gt;</span> <span class="n">changeset</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">changeset</span><span class="p">(%</span><span class="no">Pizza</span><span class="p">{}</span> <span class="o">=</span> <span class="n">pizza</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pizza</span>
+    <span class="o">|&gt;</span> <span class="no">Changeset</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">[</span><span class="ss">:name</span><span class="p">,</span> <span class="ss">:description</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="no">Pizza</span><span class="o">.</span><span class="n">db_changeset</span><span class="p">()</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Contexts</span><span class="o">.</span><span class="no">Manager</span><span class="o">.</span><span class="no">Pizzas</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Changeset</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Models</span><span class="o">.</span><span class="no">Pizza</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Repo</span>
+
+  <span class="k">def</span> <span class="n">update</span><span class="p">(%</span><span class="no">Pizza</span><span class="p">{}</span> <span class="o">=</span> <span class="n">pizza</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pizza</span>
+    <span class="o">|&gt;</span> <span class="n">changeset</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">changeset</span><span class="p">(%</span><span class="no">Pizza</span><span class="p">{}</span> <span class="o">=</span> <span class="n">pizza</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pizza</span>
+    <span class="o">|&gt;</span> <span class="no">Changeset</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="p">[</span><span class="ss">:description</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="no">Changeset</span><span class="o">.</span><span class="n">validate_required</span><span class="p">([</span><span class="ss">:description</span><span class="p">])</span>
+    <span class="o">|&gt;</span> <span class="no">Pizza</span><span class="o">.</span><span class="n">db_changeset</span><span class="p">()</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>So instead of bloating storage layer with processing definitions like <code class="highlighter-rouge">def admin_changeset(struct, params)</code> and <code class="highlighter-rouge">def manager_changeset(struct, params)</code> we put ‘em to <strong>user story definition</strong> that uses that exact changeset.</p>
+
+<h3 id="that-does-not-look-very-good">That does not look very good</h3>
+<p>Because we use the same word “changeset” (and even implementation under the hood) for two different things: <em>DB handling</em> and <em>user input validation and normalization</em>.</p>
+
+<p>The only thing I can think of to make it better is to name these changesets so it would be clear which changeset is for what.</p>
+
+<h2 id="gateways-upd-2021-10-10">Gateways (UPD 2021-10-10)</h2>
+<p>More on project structure!</p>
+
+<p>Some systems have to communicate with other systems (HTTP, MQ, etc).</p>
+
+<p>That “communications” layer has to be separated from everything else (IMHO). I usually go with “lib/my_app/gateways” folder.</p>
+
+<p>Example:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/gateways/some_other_service.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span><span class="o">.</span><span class="no">SomeOtherService</span> <span class="k">do</span>
+  <span class="nv">@items_url</span> <span class="sd">"</span><span class="s2">http://example.com/items"</span>
+
+  <span class="k">def</span> <span class="n">get_items</span> <span class="k">do</span>
+    <span class="n">request</span> <span class="o">=</span> <span class="p">{</span><span class="nv">@items_url</span><span class="p">,</span> <span class="p">[]}</span>
+
+    <span class="n">with</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">{</span> <span class="p">{</span><span class="n">_</span><span class="p">,</span> <span class="m">200</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">_</span><span class="p">,</span> <span class="n">raw_response</span><span class="p">}}</span> <span class="o">&lt;-</span> <span class="ss">:httpc</span><span class="o">.</span><span class="n">request</span><span class="p">(</span><span class="ss">:get</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="p">[],</span> <span class="p">[]),</span>
+         <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">response</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="no">Jason</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="n">raw_response</span><span class="p">)</span> <span class="k">do</span>
+      <span class="n">response</span><span class="p">[</span><span class="sd">"</span><span class="s2">items"</span><span class="p">]</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/contexts/items.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Contexts</span><span class="o">.</span><span class="no">Items</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span><span class="o">.</span><span class="no">SomeOtherService</span><span class="p">,</span> <span class="ss">as:</span> <span class="no">SomeOtherServiceGateway</span>
+
+  <span class="k">def</span> <span class="n">load_items</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="no">SomeOtherServiceGateway</span><span class="o">.</span><span class="n">get_items</span><span class="p">()</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">save_items</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+      <span class="n">error</span> <span class="o">-&gt;</span> <span class="n">error</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">save_items</span> <span class="k">do</span>
+    <span class="c1"># save items to DB</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<h3 id="dependency-inversion">Dependency inversion</h3>
+<p>Sort of.</p>
+
+<p>More often than not it’s impossible to reach other service from local machine, so some kind of fake service implementation has to be used. In that case instead of using gateway modules one can just get preconfigured module by calling a function like this:</p>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># config/dev.exs</span>
+<span class="c1"># ...</span>
+<span class="n">config</span> <span class="ss">:my_app</span><span class="p">,</span> <span class="ss">:use_fake_other_service</span><span class="p">,</span> <span class="no">true</span>
+<span class="c1"># ...</span>
+</code></pre></div></div>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/gateways.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span><span class="o">.</span><span class="no">OtherService</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span><span class="o">.</span><span class="no">OtherService</span><span class="o">.</span><span class="no">Fake</span><span class="p">,</span> <span class="ss">as:</span> <span class="no">FakeOtherService</span>
+
+  <span class="k">def</span> <span class="n">other_service</span> <span class="k">do</span>
+    <span class="k">if</span> <span class="no">Application</span><span class="o">.</span><span class="n">get_env</span><span class="p">(</span><span class="ss">:my_app</span><span class="p">,</span> <span class="ss">:use_fake_other_service</span><span class="p">)</span> <span class="k">do</span>
+      <span class="no">FakeOtherService</span>
+    <span class="k">else</span>
+      <span class="no">OtherService</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/gateways/other_service/fake.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span><span class="o">.</span><span class="no">OtherService</span><span class="o">.</span><span class="no">Fake</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">get_items</span><span class="p">,</span> <span class="k">do</span><span class="p">:</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">[</span><span class="m">1</span><span class="p">,</span> <span class="m">2</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="m">4</span><span class="p">,</span> <span class="m">5</span><span class="p">]}</span>
+<span class="k">end</span>
+</code></pre></div></div>
+<div class="language-elixir highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># lib/my_app/contexts/items.ex</span>
+
+<span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Contexts</span><span class="o">.</span><span class="no">Items</span> <span class="k">do</span>
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Gateways</span>
+
+  <span class="k">def</span> <span class="n">load_items</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="no">Gateways</span><span class="o">.</span><span class="n">other_service</span><span class="p">()</span><span class="o">.</span><span class="n">get_items</span><span class="p">()</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">items</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="n">save_items</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+      <span class="n">error</span> <span class="o">-&gt;</span> <span class="n">error</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">save_items</span> <span class="k">do</span>
+    <span class="c1"># save items to DB</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+  </div>
+
+  
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

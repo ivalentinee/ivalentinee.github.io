@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-09-27T00:00:00+00:00" />
 <script type="application/ld+json">
-{"headline":"Хачим OpenAPI","dateModified":"2018-09-27T00:00:00+00:00","datePublished":"2018-09-27T00:00:00+00:00","description":"Предисловие Так исторически сложилось, что я на проектах пользовался apiDoc’м. Прекрасный инструмент. Но, увы, при росте размеров и количества HTTP API он (apiDoc) всё хуже справлялся. Когда пришло время выбирать новый инструмент, выбор, по сути, свёлся к двум стульям вариантам: API Blueprint и OpenAPI. Продолбавшись с API Blueprint часа 4 и так и не заставив его нормально работать с deepObject-параметрами строки запроса, остался только туманный OpenAPI. Предполагаемая модель данных и API Для демонстрации того, что поломало мне пропагандируемый OpenAPI-документацией подход, необходимо обозначить некоторую модель и пару методов API для работы с ней Пусть это будет товар в интернет-магазине. Модель данных Атрибутами (их было бы больше, но для примера хватит этих) будут: Название (строка) — name Описание (строка) — description Артикул (число) — vendor_code (Шоколад не виноват, гугель-транслейт так перевёл) Картинка (файл) — picture Составим канонiчную OpenAPI-схему: components: schemas: Product: type: object description: Продукт properties: name: type: string description: Название товара description: type: string description: Описание товара vendor_code: type: number description: Артикул picture: type: string format: binary description: Изображение HTTP API Тут нам понадобится описание двух методов: создания и получения. Ввиду наличия картинки метод создания гипотетически будет описываться примерно так: paths: /api/products: post: summary: Создание продукта requestBody: required: true content: multipart/form-data: schema: &quot;$ref&quot;: &quot;#/components/schemas/Product&quot; responses: &#39;200&#39;: # ... А метод получения гипотетически будет описываться примерно так: paths: /api/products/{id}: get: summary: Получение проекта parameters: - name: id in: query description: Идентификатор продукта schema: type: string responses: &#39;200&#39;: content: application/json: schema: $ref: &quot;#/components/schemas/Product&quot; Всё правильно? Да нет, не очень. Пример сломанного API А что, собственно, сломалось-то? На деле никто не будет делать API, которое получает файл бинарником (в составе multipart/form-data), и отдавать бинарником (в составе application/json). Скорее всего ответ будет в виде: picture: type: object description: Изображение properties: link: type: string description: Ссылка на файл filename: type: string description: Имя файла То есть, в терминологии OpenAPI producer (производитель) не равен cunsumer’у (потребителю). А это значит, что использовать одну и ту же схему не получится. Как быть? В идеальном мире можно было бы описать модель, а потом сокращать/дополнять её до нужного нам состояния. Однако такой метод мало того, что не поддерживается (merge в стандарт не включат, а allOf не только сломан, но и создан не столько для сращивания схем, сколько для объединения), так ещё и опасен, потому что изменения исходной модели неизвестно как скажутся на производной модели. Забить на вынесение схемы И просто везде писать всё целиком. Но это будет лютое дублирование. А учитывая то, как многословно (я бы даже сказал “многострочо”) описание в OpenAPI, это приведёт к огромному файлу. Нецелесообразно огромному. Вынести общее описание на уровень выше Ну я не про yaml-файлы сейчас, а про уровень абстракции. А общими являются описания отдельных полей (не всех, но почти). Их и будем выносить из описания методов. Ввиду того, что OpenAPI явно не указывает, какие именно схемы мы должны можем описывать, сделать это для подсхем это достаточно легко. После чего в описании методов будем всё-таки писать схему, но не целиком описывать модель, а только перечислять нужные свойства. «Похаченное» API Описываем свойства модели components: schemas: Product::name: type: string description: Название товара Product::description: type: string description: Описание товара Product::vendor_code: type: number description: Артикул Product::picture: type: object description: Изображение properties: link: type: string description: Ссылка на файл filename: type: string description: Имя файла Product::picture::upload: type: string format: binary description: Изображение Используем их в схемах методов Метод создания теперь выглядит так: paths: /api/products: post: summary: Создание продукта requestBody: required: true content: multipart/form-data: schema: type: object properties: name: {&quot;$ref&quot;: &quot;#/components/schemas/Product::name&quot;} description: {&quot;$ref&quot;: &quot;#/components/schemas/Product::description&quot;} vendor_code: {&quot;$ref&quot;: &quot;#/components/schemas/Product::vendor_code&quot;} picture: {&quot;$ref&quot;: &quot;#/components/schemas/Product::picture::upload&quot;} responses: &#39;200&#39;: # ... А метод получения теперь выглядит так: paths: /api/products/{id}: get: summary: Получение проекта parameters: - name: id in: query description: Идентификатор продукта schema: type: string responses: &#39;200&#39;: content: application/json: schema: type: object properties: name: {&quot;$ref&quot;: &quot;#/components/schemas/Product::name&quot;} description: {&quot;$ref&quot;: &quot;#/components/schemas/Product::description&quot;} vendor_code: {&quot;$ref&quot;: &quot;#/components/schemas/Product::vendor_code&quot;} picture: {&quot;$ref&quot;: &quot;#/components/schemas/Product::picture&quot;} Пример похаченного API Немного выводов Такое описание, по сути, отображает реальное положение дел. Мало кто пишет один и тот же код как для получения данных, так и для их отображения. Однако общими для них (в коде) являются поля (их типы и описания). Ну кроме случая с файлами (и подобные). Авторский говнокод Ещё одна крохотная проблема исходного OpenAPI заключается в том, что описание нельзя разбить на несколько файлов. Что, конечно, можно понять, но на практике — крайне неудобное ограничение. Проблема решается в пару строк кода: парсим все файлы, мержим, рендерим в один файл. Так случилось, что подобное решение я уже написал. Не ручаюсь за его работоспособность :)","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2018/09/27/hacking-openapi.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2018/09/27/hacking-openapi.html","@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2018/09/27/hacking-openapi.html"},"description":"Предисловие Так исторически сложилось, что я на проектах пользовался apiDoc’м. Прекрасный инструмент. Но, увы, при росте размеров и количества HTTP API он (apiDoc) всё хуже справлялся. Когда пришло время выбирать новый инструмент, выбор, по сути, свёлся к двум стульям вариантам: API Blueprint и OpenAPI. Продолбавшись с API Blueprint часа 4 и так и не заставив его нормально работать с deepObject-параметрами строки запроса, остался только туманный OpenAPI. Предполагаемая модель данных и API Для демонстрации того, что поломало мне пропагандируемый OpenAPI-документацией подход, необходимо обозначить некоторую модель и пару методов API для работы с ней Пусть это будет товар в интернет-магазине. Модель данных Атрибутами (их было бы больше, но для примера хватит этих) будут: Название (строка) — name Описание (строка) — description Артикул (число) — vendor_code (Шоколад не виноват, гугель-транслейт так перевёл) Картинка (файл) — picture Составим канонiчную OpenAPI-схему: components: schemas: Product: type: object description: Продукт properties: name: type: string description: Название товара description: type: string description: Описание товара vendor_code: type: number description: Артикул picture: type: string format: binary description: Изображение HTTP API Тут нам понадобится описание двух методов: создания и получения. Ввиду наличия картинки метод создания гипотетически будет описываться примерно так: paths: /api/products: post: summary: Создание продукта requestBody: required: true content: multipart/form-data: schema: &quot;$ref&quot;: &quot;#/components/schemas/Product&quot; responses: &#39;200&#39;: # ... А метод получения гипотетически будет описываться примерно так: paths: /api/products/{id}: get: summary: Получение проекта parameters: - name: id in: query description: Идентификатор продукта schema: type: string responses: &#39;200&#39;: content: application/json: schema: $ref: &quot;#/components/schemas/Product&quot; Всё правильно? Да нет, не очень. Пример сломанного API А что, собственно, сломалось-то? На деле никто не будет делать API, которое получает файл бинарником (в составе multipart/form-data), и отдавать бинарником (в составе application/json). Скорее всего ответ будет в виде: picture: type: object description: Изображение properties: link: type: string description: Ссылка на файл filename: type: string description: Имя файла То есть, в терминологии OpenAPI producer (производитель) не равен cunsumer’у (потребителю). А это значит, что использовать одну и ту же схему не получится. Как быть? В идеальном мире можно было бы описать модель, а потом сокращать/дополнять её до нужного нам состояния. Однако такой метод мало того, что не поддерживается (merge в стандарт не включат, а allOf не только сломан, но и создан не столько для сращивания схем, сколько для объединения), так ещё и опасен, потому что изменения исходной модели неизвестно как скажутся на производной модели. Забить на вынесение схемы И просто везде писать всё целиком. Но это будет лютое дублирование. А учитывая то, как многословно (я бы даже сказал “многострочо”) описание в OpenAPI, это приведёт к огромному файлу. Нецелесообразно огромному. Вынести общее описание на уровень выше Ну я не про yaml-файлы сейчас, а про уровень абстракции. А общими являются описания отдельных полей (не всех, но почти). Их и будем выносить из описания методов. Ввиду того, что OpenAPI явно не указывает, какие именно схемы мы должны можем описывать, сделать это для подсхем это достаточно легко. После чего в описании методов будем всё-таки писать схему, но не целиком описывать модель, а только перечислять нужные свойства. «Похаченное» API Описываем свойства модели components: schemas: Product::name: type: string description: Название товара Product::description: type: string description: Описание товара Product::vendor_code: type: number description: Артикул Product::picture: type: object description: Изображение properties: link: type: string description: Ссылка на файл filename: type: string description: Имя файла Product::picture::upload: type: string format: binary description: Изображение Используем их в схемах методов Метод создания теперь выглядит так: paths: /api/products: post: summary: Создание продукта requestBody: required: true content: multipart/form-data: schema: type: object properties: name: {&quot;$ref&quot;: &quot;#/components/schemas/Product::name&quot;} description: {&quot;$ref&quot;: &quot;#/components/schemas/Product::description&quot;} vendor_code: {&quot;$ref&quot;: &quot;#/components/schemas/Product::vendor_code&quot;} picture: {&quot;$ref&quot;: &quot;#/components/schemas/Product::picture::upload&quot;} responses: &#39;200&#39;: # ... А метод получения теперь выглядит так: paths: /api/products/{id}: get: summary: Получение проекта parameters: - name: id in: query description: Идентификатор продукта schema: type: string responses: &#39;200&#39;: content: application/json: schema: type: object properties: name: {&quot;$ref&quot;: &quot;#/components/schemas/Product::name&quot;} description: {&quot;$ref&quot;: &quot;#/components/schemas/Product::description&quot;} vendor_code: {&quot;$ref&quot;: &quot;#/components/schemas/Product::vendor_code&quot;} picture: {&quot;$ref&quot;: &quot;#/components/schemas/Product::picture&quot;} Пример похаченного API Немного выводов Такое описание, по сути, отображает реальное положение дел. Мало кто пишет один и тот же код как для получения данных, так и для их отображения. Однако общими для них (в коде) являются поля (их типы и описания). Ну кроме случая с файлами (и подобные). Авторский говнокод Ещё одна крохотная проблема исходного OpenAPI заключается в том, что описание нельзя разбить на несколько файлов. Что, конечно, можно понять, но на практике — крайне неудобное ограничение. Проблема решается в пару строк кода: парсим все файлы, мержим, рендерим в один файл. Так случилось, что подобное решение я уже написал. Не ручаюсь за его работоспособность :)","@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2018/09/27/hacking-openapi.html","headline":"Хачим OpenAPI","dateModified":"2018-09-27T00:00:00+00:00","datePublished":"2018-09-27T00:00:00+00:00","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
 <body><header class="site-header" role="banner">
@@ -43,6 +43,11 @@
             
             
               
+            
+          
+            
+            
+              
                 <a class="page-link" href="/ru/about/">Обо мне</a>
               
             
@@ -64,6 +69,13 @@
           
             
             
+              
+            
+          
+            
+            
+              
+            
           
             
             
@@ -77,6 +89,44 @@
             
           
             
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
             
           
             
@@ -312,28 +362,6 @@
 <p>Так случилось, что <a href="https://github.com/ivalentinee/openapi-merger">подобное решение я уже написал</a>. Не ручаюсь за его работоспособность :)</p>
 
   </div>
-
-  
-  <div id="disqus_thread"></div>
-<script>
-
-/**
-*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-/*
-var disqus_config = function () {
-this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-*/
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://ivalentinee.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
   
 

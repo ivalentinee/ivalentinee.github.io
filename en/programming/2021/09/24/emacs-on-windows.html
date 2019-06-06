@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.5.0 -->
+<title>Emacs on Windows | ivalentinee</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="Emacs on Windows" />
+<meta property="og:locale" content="en" />
+<meta name="description" content="How did I get there Due to job change I had to buy a new laptop (I had to give laptop from my previous job back). Requirements for the new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle. Since my old Lenovo Carbon (4th gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen). When my new laptop arrived I logged into Windows 10 Pro (OEM) and… decided to keep Windows. Why? This laptop (suddenly!) had touchscreen, fingerprint scanner, power modes to let battery last longer… Well, I didn’t want to make it all work on Linux, but wanted to use all these features. I got WSL2, Docker and Emacs on WSL2 working in two days so I was able to go around my day job. A month later I had to download lots of files, edit them and send back. As almost all applications (apart from Docker and Emacs) were running on Windows using WSL emacs was not very convenient. So I decided to make Emacs work on Windows. As most of my questions took some hours to google answers I decided to put these answers here. Installing That’s the easiest part: go to https://www.gnu.org/software/emacs/, download, install. Configuring Emacs by default looks for configuration not in C:\Users\&lt;Username&gt; but in C:\Users\&lt;Username&gt;\AppData\Roaming. So that’s where we put it. As I keep emacs dotfiles in Git I cloned my repo to C:\Users\&lt;Username&gt;\Code\emacs_config and made symbolic links in PowerShell (as Administrator): C:\Users\Valen&gt; mkdir .emacs.d C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs&#39; C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\.emacs.d\ -Name settings -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs.d\settings&#39; Changing HOME folder As Emacs looks for home in C:\Users\&lt;Username&gt;\AppData\Roaming finding files is not very convenient (getting back to C:\Users\&lt;Username&gt; every time). There’re few ways to fix this: Set HOME in Windows Not my thing, ‘cause fighting Windows to set HOME is too painful to me Set HOME in Emacs That’s my thing! To do this I put this code at the end of .emacs: (if (string= system-type &quot;windows-nt&quot;) (setenv &quot;HOME&quot; &quot;C:\\Users\\Valen&quot;)) emacs –daemon and emacsclient It took me about two hours to google answers for that, so this section (I think) is the most valuable. First, I wanted to use emacsclient ‘cause in 2021 it takes emacs inexcusibly long time to start. Second, I’d like not to lauch emacs --daemon at system start. That’s just me. I found this solution: run emacs with -a option (which starts alternative editor if emacsclient fails to start) with empty value which causes emacsclient to start emacs --daemon and connect to it. To make this work I had to delete C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-&lt;version&gt; which had shortcuts created by emacs installer. Next I created shortcut C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs and set target attribute to this: &quot;C:\Program Files\Emacs\x86_64\bin\emacsclient.exe&quot; -c -n -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; -a= Where -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; points to daemon socket. Remember we changed HOME? That has consequences. Adopting emacs configuration Emacs config from Linux didn’t allow Emacs to start normally, so I had to fix it. Specifically, I had to turn off pinentry integration (it makes no sense on Windows anyway): (if (string= system-type &quot;gnu/linux&quot;) (progn (setenv &quot;INSIDE_EMACS&quot; (format &quot;%s,comint&quot; emacs-version)) (setq epa-pinentry-mode &#39;loopback) (pinentry-start))) PowerShell Cmd was not an option, so I had to make PowerShell work in shell-mode: (if (string= system-type &quot;windows-nt&quot;) (setq shell-file-name &quot;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe&quot; explicit-powershell.exe-args &#39;(&quot;-InputFormat&quot; &quot;Text&quot; &quot;-NoLogo&quot;))) Autocompletition doesn’t work though. What else? Well, neither grep nor silversearcher-ag are easy to install for PowerShell which is sad. And I didn’t bother wit git integration because I don’t write too much code on Windows. Small recap In WSL2 it (Emacs) still runs faster and is easier to use. So I ended up making /mnt/c/Users/Valen → ~/winhome symlink ans use Emacs on WSL. And yeah, I saw Surface Laptop Studio announce and now I regret that I got Lenovo Carbon. But at least it was a way to know that development on Windows (with WSL) works pretty well (so I don’t need Linux as host system)." />
+<meta property="og:description" content="How did I get there Due to job change I had to buy a new laptop (I had to give laptop from my previous job back). Requirements for the new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle. Since my old Lenovo Carbon (4th gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen). When my new laptop arrived I logged into Windows 10 Pro (OEM) and… decided to keep Windows. Why? This laptop (suddenly!) had touchscreen, fingerprint scanner, power modes to let battery last longer… Well, I didn’t want to make it all work on Linux, but wanted to use all these features. I got WSL2, Docker and Emacs on WSL2 working in two days so I was able to go around my day job. A month later I had to download lots of files, edit them and send back. As almost all applications (apart from Docker and Emacs) were running on Windows using WSL emacs was not very convenient. So I decided to make Emacs work on Windows. As most of my questions took some hours to google answers I decided to put these answers here. Installing That’s the easiest part: go to https://www.gnu.org/software/emacs/, download, install. Configuring Emacs by default looks for configuration not in C:\Users\&lt;Username&gt; but in C:\Users\&lt;Username&gt;\AppData\Roaming. So that’s where we put it. As I keep emacs dotfiles in Git I cloned my repo to C:\Users\&lt;Username&gt;\Code\emacs_config and made symbolic links in PowerShell (as Administrator): C:\Users\Valen&gt; mkdir .emacs.d C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs&#39; C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\.emacs.d\ -Name settings -Value &#39;C:\Users\Valen\Code\emacs_config\.emacs.d\settings&#39; Changing HOME folder As Emacs looks for home in C:\Users\&lt;Username&gt;\AppData\Roaming finding files is not very convenient (getting back to C:\Users\&lt;Username&gt; every time). There’re few ways to fix this: Set HOME in Windows Not my thing, ‘cause fighting Windows to set HOME is too painful to me Set HOME in Emacs That’s my thing! To do this I put this code at the end of .emacs: (if (string= system-type &quot;windows-nt&quot;) (setenv &quot;HOME&quot; &quot;C:\\Users\\Valen&quot;)) emacs –daemon and emacsclient It took me about two hours to google answers for that, so this section (I think) is the most valuable. First, I wanted to use emacsclient ‘cause in 2021 it takes emacs inexcusibly long time to start. Second, I’d like not to lauch emacs --daemon at system start. That’s just me. I found this solution: run emacs with -a option (which starts alternative editor if emacsclient fails to start) with empty value which causes emacsclient to start emacs --daemon and connect to it. To make this work I had to delete C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-&lt;version&gt; which had shortcuts created by emacs installer. Next I created shortcut C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs and set target attribute to this: &quot;C:\Program Files\Emacs\x86_64\bin\emacsclient.exe&quot; -c -n -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; -a= Where -f &quot;c:\Users\Valen\.emacs.d\server\server&quot; points to daemon socket. Remember we changed HOME? That has consequences. Adopting emacs configuration Emacs config from Linux didn’t allow Emacs to start normally, so I had to fix it. Specifically, I had to turn off pinentry integration (it makes no sense on Windows anyway): (if (string= system-type &quot;gnu/linux&quot;) (progn (setenv &quot;INSIDE_EMACS&quot; (format &quot;%s,comint&quot; emacs-version)) (setq epa-pinentry-mode &#39;loopback) (pinentry-start))) PowerShell Cmd was not an option, so I had to make PowerShell work in shell-mode: (if (string= system-type &quot;windows-nt&quot;) (setq shell-file-name &quot;C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe&quot; explicit-powershell.exe-args &#39;(&quot;-InputFormat&quot; &quot;Text&quot; &quot;-NoLogo&quot;))) Autocompletition doesn’t work though. What else? Well, neither grep nor silversearcher-ag are easy to install for PowerShell which is sad. And I didn’t bother wit git integration because I don’t write too much code on Windows. Small recap In WSL2 it (Emacs) still runs faster and is easier to use. So I ended up making /mnt/c/Users/Valen → ~/winhome symlink ans use Emacs on WSL. And yeah, I saw Surface Laptop Studio announce and now I regret that I got Lenovo Carbon. But at least it was a way to know that development on Windows (with WSL) works pretty well (so I don’t need Linux as host system)." />
+<link rel="canonical" href="https://ivalentinee.github.io/en/programming/2021/09/24/emacs-on-windows.html" />
+<meta property="og:url" content="https://ivalentinee.github.io/en/programming/2021/09/24/emacs-on-windows.html" />
+<meta property="og:site_name" content="ivalentinee" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2021-09-24T00:00:00+00:00" />
+<script type="application/ld+json">
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/en/programming/2021/09/24/emacs-on-windows.html"},"description":"How did I get there Due to job change I had to buy a new laptop (I had to give laptop from my previous job back). Requirements for the new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle. Since my old Lenovo Carbon (4th gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen). When my new laptop arrived I logged into Windows 10 Pro (OEM) and… decided to keep Windows. Why? This laptop (suddenly!) had touchscreen, fingerprint scanner, power modes to let battery last longer… Well, I didn’t want to make it all work on Linux, but wanted to use all these features. I got WSL2, Docker and Emacs on WSL2 working in two days so I was able to go around my day job. A month later I had to download lots of files, edit them and send back. As almost all applications (apart from Docker and Emacs) were running on Windows using WSL emacs was not very convenient. So I decided to make Emacs work on Windows. As most of my questions took some hours to google answers I decided to put these answers here. Installing That’s the easiest part: go to https://www.gnu.org/software/emacs/, download, install. Configuring Emacs by default looks for configuration not in C:\\Users\\&lt;Username&gt; but in C:\\Users\\&lt;Username&gt;\\AppData\\Roaming. So that’s where we put it. As I keep emacs dotfiles in Git I cloned my repo to C:\\Users\\&lt;Username&gt;\\Code\\emacs_config and made symbolic links in PowerShell (as Administrator): C:\\Users\\Valen&gt; mkdir .emacs.d C:\\Users\\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\\Users\\Valen\\ -Name .emacs -Value &#39;C:\\Users\\Valen\\Code\\emacs_config\\.emacs&#39; C:\\Users\\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\\Users\\Valen\\.emacs.d\\ -Name settings -Value &#39;C:\\Users\\Valen\\Code\\emacs_config\\.emacs.d\\settings&#39; Changing HOME folder As Emacs looks for home in C:\\Users\\&lt;Username&gt;\\AppData\\Roaming finding files is not very convenient (getting back to C:\\Users\\&lt;Username&gt; every time). There’re few ways to fix this: Set HOME in Windows Not my thing, ‘cause fighting Windows to set HOME is too painful to me Set HOME in Emacs That’s my thing! To do this I put this code at the end of .emacs: (if (string= system-type &quot;windows-nt&quot;) (setenv &quot;HOME&quot; &quot;C:\\\\Users\\\\Valen&quot;)) emacs –daemon and emacsclient It took me about two hours to google answers for that, so this section (I think) is the most valuable. First, I wanted to use emacsclient ‘cause in 2021 it takes emacs inexcusibly long time to start. Second, I’d like not to lauch emacs --daemon at system start. That’s just me. I found this solution: run emacs with -a option (which starts alternative editor if emacsclient fails to start) with empty value which causes emacsclient to start emacs --daemon and connect to it. To make this work I had to delete C:\\Users\\Valen\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Emacs-&lt;version&gt; which had shortcuts created by emacs installer. Next I created shortcut C:\\Users\\Valen\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Emacs and set target attribute to this: &quot;C:\\Program Files\\Emacs\\x86_64\\bin\\emacsclient.exe&quot; -c -n -f &quot;c:\\Users\\Valen\\.emacs.d\\server\\server&quot; -a= Where -f &quot;c:\\Users\\Valen\\.emacs.d\\server\\server&quot; points to daemon socket. Remember we changed HOME? That has consequences. Adopting emacs configuration Emacs config from Linux didn’t allow Emacs to start normally, so I had to fix it. Specifically, I had to turn off pinentry integration (it makes no sense on Windows anyway): (if (string= system-type &quot;gnu/linux&quot;) (progn (setenv &quot;INSIDE_EMACS&quot; (format &quot;%s,comint&quot; emacs-version)) (setq epa-pinentry-mode &#39;loopback) (pinentry-start))) PowerShell Cmd was not an option, so I had to make PowerShell work in shell-mode: (if (string= system-type &quot;windows-nt&quot;) (setq shell-file-name &quot;C:\\\\Windows\\\\System32\\\\WindowsPowerShell\\\\v1.0\\\\powershell.exe&quot; explicit-powershell.exe-args &#39;(&quot;-InputFormat&quot; &quot;Text&quot; &quot;-NoLogo&quot;))) Autocompletition doesn’t work though. What else? Well, neither grep nor silversearcher-ag are easy to install for PowerShell which is sad. And I didn’t bother wit git integration because I don’t write too much code on Windows. Small recap In WSL2 it (Emacs) still runs faster and is easier to use. So I ended up making /mnt/c/Users/Valen → ~/winhome symlink ans use Emacs on WSL. And yeah, I saw Surface Laptop Studio announce and now I regret that I got Lenovo Carbon. But at least it was a way to know that development on Windows (with WSL) works pretty well (so I don’t need Linux as host system).","@type":"BlogPosting","url":"https://ivalentinee.github.io/en/programming/2021/09/24/emacs-on-windows.html","headline":"Emacs on Windows","dateModified":"2021-09-24T00:00:00+00:00","datePublished":"2021-09-24T00:00:00+00:00","@context":"http://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper">
+    
+    
+    <a class="site-title" href="/en/">ivalentinee</a>
+
+    
+      <nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path fill="#424242" d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.031C17.335,0,18,0.665,18,1.484L18,1.484z"/>
+              <path fill="#424242" d="M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0c0-0.82,0.665-1.484,1.484-1.484 h15.031C17.335,6.031,18,6.696,18,7.516L18,7.516z"/>
+              <path fill="#424242" d="M18,13.516C18,14.335,17.335,15,16.516,15H1.484C0.665,15,0,14.335,0,13.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.031C17.335,12.031,18,12.696,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger">
+          
+            
+            
+              
+                <a class="page-link" href="/en/about/">About</a>
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+        </div>
+      </nav>
+    
+  </div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Emacs on Windows</h1>
+    <p class="post-meta">
+      <time datetime="2021-09-24T00:00:00+00:00" itemprop="datePublished">
+        
+        Sep 24, 2021
+      </time>
+      </p>
+  </header>
+
+          <div class="language-selector">
+          <span class="language-selector-link">English</span><span class="language-selector-separator">|</span><a href="/ru/programming/2021/09/24/emacs-on-windows.html" class="language-selector-link">Русский</a>
+        </div>
+
+
+  <div class="post-content" itemprop="articleBody">
+    <h2 id="how-did-i-get-there">How did I get there</h2>
+<p>Due to job change I had to buy a new laptop (I had to give laptop from my previous job back).<br />
+Requirements for the new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle.<br />
+Since my old Lenovo Carbon (4th gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen).</p>
+
+<p>When my new laptop arrived I logged into Windows 10 Pro (OEM) and… decided to keep Windows. Why? This laptop (suddenly!) had touchscreen, fingerprint scanner, power modes to let battery last longer… Well, I didn’t want to make it all work on Linux, but wanted to use all these features.</p>
+
+<p>I got WSL2, Docker and <a href="https://emacsredux.com/blog/2020/09/23/using-emacs-on-windows-with-wsl2/">Emacs on WSL2</a> working in two days so I was able to go around my day job.</p>
+
+<p>A month later I had to download lots of files, edit them and send back. As almost all applications (apart from Docker and Emacs) were running on Windows using WSL emacs was not very convenient. So I decided to make Emacs work on Windows. As most of my questions took some hours to google answers I decided to put these answers here.</p>
+
+<h2 id="installing">Installing</h2>
+<p>That’s the easiest part: go to <a href="https://www.gnu.org/software/emacs/">https://www.gnu.org/software/emacs/</a>, download, install.</p>
+
+<h2 id="configuring">Configuring</h2>
+<p>Emacs by default looks for configuration not in <code class="highlighter-rouge">C:\Users\&lt;Username&gt;</code> but in <code class="highlighter-rouge">C:\Users\&lt;Username&gt;\AppData\Roaming</code>. So that’s where we put it.</p>
+
+<p>As I keep emacs dotfiles in Git I cloned my repo to <code class="highlighter-rouge">C:\Users\&lt;Username&gt;\Code\emacs_config</code> and made symbolic links in PowerShell (as Administrator):</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> C:\Users\Valen&gt; mkdir .emacs.d
+ C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value 'C:\Users\Valen\Code\emacs_config\.emacs'
+ C:\Users\Valen&gt; New-Item -ItemType SymbolicLink -Path C:\Users\Valen\.emacs.d\ -Name settings -Value 'C:\Users\Valen\Code\emacs_config\.emacs.d\settings'
+</code></pre></div></div>
+
+<h2 id="changing-home-folder">Changing HOME folder</h2>
+<p>As Emacs looks for home in <code class="highlighter-rouge">C:\Users\&lt;Username&gt;\AppData\Roaming</code> finding files is not very convenient (getting back to <code class="highlighter-rouge">C:\Users\&lt;Username&gt;</code> every time). There’re few ways to fix this:</p>
+<ol>
+  <li>Set HOME in Windows
+Not my thing, ‘cause fighting Windows to set HOME is too painful to me</li>
+  <li>Set HOME in Emacs
+That’s my thing!</li>
+</ol>
+
+<p>To do this I put this code at the end of .emacs:</p>
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">string=</span> <span class="nv">system-type</span> <span class="s">"windows-nt"</span><span class="p">)</span>
+    <span class="p">(</span><span class="nv">setenv</span> <span class="s">"HOME"</span> <span class="s">"C:\\Users\\Valen"</span><span class="p">))</span>
+</code></pre></div></div>
+
+<h2 id="emacs-daemon-and-emacsclient">emacs –daemon and emacsclient</h2>
+<p>It took me about two hours to google answers for that, so this section (I think) is the most valuable.</p>
+
+<p>First, I wanted to use emacsclient ‘cause in 2021 it takes emacs inexcusibly long time to start.<br />
+Second, I’d like not to lauch <code class="highlighter-rouge">emacs --daemon</code> at system start. That’s just me.</p>
+
+<p>I found this solution: run emacs with <code class="highlighter-rouge">-a</code> option (which starts alternative editor if emacsclient fails to start) with empty value which causes emacsclient to start <code class="highlighter-rouge">emacs --daemon</code> and connect to it.</p>
+
+<p>To make this work I had to delete <code class="highlighter-rouge">C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs-&lt;version&gt;</code> which had shortcuts created by emacs installer.
+Next I created shortcut <code class="highlighter-rouge">C:\Users\Valen\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Emacs</code> and set <code class="highlighter-rouge">target</code> attribute to this:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>"C:\Program Files\Emacs\x86_64\bin\emacsclient.exe" -c -n -f "c:\Users\Valen\.emacs.d\server\server" -a=
+</code></pre></div></div>
+<p>Where <code class="highlighter-rouge">-f "c:\Users\Valen\.emacs.d\server\server"</code> points to daemon socket. Remember we changed HOME? That has consequences.</p>
+
+<h2 id="adopting-emacs-configuration">Adopting emacs configuration</h2>
+<p>Emacs config from Linux didn’t allow Emacs to start normally, so I had to fix it.</p>
+
+<p>Specifically, I had to turn off pinentry integration (it makes no sense on Windows anyway):</p>
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">string=</span> <span class="nv">system-type</span> <span class="s">"gnu/linux"</span><span class="p">)</span>
+    <span class="p">(</span><span class="k">progn</span> <span class="p">(</span><span class="nv">setenv</span> <span class="s">"INSIDE_EMACS"</span> <span class="p">(</span><span class="nb">format</span> <span class="s">"%s,comint"</span> <span class="nv">emacs-version</span><span class="p">))</span>
+           <span class="p">(</span><span class="k">setq</span> <span class="nv">epa-pinentry-mode</span> <span class="ss">'loopback</span><span class="p">)</span>
+           <span class="p">(</span><span class="nv">pinentry-start</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<h2 id="powershell">PowerShell</h2>
+<p>Cmd was not an option, so I had to make PowerShell work in shell-mode:</p>
+<div class="language-elisp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="k">if</span> <span class="p">(</span><span class="nb">string=</span> <span class="nv">system-type</span> <span class="s">"windows-nt"</span><span class="p">)</span>
+    <span class="p">(</span><span class="k">setq</span>
+     <span class="nv">shell-file-name</span> <span class="s">"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe"</span>
+     <span class="nv">explicit-powershell.exe-args</span> <span class="o">'</span><span class="p">(</span><span class="s">"-InputFormat"</span> <span class="s">"Text"</span> <span class="s">"-NoLogo"</span><span class="p">)))</span>
+</code></pre></div></div>
+
+<p>Autocompletition doesn’t work though.</p>
+
+<h2 id="what-else">What else?</h2>
+<p>Well, neither grep nor silversearcher-ag are easy to install for PowerShell which is sad.<br />
+And I didn’t bother wit git integration because I don’t write too much code on Windows.</p>
+
+<h2 id="small-recap">Small recap</h2>
+<p>In WSL2 it (Emacs) still runs faster and is easier to use. So I ended up making <code class="highlighter-rouge">/mnt/c/Users/Valen → ~/winhome</code> symlink ans use Emacs on WSL.</p>
+
+<p>And yeah, I saw Surface Laptop Studio announce and now I regret that I got Lenovo Carbon. But at least it was a way to know that development on Windows (with WSL) works pretty well (so I don’t need Linux as host system).</p>
+
+  </div>
+
+  
+
+  
+  <script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    processEscapes: true
+  }
+});
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML" async></script>
+
+  
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">ivalentinee</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">ivalentinee</li><li><a class="u-email" href="mailto:valentine.emperor@gmail.com">valentine.emperor@gmail.com</a></li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/ivalentinee"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">ivalentinee</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p></p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>

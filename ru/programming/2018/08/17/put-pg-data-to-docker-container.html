@@ -15,7 +15,7 @@
 <meta property="og:type" content="article" />
 <meta property="article:published_time" content="2018-08-17T00:00:00+00:00" />
 <script type="application/ld+json">
-{"headline":"Как засунуть pg_data-бекап в docker-контейнер","dateModified":"2018-08-17T00:00:00+00:00","datePublished":"2018-08-17T00:00:00+00:00","description":"Предисловие Этот пост написан скорее для меня самого, чем для случайно забредших сюда. Иногда админы, которых попросили скинуть бекап с какого-нибудь стенда, радостно кидают архивчик и говорят: “Сделано”. А в архиве вместо православного pg_dump’а лежит богомерзкая папка pg_data. Но проблема в том, что накатывание этого даже без докера не всегда удобно. Благо что базёна при dockerway-разработке всего одна на инстанс pg, поэтому разбираться с внутренним устройством pg_data не приходится. Накатываем Ищем, куда копировать Я при разработке использую docker-compose, поэтому плясать буду от него. Для начала получаем ID нужного контейнера. Допустим, в docker-compose.yml он у меня назван postgres: $ docker-compose ps -q postgres Далее для полученного ID надо получить путь до volume’а, в котором хранится pg_data: $ docker inspect -f &#39;{{ .Mounts }}&#39; &lt;id контейнера&gt; Получаем что-то вроде [{volume ea8997003c8f70cb8590754b882f644ad4a29c9bdd2074c4799e150a99d5eada /var/lib/docker/volumes/ea8997003c8f70cb8590754b882f644ad4a29c9bdd2074c4799e150a99d5eada/_data /var/lib/postgresql/data local rw true }] где /var/lib/docker/volumes/ea8997003c8f70cb8590754b882f644ad4a29c9bdd2074c4799e150a99d5eada/_data — наше искомое значение. Копируем и накатываем права Перед процедурой желательно тормознуть все контейнеры: $ docker-compose stop Для полученной директории с pg_data: копируем куда-нибудь действующие конфиги postgresql.conf и pg_hba.conf удаляем всё содержимое папки копируем полное содержимое pg_data из архива заменяем конфиги postgresql.conf и pg_hba.conf теми, что мы сохранили в первом пункте. На всякий случай регулярка для pg_hba.conf чтобы всё разрешить: # sed -i &quot;s/md5\\|reject\\|trust\\|password\\|gss\\|sspi/trust/g&quot; &lt;путь до pg_data&gt;/pg_hba.conf Так как на стенде имя БД и права скорее всего не совпадают с локальными, надо будет заходить и править это дело руками. Для этого стартуем контейнер с БД и меняем все нужные права/названия. Например: $ docker-compose start postgres $ docker-compose exec postgres bash # psql -U postgres postgres-# ALTER USER postgres PASSWORD null; postgres-# \\l postgres-# ALTER DATABASE &lt;продовое название БД&gt; RENAME TO &lt;локальное название БД&gt;; postgres-# ALTER DATABASE &lt;локальное название БД&gt; OWNER TO postgres; Готово! Вы восхитительны!","mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2018/08/17/put-pg-data-to-docker-container.html"},"@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2018/08/17/put-pg-data-to-docker-container.html","@context":"http://schema.org"}</script>
+{"mainEntityOfPage":{"@type":"WebPage","@id":"https://ivalentinee.github.io/ru/programming/2018/08/17/put-pg-data-to-docker-container.html"},"description":"Предисловие Этот пост написан скорее для меня самого, чем для случайно забредших сюда. Иногда админы, которых попросили скинуть бекап с какого-нибудь стенда, радостно кидают архивчик и говорят: “Сделано”. А в архиве вместо православного pg_dump’а лежит богомерзкая папка pg_data. Но проблема в том, что накатывание этого даже без докера не всегда удобно. Благо что базёна при dockerway-разработке всего одна на инстанс pg, поэтому разбираться с внутренним устройством pg_data не приходится. Накатываем Ищем, куда копировать Я при разработке использую docker-compose, поэтому плясать буду от него. Для начала получаем ID нужного контейнера. Допустим, в docker-compose.yml он у меня назван postgres: $ docker-compose ps -q postgres Далее для полученного ID надо получить путь до volume’а, в котором хранится pg_data: $ docker inspect -f &#39;{{ .Mounts }}&#39; &lt;id контейнера&gt; Получаем что-то вроде [{volume ea8997003c8f70cb8590754b882f644ad4a29c9bdd2074c4799e150a99d5eada /var/lib/docker/volumes/ea8997003c8f70cb8590754b882f644ad4a29c9bdd2074c4799e150a99d5eada/_data /var/lib/postgresql/data local rw true }] где /var/lib/docker/volumes/ea8997003c8f70cb8590754b882f644ad4a29c9bdd2074c4799e150a99d5eada/_data — наше искомое значение. Копируем и накатываем права Перед процедурой желательно тормознуть все контейнеры: $ docker-compose stop Для полученной директории с pg_data: копируем куда-нибудь действующие конфиги postgresql.conf и pg_hba.conf удаляем всё содержимое папки копируем полное содержимое pg_data из архива заменяем конфиги postgresql.conf и pg_hba.conf теми, что мы сохранили в первом пункте. На всякий случай регулярка для pg_hba.conf чтобы всё разрешить: # sed -i &quot;s/md5\\|reject\\|trust\\|password\\|gss\\|sspi/trust/g&quot; &lt;путь до pg_data&gt;/pg_hba.conf Так как на стенде имя БД и права скорее всего не совпадают с локальными, надо будет заходить и править это дело руками. Для этого стартуем контейнер с БД и меняем все нужные права/названия. Например: $ docker-compose start postgres $ docker-compose exec postgres bash # psql -U postgres postgres-# ALTER USER postgres PASSWORD null; postgres-# \\l postgres-# ALTER DATABASE &lt;продовое название БД&gt; RENAME TO &lt;локальное название БД&gt;; postgres-# ALTER DATABASE &lt;локальное название БД&gt; OWNER TO postgres; Готово! Вы восхитительны!","@type":"BlogPosting","url":"https://ivalentinee.github.io/ru/programming/2018/08/17/put-pg-data-to-docker-container.html","headline":"Как засунуть pg_data-бекап в docker-контейнер","dateModified":"2018-08-17T00:00:00+00:00","datePublished":"2018-08-17T00:00:00+00:00","@context":"http://schema.org"}</script>
 <!-- End Jekyll SEO tag -->
 <link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="https://ivalentinee.github.io/feed.xml" title="ivalentinee" /></head>
 <body><header class="site-header" role="banner">
@@ -43,6 +43,11 @@
             
             
               
+            
+          
+            
+            
+              
                 <a class="page-link" href="/ru/about/">Обо мне</a>
               
             
@@ -64,6 +69,13 @@
           
             
             
+              
+            
+          
+            
+            
+              
+            
           
             
             
@@ -77,6 +89,44 @@
             
           
             
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
+            
+          
+            
+            
+              
             
           
             
@@ -163,28 +213,6 @@
 <p>Готово! Вы восхитительны!</p>
 
   </div>
-
-  
-  <div id="disqus_thread"></div>
-<script>
-
-/**
-*  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-*  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
-/*
-var disqus_config = function () {
-this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
-this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-};
-*/
-(function() { // DON'T EDIT BELOW THIS LINE
-var d = document, s = d.createElement('script');
-s.src = 'https://ivalentinee.disqus.com/embed.js';
-s.setAttribute('data-timestamp', +new Date());
-(d.head || d.body).appendChild(s);
-})();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
   
 

@@ -6,6 +6,7 @@ rm -rf *
 git checkout master
 cp -rf /tmp/_site/* ./
 git add .
-git commit -am "Updated at $(date)"
+git commit --amend -am "Published static files"
 git push -f origin master
+rm -rf _site
 git checkout src
