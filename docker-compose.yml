@@ -4,7 +4,6 @@ services:
   web:
     build: .
     image: ivalentinee.github.io
-    command: bundle exec jekyll serve -H 0.0.0.0
     volumes: &web-volumes
       - ./:/app
       - ~/.bash_history:/root/.bash_history

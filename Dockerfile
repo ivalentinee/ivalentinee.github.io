@@ -6,4 +6,4 @@ WORKDIR /app
 COPY Gemfile Gemfile.lock /app/
 RUN bundle install --jobs 3
 
-CMD bundle exec jekyll serve -H 0.0.0.0
+CMD bundle exec jekyll serve -H 0.0.0.0 --drafts
