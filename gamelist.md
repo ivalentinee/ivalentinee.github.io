@@ -54,6 +54,7 @@ permalink: /gamelist/
 - [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 21.09.2017
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 09.06.2017 \\
   На DLC и NG+ забил.
+- [My Friend Perdo](https://store.steampowered.com/app/557340/My_Friend_Pedro/) — 21.06.2019
 - [Portal](http://store.steampowered.com/app/400/Portal/)
 - [Portal 2](http://store.steampowered.com/app/620/Portal_2/)
 - [Prototype](http://store.steampowered.com/app/10150/Prototype/) — 16.03.2017
