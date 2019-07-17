@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  "MVC authorization"
-date:   2019-05-04
+date:   2019-07-17
 categories: programming
 math: true
 uid: mvc-authorization
@@ -73,37 +73,38 @@ To avoid ambiguity either white or black list should be used, but not both. Othe
 
 #### Splitting predicate definition
 
-Defining one massive rule for everything is not good (just imagine that huge `if` statement). So authorization predicate is usually splitted into smaller predicates combined with disjunction:\\
+Defining one massive rule for everything is not that convenient (just imagine that huge `if` statement). So authorization predicate is usually splitted into smaller predicates combined with disjunction:\\
 {% raw %}$$p := \displaystyle\bigvee_{i=1}^{n} p_i$${% endraw %}.
 
-<!-- #### Выделение групп объектов -->
+#### Grouping objects
 <!-- Так как зачастую объекты системы являются изменяемыми данными, прописывать правило для каждой тройки {% raw %}$$\{s, a, o\}$${% endraw %} не представляется возможным. В таком случае предикат политики авторизации описывается с помощью правил, выделяющих подмножество из {% raw %}$$D_p$${% endraw %}. -->
 
 <!-- Логичнее всего выделять наибольшие подмножества, которые имеют значения с точки зрения бизнеса и для каждого определять меньший предикат: {% raw %}$$p(D_p) := \displaystyle\bigvee_{i=1}^{n} p_i(D_{pi}), D_{pi} ⊆ D_p$${% endraw %} -->
 
 <!-- Можно ввести требование, при котором подмножества {% raw %}$$D_{pi}$${% endraw %} не должны пересекаться, в таком случае каждый отдельный меньший предикат {% raw %}$$P_i$${% endraw %} будет однозначно определять, будет ли конкретный случай {% raw %}$$\{s_x, a_y, o_z\} ∈ D_p$${% endraw %} разрешён или запрещён: {% raw %}$$p(D_p) := \displaystyle\bigvee_{i=1}^{n} p_i(D_{pi}), D_{pi} ⊆ D_p, i ≠ j, D_{pi} ⊄ D_{pj}$${% endraw %}. -->
 
-<!-- ## Общий процесс -->
-<!-- ![Общий процесс совершения действия с авторизацией](/assets/img/posts/2019-05-04-MVC-authorization/Generic authorization flow.png) -->
+## Whole process
+![Authorized action diagram](/assets/img/posts/2019-05-04-MVC-authorization/Generic authorization flow.png)
 
-<!-- ### Определение субъекта -->
-<!-- Как я уже писал выше, определением (отображением внешнего во внутренний) объекта занимается процесс [аутентификации или идентификации]({% uid_url authorization-authentication-and-identification %}). На обе темы написаны не только статьи, а целые книги, разработаны мегатонны технологий ([kerberos?](https://ru.wikipedia.org/wiki/Kerberos), [tls?](https://en.wikipedia.org/wiki/Transport_Layer_Security#Client-authenticated_TLS_handshake)), поэтому эта тема не стала предметом рассмотрения данной статьи. -->
+### Subject identification
+As noted above subject mapping is done by [authenticaiton or identification]({% uid_url authorization-authentication-and-identification %}). Both processes are well described in many books and articles, tons of technologies are developed ([kerberos?](https://ru.wikipedia.org/wiki/Kerberos), [tls?](https://en.wikipedia.org/wiki/Transport_Layer_Security#Client-authenticated_TLS_handshake)), so I won't touch that matter.
 
-<!-- ### Определение объекта -->
-<!-- А вот тут даже в общем случае есть что написать. -->
+### Object identification
+But this topic has something to write about.
 
-<!-- #### Идентификация -->
-<!-- Для большинства действий отображение объекта производится по данным, приходящим из системы ввода-вывода. Например, получение поста по его идентификатору: `SELECT * FROM posts WHERE id=&post_id`. -->
+#### Identification
+For most actions object identification is done by IO data. For example getting post by it's identificator: `SELECT * FROM posts WHERE id=&post_id`.
 
-<!-- Важно заметить, что отображение происходит не на **объект авторизации** (потому что внешнего объекта авторизации в явном виде нет), а на **объект системы**. И уже из **объекта системы** (или нескольких) определяется **объект авторизации**. -->
+It's important to note that identification is done not for **authorization object** (because there's no explicit authorization object), but for **system object**. And **authorization object** is then made from **system objects**.
 
-<!-- #### Замена объекта авторизации -->
-<!-- В качестве сценария для рассмотрения замены **объекта авторизации** можно рассмотреть добавление объекта, хотя, очевидно, данный подход можно применить для любого класса действия.\\ -->
-<!-- С добавлением объекта сложность в том, что новый объект ещё не является **объектом системы** ({% raw %}$$so_{new} ∉ SO$${% endraw %}), поэтому он не входит в область определения предиката авторизации. -->
+#### Authorization object substitution
+We'll look at creating object as an example for substitution, though this approach is universal.
 
-<!-- В таком случае можно рассматривать в качестве **объекта авторизации** множество или подмножество, которое пользователь хочет изменить. -->
+Creating object has one problem: new object is not **system object** ({% raw %}$$so_{new} ∉ SO$${% endraw %}) yet, but only some data to create one, so it's not in predicate domain.
 
-<!-- Рассмотрим три случая. -->
+In that case a set (or subset) which would be changed can be used as **authorization object**.
+
+Let's look at three cases.
 
 <!-- 1. Замена на пустое множество.\\ -->
 <!-- В ряде случаев нет возможности однозначно идентифицировать **объект авторизации**. Для таких сценариев можно рассматривать **множество всех объектов системы** ({% raw %}$$SO$${% endraw %}) в качестве **объекта авторизации**, так как действием является расширение этого множества. Но ввиду того, что такие действия де-факто не зависят от {% raw %}$$SO$${% endraw %}, то его ({% raw %}$$SO$${% endraw %}) можно заменить на **пустое множество**.\\ -->
@@ -119,7 +120,7 @@ Defining one massive rule for everything is not good (just imagine that huge `if
 
 <!-- Про выбор «**нуль-замены**» или **классов объектов** напишу в пункте про определение действия. -->
 
-<!-- #### Групповые действия -->
+#### Actions on groups of objects
 <!-- Зачастую нужно произвести действие сразу с несколькими объектами. В данном случае ответом на групповое действие, очевидно, будет конъюнкция из атомарных действий: -->
 <!-- {% raw %}$$p_{group} = \displaystyle\bigwedge_{i=1}^k p_i$${% endraw %}. -->
 
@@ -128,20 +129,20 @@ Defining one massive rule for everything is not good (just imagine that huge `if
 
 <!-- Для действий «добавить комментарий к посту №2», «изменить пост №3», «распечатать отчёт о всех моих постах», «запустить ядерную ракету в направлении Вашингтона» рассмотрим два подхода. -->
 
-<!-- #### «Широкие» действия -->
+#### "Wide" actions
 <!-- В таком случае действия могут описываться как «добавить», «изменить», «распечатать», «запустить». А классы **объектов системы** будут либо выводиться на уровне идентификации, либо поступать в качестве данных. -->
 
 <!-- Идентификацируемое подмножества объектов (а не одного) как **объекта авторизации** я называю **базовым классом действия**, потому что используемый идентификатор в таких случаях используется для выделения класса объектов из всего множества объектов. -->
 
 <!-- Для «широких» действий нет возможности применить «**нуль-замену**», потому что идентифицируемый **объект системы** (или базовый класс) (и на основании него определёный **объект авторизации**) позволяет специфицировать область, на которой определён предикат (или, очевидно, меньший предикат). -->
 
-<!-- #### «Узкие» действия -->
+#### "Narrow" actions
 <!-- «Узкие» действия описываются как «добавить комментарий к посту», «изменить пост», «распечатать отчёт о всех моих постах», «запустить ракету в направлении города». Очевидно, что в отличии от «широких» действий класс объектов уже включён в само действие, а потому повторное его использование для специфицирования области не требуется, поэтому «**нуль-замену**» вполне можно и нужно применять. -->
 
-<!-- #### Выбор между узкими и широкими действиями -->
+#### "Wide" vs "narrow" choice
 <!-- Не смотря на то, что подходы рассмотрены отдельно, в реальных программах предикат может быть одновременно и «узким» и «широким», специфицируя условие и в самом действии и в идентификаторах объектов системы. -->
 
-<!-- ## Применительно к реальному миру -->
+## Now to real world application
 <!-- Теперь можно поговорить про типичные MVC-web приложения. -->
 
 <!-- Тут я буду исходить из модульной rack-/plug-style системы. -->
@@ -150,13 +151,13 @@ Defining one massive rule for everything is not good (just imagine that huge `if
 
 <!-- ![Совершение действия с авторизацией в MVC](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization.png) -->
 
-<!-- ### А где объект авторизации? -->
+### Where's authorization object
 <!-- Это была первая проблема, с которой я столкнулся, когда понадобилась полноценная система авторизации. -->
 
 <!-- Большая часть предлагаемых решений работают на основе предиката {% raw %}$$p(\{s, a\}), \{s, a\} ∈ S×A$${% endraw %} вместо {% raw %}$$p(\{s, a, o\})$${% endraw %}. Компенсируется это обычно за счёт использования «узких» действий и исключения объектов авторизации из области определения предиката.\\ -->
 <!-- Очевидно, что в таком случае нет никакого способа запретить действия, которые действительно зависят от объекта авторизации. Пример: «Пользователи, которые не являются администраторами не имеют права редактировать и удалять не свои посты». -->
 
-<!-- #### Как можно обойтись без объекта авторизации -->
+#### No authorization object at all
 <!-- На самом деле можно обойтись без объекта авторизации, перенося политику авторизации на уровень логики приложения. -->
 
 <!-- Для указанного выше примера удаление логически делается только среди собственных постов: `DELETE FROM posts WHERE author_id=&current_user_id AND id=&post_id`.\\ -->
@@ -172,7 +173,7 @@ Defining one massive rule for everything is not good (just imagine that huge `if
 <!-- Таким образом программист, который откроет оригинальную задачу в трекере и начнёт искать соответствующий код в политиках авторизации может потратить на поиск ответственного участка кода больше времени.\\ -->
 <!-- Ну и бонусом: пользователь вместо ошибки 403 получит ошибку 404. Хотя чаще всего это не сильно портит проектирование интерфейса. -->
 
-<!-- #### Всё-таки получаем объект авторизации -->
+#### Somehow getting authorization object
 <!-- Казалось бы, на схеме всё исправляется просто: -->
 
 <!-- ![Совершение действия с авторизацией и объектом в MVC](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization with object.png) -->
@@ -207,13 +208,13 @@ Defining one massive rule for everything is not good (just imagine that huge `if
 <!-- 1. Теперь контроллер — не единственная точка работы с данными на пути обработки запроса! Если поменяется код работы (в частности `select`) с постами — надо будет идти потенциально в два места. -->
 <!-- 2. Теперь при определении полноценного предиката нет возможности проверить доступность до получения объекта. И хотя это — то, к чему мы осознанно шли, в высоконагруженных системах такое поведение может значительно добавить нагрузки в тех сценариях, когда большая часть запросов может быть отвергнута с использованием {% raw %}$$p(\{s, a\})$${% endraw %}. -->
 
-<!-- #### Использование полноценного предиката до отображения объекта авторизации -->
+#### Applying predicate before authorization object identification
 <!-- Теоретическая возможность сделать двухэтапную авторизацию для высоконагруженных систем есть: достаточно свести предикат в области {% raw %}$$S×A×O$${% endraw %} к предикату в области {% raw %}$$S×A$${% endraw %}, но -->
 <!-- 1. Это приведёт к поддержке в коде двух предикатов вместо одного. А в действительности это будет поддержка {% raw %}$$2·n$${% endraw %} меньших предикатов вместо {% raw %}$$n$${% endraw %}\\ -->
 <!-- ({% raw %}$$\displaystyle\bigvee_{i=1}^{n} {p_{i}(\{s, a\}) ∧ p_i(\{s, a, o\})}$${% endraw %} вместо {% raw %}$$\displaystyle\bigvee_{i=1}^{n} p_i(\{s, a, o\})$${% endraw %}). -->
 <!-- 2. На практике я такого не делал, поэтому про подводные камни рассказать не могу. -->
 
-<!-- ### Определение действия -->
+### Action identification
 <!-- Тут тоже есть свои особенности в реальных системах. -->
 
 <!-- Проблема в том, что отображение действия происходит не один раз: сначала внешнее действие отображается на внутреннее на уровне контроллера, потом контроллер отображает это на одно (или несколько) действий модуля бизнес-логики, которые уже отображают свои действия на действия уровня данных или низкоуровневые процедуры (например, печать). -->
@@ -229,24 +230,24 @@ Defining one massive rule for everything is not good (just imagine that huge `if
 
 <!-- Но в общем и целом, помня про текучие абстрации, можно руководствоваться подходом, при котором предикат будет иметь наименее объёмное определение. В частности иногда есть смысл авторизовать действие на уровне бизнес-логики, а не на уровне контроллера. -->
 
-<!-- ### Обратная авторизация и логически недоступные действия -->
-<!-- Вот сейчас я буду рассказывать про откровенный костыль, но мне пришлось на это пойти. -->
+### Reverse authorization
+This is more of a hack, than a proper solution, but I had to do it.
 
-<!-- Кроме авторизации зачастую встаёт вопрос «обратной авторизации» — когда нужно не ответить отказом/успехом на попытку действия, а предоставить список доступных действий. -->
+Sometimes you may need not only to perform authorization, but "reverse authorization" — get a list of available actions instead of authorizing already identified acion.
 
-<!-- Я использовал такой подход: брал список вообще всех действий и применял к ним предикат с текущими субъектом и объектом. -->
+I developed this approach: take all actions and apply predicate to all of them with current subject and object.
 
-<!-- Способ полностью работал. Но проблема была в том, что кнопку нужно было задизейблить не только когда пользователю нельзя чего-то сделать, но и когда действие было логически невозможным. -->
+It worked. But problem is that sometimes button should be disabled not only by authorization rules, but by logic (i.e. action doesn't make sense for that exact object).
 
-<!-- Тут есть два варианта: -->
-<!-- 1. Составить предикат логически недоступных действий и конънктивно применять его вместе с предикатом авторизации. -->
-<!-- 2. Учесть логическую невозможность действия в авторизации. -->
+There're two ways:
+1. Create logically impossible actions predicate and conjunct it with authorization predicate.
+2. Add app logic constraints to authorization predicate.
 
-<!-- Позор мне, я выбрал второй способ. Чреват он двумя выхлопами: -->
-<!-- 1. Разделить правила логические и политические в определении предиката невозможно. Это очень плохо. -->
-<!-- 2. Авторизационный предикат разрастается в объёме на k логических условий для каждого из авторизационных (условий): {% raw %}$$\displaystyle\bigvee_{i=1}^{n} {\displaystyle\bigvee_{j=1}^{k_i} p_{ij}(\{s, a, o\})}$${% endraw %}. -->
+Shame on me, I went with the last. And it's really bad 'cause of two reasons:
+1. Authorization and logic rules are not the same so it makes sense to separate em.
+2. Authorization predicate grows at {% raw %}$$k$${% endraw %} conditions for every authorization condition: {% raw %}$$\displaystyle\bigvee_{i=1}^{n} {\displaystyle\bigvee_{j=1}^{k_i} p_{ij}(\{s, a, o\})}$${% endraw %}.
 
-<!-- ## Заключение -->
-<!-- Авторизация в простых приложениях — достаточно простой предмет. Основная проблема почти всегда заключается в подходе, а не в теоретической ёмкости проблемы. -->
+## Conclusion
+Authorization for simple application is, well, simple. Problems are in choosing approach, not in theoritical volume.
 
-<!-- Но при этом многие (в т.ч. и я зачастую) делают авторизацию в MVC-приложениях исходя исключительно из практики, «как получится», что приводит к проблемам гибкости и корректности. -->
+Despite being a simple matter many still implement MVC-application authorization intuitivly, which leads to fragile and "stiff", sometimes even "incorrect" design.
