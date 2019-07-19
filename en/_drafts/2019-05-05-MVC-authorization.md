@@ -77,11 +77,9 @@ Defining one massive rule for everything is not that convenient (just imagine th
 {% raw %}$$p := \displaystyle\bigvee_{i=1}^{n} p_i$${% endraw %}.
 
 #### Grouping objects
-<!-- Так как зачастую объекты системы являются изменяемыми данными, прописывать правило для каждой тройки {% raw %}$$\{s, a, o\}$${% endraw %} не представляется возможным. В таком случае предикат политики авторизации описывается с помощью правил, выделяющих подмножество из {% raw %}$$D_p$${% endraw %}. -->
+As system objects almost always can be changed building rules for every {% raw %}$$\{s, a, o\}$${% endraw %} is nearly impossible. In such case (again, almost always) authorization predicate is defined with rules on subsets of {% raw %}$$D_p$${% endraw %}.
 
-<!-- Логичнее всего выделять наибольшие подмножества, которые имеют значения с точки зрения бизнеса и для каждого определять меньший предикат: {% raw %}$$p(D_p) := \displaystyle\bigvee_{i=1}^{n} p_i(D_{pi}), D_{pi} ⊆ D_p$${% endraw %} -->
-
-<!-- Можно ввести требование, при котором подмножества {% raw %}$$D_{pi}$${% endraw %} не должны пересекаться, в таком случае каждый отдельный меньший предикат {% raw %}$$P_i$${% endraw %} будет однозначно определять, будет ли конкретный случай {% raw %}$$\{s_x, a_y, o_z\} ∈ D_p$${% endraw %} разрешён или запрещён: {% raw %}$$p(D_p) := \displaystyle\bigvee_{i=1}^{n} p_i(D_{pi}), D_{pi} ⊆ D_p, i ≠ j, D_{pi} ⊄ D_{pj}$${% endraw %}. -->
+It makes sense use non-intersecting {% raw %}$$D_{pi}$${% endraw %}, thus every lesser predicate {% raw %}$$P_i$${% endraw %} will exclusivly define each case: {% raw %}$$p(D_p) := \displaystyle\bigvee_{i=1}^{n} p_i(D_{pi}), D_{pi} ⊆ D_p, i ≠ j, D_{pi} ⊄ D_{pj}$${% endraw %}.
 
 ## Whole process
 ![Authorized action diagram](/assets/img/posts/2019-05-04-MVC-authorization/Generic authorization flow.png)
@@ -106,19 +104,14 @@ In that case a set (or subset) which would be changed can be used as **authoriza
 
 Let's look at three cases.
 
-<!-- 1. Замена на пустое множество.\\ -->
-<!-- В ряде случаев нет возможности однозначно идентифицировать **объект авторизации**. Для таких сценариев можно рассматривать **множество всех объектов системы** ({% raw %}$$SO$${% endraw %}) в качестве **объекта авторизации**, так как действием является расширение этого множества. Но ввиду того, что такие действия де-факто не зависят от {% raw %}$$SO$${% endraw %}, то его ({% raw %}$$SO$${% endraw %}) можно заменить на **пустое множество**.\\ -->
-<!-- Я бы предложил для такой замены название «**нуль-замена**».\\ -->
-<!-- Признаком возможности такой замены является **отсутствие идентификационных данных** для определения конкретного **объекта авторизации**.\\ -->
-<!-- Примером такого сценария является *добавление поста*. Пользователь либо может добавить пост, либо не может, и это никак не зависит ни от добавляемого поста, ни от других объектов в системе. -->
-<!-- 2. Класс объектов как **объект авторизации**\\ -->
-<!-- Для предыдущего случая можно рассмотреть в качестве **объекта авторизации** множество постов, если явно обозначен идентификатор этого множества. Тогда для данного действия объектом авторизации будет ({% raw %}$$o = Posts, post ∈ Posts ⊆ SO$${% endraw %}). Очевидно, что для данного сценария **нуль-замена** не требуется. -->
-<!-- 3. Замена на владельца.\\ -->
-<!-- Рассмотрим добавление комментария к постам. В этом случае в качестве **объекта авторизации** выступит множество комментариев к **конкретному посту**. Но в таком случае, опять же, удобно делать де-факто замену **множества комментариев к посту** на сам **пост** как **объект авторизации**. Подобно предыдущему пункту данная замена противоречит строгой теории, но позволяет сделать правила авторизации ({% raw %}$$p_i(D_{pi})$${% endraw %}) проще и понятнее, а также лучше соответствовать внешним (бизнесовым) правилам.\\ -->
-<!-- Я бы предложил для такой замены название «**замена объектом-владельцем**», потому что в данном случае множество определяется через пренадлежность какому-то другому объекту (владельцу).\\ -->
-<!-- Про каскадную замену объектом-владельцем мне лень писать, честно. -->
-
-<!-- Про выбор «**нуль-замены**» или **классов объектов** напишу в пункте про определение действия. -->
+1. Empty set substitution
+Sometimes it's impossible to identify authorization object. In such case whole **system objects** set ({% raw %}$$SO$${% endraw %}) can represent **authorization object**, because that set would be expanded (or altered) by some action. But some of such actions don't depend on {% raw %}$$SO$${% endraw %} (only on subject and action), so {% raw %}$$SO$${% endraw %} can be substituted with **empty set**.\\
+Sometimes I call such cases "null substitution".\\
+Example: adding post. User can add post or can not, and it doen't depend on other posts or even any other system object.
+2. Subset substitution
+"Adding post" example can be described also for *posts set* as **authorization object** (because that set would be expanded). So {% raw %}$$o = Posts, post ∈ Posts ⊆ SO$${% endraw %} will represent **authorization object**.
+3. Owner substitution
+Let's have a look at "adding comment to post". In such case *exact post comments set* will be an **authorization object**. But it's more convenient to substitute that *set* with *post* itself.
 
 #### Actions on groups of objects
 <!-- Зачастую нужно произвести действие сразу с несколькими объектами. В данном случае ответом на групповое действие, очевидно, будет конъюнкция из атомарных действий: -->
