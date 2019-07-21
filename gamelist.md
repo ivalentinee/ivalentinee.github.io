@@ -25,6 +25,7 @@ permalink: /gamelist/
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 28.12.2018
+- [Castlevania: Lords of Shadow](https://store.steampowered.com/app/234080/Castlevania_Lords_of_Shadow__Ultimate_Edition/) — 22.07.2019
 - [Dandara](https://store.steampowered.com/app/612390/Dandara/) — 10.04.2019
 - [Darksiders](https://store.steampowered.com/app/462780/Darksiders_Warmastered_Edition/) — 21.07.2018
 - [Darksiders II](https://store.steampowered.com/app/388410/Darksiders_II_Deathinitive_Edition/) — 22.08.2018
