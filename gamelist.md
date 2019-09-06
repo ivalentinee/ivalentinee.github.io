@@ -34,6 +34,7 @@ permalink: /gamelist/
 - [Devil May Cry 1](https://store.steampowered.com/app/631510/Devil_May_Cry_HD_Collection/) — 10.07.2018 \\
 На харде проходить не стал. Хотя очень хотелось.
 - [Doki Doki Literature Club!](https://store.steampowered.com/app/698780/Doki_Doki_Literature_Club/) — 03.08.2019
+- [DOOM](https://store.steampowered.com/app/379720/DOOM/) — 07.09.2019
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 04.02.2015
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 01.12.2016 \\
   Забил на DLC.
