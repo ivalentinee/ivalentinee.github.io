@@ -7,9 +7,9 @@ uid: elixir-in-kubernetes
 ---
 
 ## Зачем?
-Потому что могу. Потом что это был самый адекватный организовать общение между сервисами.
+Потому что могу. Потому что это был самый адекватный организовать общение между сервисами.
 
-А, так как я пейсатель на еликсиряхъ, то пояснения буду приводить на них (шучу, примеров кода не будет).
+А так как я пейсатель на еликсиряхъ, то пояснения буду приводить на них (шучу, примеров кода не будет).
 
 ## Исходники
 Для организации подхода использовались статьи:
@@ -17,7 +17,7 @@ uid: elixir-in-kubernetes
 - [Clustering Elixir/Erlang applications in Kubernetes](https://blog.ispirata.com/clustering-elixir-erlang-applications-in-kubernetes-part-1-the-theory-ca658acbf101) (как пример организации)
 
 ## Начнём
-Итак, ситуация: готовое приложение на N сервисов (где N <~ 10), развёрнутое в кубернетисах (на самом деле в [шифтах](https://www.openshift.com/), но не суть) в качестве набора deploymentconfig'ов, на нужные сервисы развёрнуты [service'ы](https://kubernetes.io/docs/concepts/services-networking/service/) (слово "сервис" буду использовать для частей приложения, а "service" — для сущности kubernetes'а) и [маршруты](https://docs.openshift.com/enterprise/3.0/architecture/core_concepts/routes.html). Сервисы складывают общую информацию в redis/memcached/postgresql/kafka/whatever, за счёт чего и происходит косвенное взаимодействие.
+Итак, ситуация: готовое приложение на N сервисов (где N <= 10), развёрнутое в кубернетисах (на самом деле в [шифтах](https://www.openshift.com/), но не суть) в качестве набора deploymentconfig'ов, на нужные сервисы развёрнуты [service'ы](https://kubernetes.io/docs/concepts/services-networking/service/) (слово "сервис" буду использовать для частей приложения, а "service" — для сущности kubernetes'а) и [маршруты](https://docs.openshift.com/enterprise/3.0/architecture/core_concepts/routes.html). Сервисы складывают общую информацию в redis/memcached/postgresql/kafka/whatever, за счёт чего и происходит косвенное взаимодействие.
 
 И тут появилась необходимость прямого взаимодействия между сервисами. Благодаря тому, что приложение написано на elixir'е, вариантов оказалось не один, а два, а именно:
 1. Общение через реализацию протоколов (grpc и co.)
@@ -89,7 +89,7 @@ elixir --erl "${ERL_OPTIONS}" -S mix run --no-halt
 ### empd
 Тут всё просто.
 
-epmd использует для входящих соединений порт `4369`. Его-то в [service'ах](https://kubernetes.io/docs/concepts/services-networking/service/) и открываем:
+[epmd](http://erlang.org/doc/man/epmd.html) использует для входящих соединений порт `4369`. Его-то в [service'ах](https://kubernetes.io/docs/concepts/services-networking/service/) и открываем:
 ```yaml
 apiVersion: v1
 kind: Service
@@ -141,6 +141,8 @@ elixir --erl "${ERL_OPTIONS}" -S mix run --no-halt
 И вуаля, erlang-процессы запущены и могут связаться друг с другом!
 
 Очевидно, что с таким подходом запустить неизвестное заранее количество erlang-процессов в одном контейнере мы не сможем. Но для того контейнеры и нужны же, чтобы один процесс запускать.
+
+Конечно, в случае одного заранее известного процесса можно жить и [вообще без epmd](https://www.erlang-solutions.com/blog/erlang-and-elixir-distribution-without-epmd.html), но для этого нужно было бы писать (копипастить) лишний код.
 
 ## Заключение
 Данный подход расписан для случая с deploymentconfig'ами. Есть подход [с использованием StatefulSet'ов](https://blog.ispirata.com/clustering-elixir-erlang-applications-in-kubernetes-part-1-the-theory-ca658acbf101) (как пример организации), который в теории круче, но у меня уже было готовое приложение и на его пересборку с даунтаймом никто бы не подписался.
