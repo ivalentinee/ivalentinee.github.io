@@ -39,6 +39,8 @@ permalink: /gamelist/
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 04.02.2015
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 01.12.2016 \\
   Забил на DLC.
+- [Far Cry 5](https://store.ubi.com/us/far-cry--5/591567f6ca1a6460388b456a.html?lang=en_US) — 16.11.2019
+- [Far Cry New Dawn](https://store.ubi.com/us/far-cry-new-dawn/5bf319696b54a4ddc91e8843.html) — 12.12.2019
 - [Gato Roboto](https://store.steampowered.com/app/916730/Gato_Roboto/) — 01.06.2019
 - [Gauntlet](http://store.steampowered.com/app/258970/Gauntlet_Slayer_Edition/) — 24.09.2016 \\
   Проходил не в соло. Ещё хотелось бы ачивку "We need to go Deeper - Gold", но сюжет пройден — игра пройдена.
