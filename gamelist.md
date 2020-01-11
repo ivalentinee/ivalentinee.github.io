@@ -47,6 +47,7 @@ permalink: /gamelist/
 - [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f?activetab=pivot%3aoverviewtab) — 03.07.2018
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
+- [Halo: Reach](https://store.steampowered.com/app/1064220/Halo_Reach/) — 11.01.2020
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 13.05.2018 \\
   Первая часть лучше
