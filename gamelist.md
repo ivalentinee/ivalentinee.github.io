@@ -18,7 +18,7 @@ permalink: /gamelist/
 2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
 
 ## Done
-Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [плюсаче](https://plus.google.com/u/0/111577518760980284675) или [вконтаче](https://vk.com/v_emperor), например.
+Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [твитаче](https://twitter.com/ivalentinee_), например.
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
 - [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 26.12.2018
 - [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) — 08.01.2019
@@ -30,6 +30,7 @@ permalink: /gamelist/
 - [Darksiders](https://store.steampowered.com/app/462780/Darksiders_Warmastered_Edition/) — 21.07.2018
 - [Darksiders II](https://store.steampowered.com/app/388410/Darksiders_II_Deathinitive_Edition/) — 22.08.2018
 - [Darksiders III](https://store.steampowered.com/app/606280/Darksiders_III) — 15.11.2019
+- [Darksiders Genesis](https://store.steampowered.com/app/710920/Darksiders_Genesis/) — 21.01.2020
 - [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 07.07.2017 \\
 Прошёл на сложности Deus Ex. Ачивоньки за стелс и пацифизм не получил — пару раз где-то оплошал, видимо.
 - [Devil May Cry 1](https://store.steampowered.com/app/631510/Devil_May_Cry_HD_Collection/) — 10.07.2018 \\
