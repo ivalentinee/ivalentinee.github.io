@@ -18,7 +18,7 @@ permalink: /gamelist/
 2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
 
 ## Done
-Если кого-то заинтересует моё мнение относительно какой-то из игр — спрашивайте в [твитаче](https://twitter.com/ivalentinee_), например.
+Если кого-то заинтересует моё мнение относительно какой-то из игр, спрашивайте в [твитаче](https://twitter.com/ivalentinee_), например.
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
 - [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 26.12.2018
 - [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) — 08.01.2019
@@ -47,6 +47,7 @@ permalink: /gamelist/
   Проходил не в соло. Ещё хотелось бы ачивку "We need to go Deeper - Gold", но сюжет пройден — игра пройдена.
 - [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f?activetab=pivot%3aoverviewtab) — 03.07.2018
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
+- [GRIS](https://store.steampowered.com/app/683320/GRIS/) — 28.01.2020
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
 - [Halo: Reach](https://store.steampowered.com/app/1064220/Halo_Reach/) — 11.01.2020
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
@@ -72,7 +73,6 @@ permalink: /gamelist/
 - [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 11.05.2019
 - [RAGE 2](https://store.steampowered.com/app/548570/RAGE_2/) — 17.05.2019
 - [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
-- [Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 11.05.2018
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
   Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
 - [Shadowrun Returns](http://store.steampowered.com/app/234650/Shadowrun_Returns/)
@@ -82,6 +82,7 @@ permalink: /gamelist/
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 02.02.2019
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 02.03.2019
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 20.06.2019
+- [The Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 11.05.2018
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 01.03.2014 \\
   Забил на DLC
 - [UTOPIA 9 - A Volatile Vacation](http://store.steampowered.com/app/405000/UTOPIA_9__A_Volatile_Vacation/) — 22.03.2017 \\
