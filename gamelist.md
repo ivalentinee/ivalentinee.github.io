@@ -60,6 +60,7 @@ permalink: /gamelist/
   Completitionist'а не делал, просто прошёл сюжетку.
 - [Just Cause 3](https://store.steampowered.com/app/225540/Just_Cause_3/) — 23.04.2017 \\
   Считаю вместе с ачивкой "Collect 'Em All", потому что на кассетах часть сюжета.
+- [Katana ZERO](https://store.steampowered.com/app/460950/Katana_ZERO/) — 24.02.2020
 - [Kingdoms of Amalur: Reckoning](http://store.steampowered.com/app/102500/Kingdoms_of_Amalur_Reckoning/) — 24.04.2018
 - [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 21.09.2017
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 09.06.2017 \\
