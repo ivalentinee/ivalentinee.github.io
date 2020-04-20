@@ -114,92 +114,90 @@ Example: adding post. User can add post or can not, and it doen't depend on othe
 Let's have a look at "adding comment to post". In such case *exact post comments set* will be an **authorization object**. But it's more convenient to substitute that *set* with *post* itself.
 
 #### Actions on groups of objects
-<!-- Зачастую нужно произвести действие сразу с несколькими объектами. В данном случае ответом на групповое действие, очевидно, будет конъюнкция из атомарных действий: -->
-<!-- {% raw %}$$p_{group} = \displaystyle\bigwedge_{i=1}^k p_i$${% endraw %}. -->
+One may have to operate on multiple objects at the same time. Obviously, conjunction of every action will answer the question of "can?":
+{% raw %}$$p_{group} = \displaystyle\bigwedge_{i=1}^k p_i$${% endraw %}.
 
-<!-- ### Определение действия -->
-<!-- В общем случае отображение действия полностью зависит от системы ввода-вывода. Но есть повод рассмотреть определение базового класса объектов для действий. -->
+### Action mapping
+Generally action mapping depends on input-output system used. But we can have a look at **system objects** to **actions** relation.
 
-<!-- Для действий «добавить комментарий к посту №2», «изменить пост №3», «распечатать отчёт о всех моих постах», «запустить ядерную ракету в направлении Вашингтона» рассмотрим два подхода. -->
+For actions "add comment to post #2", "modify post #3", "print my posts report", "drop nuclear bomb at Moscow" there're two approaches.
 
 #### "Wide" actions
-<!-- В таком случае действия могут описываться как «добавить», «изменить», «распечатать», «запустить». А классы **объектов системы** будут либо выводиться на уровне идентификации, либо поступать в качестве данных. -->
+With that approach actions would be "add", "modify", "print" and "drop". Therefore **system object** classes would be derived at identification or supplied as action payload.
 
-<!-- Идентификацируемое подмножества объектов (а не одного) как **объекта авторизации** я называю **базовым классом действия**, потому что используемый идентификатор в таких случаях используется для выделения класса объектов из всего множества объектов. -->
-
-<!-- Для «широких» действий нет возможности применить «**нуль-замену**», потому что идентифицируемый **объект системы** (или базовый класс) (и на основании него определёный **объект авторизации**) позволяет специфицировать область, на которой определён предикат (или, очевидно, меньший предикат). -->
+Wide actions have two types of identificators: for specific **system objects** and for **system object subsets** (also might be called **system object classes**). An example of such object class is "Posts".
 
 #### "Narrow" actions
-<!-- «Узкие» действия описываются как «добавить комментарий к посту», «изменить пост», «распечатать отчёт о всех моих постах», «запустить ракету в направлении города». Очевидно, что в отличии от «широких» действий класс объектов уже включён в само действие, а потому повторное его использование для специфицирования области не требуется, поэтому «**нуль-замену**» вполне можно и нужно применять. -->
+"Narrow" actions might be described as "add comment to post", "modify post", "print my posts report" and "send a nuclear bomb". Obvoiusly, unlike "wide" actions these already include object class identifier, thus no need to specify it with any identificators.
 
 #### "Wide" vs "narrow" choice
-<!-- Не смотря на то, что подходы рассмотрены отдельно, в реальных программах предикат может быть одновременно и «узким» и «широким», специфицируя условие и в самом действии и в идентификаторах объектов системы. -->
+Despite being distinguished in this article actions can be "wide" and "narrow" at the same time, specifying condition both within it's definition and identification data.
 
-## Now to real world application
-<!-- Теперь можно поговорить про типичные MVC-web приложения. -->
+## Now to the real world
+So, let's talk about typical MVC applications
 
-<!-- Тут я буду исходить из модульной rack-/plug-style системы. -->
+As ex-RoR and currently Elixir/Phoenix developer I'll describe things assuming [rack](https://github.com/rack/rack) or [plug](https://github.com/elixir-plug/plug) being used.
 
-<!-- Чаще всего (хотя можно и по-другому) используется такая схема: -->
+Usually it looks like this:
 
-<!-- ![Совершение действия с авторизацией в MVC](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization.png) -->
+![Authorized action in MVC application](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization.png)
 
 ### Where's authorization object
-<!-- Это была первая проблема, с которой я столкнулся, когда понадобилась полноценная система авторизации. -->
+This was the first problem I encountered, when I was building real-world authorization.
 
-<!-- Большая часть предлагаемых решений работают на основе предиката {% raw %}$$p(\{s, a\}), \{s, a\} ∈ S×A$${% endraw %} вместо {% raw %}$$p(\{s, a, o\})$${% endraw %}. Компенсируется это обычно за счёт использования «узких» действий и исключения объектов авторизации из области определения предиката.\\ -->
-<!-- Очевидно, что в таком случае нет никакого способа запретить действия, которые действительно зависят от объекта авторизации. Пример: «Пользователи, которые не являются администраторами не имеют права редактировать и удалять не свои посты». -->
+Most libraries and vendor solutions use this predicate {% raw %}$$p(\{s, a\}), \{s, a\} ∈ S×A$${% endraw %} instead of this {% raw %}$$p(\{s, a, o\})$${% endraw %}. This is used with lots of narrow actions and excluding **authorization object** from predicate domain.\\
+Obviously, this approach has now way on object-based restraining. For example: "Non-administrators are not allowed to delete other's posts".
 
 #### No authorization object at all
-<!-- На самом деле можно обойтись без объекта авторизации, перенося политику авторизации на уровень логики приложения. -->
+There is a way to build systems without **authorization object** (but with authorization): moving authorization logic to business logic.
 
-<!-- Для указанного выше примера удаление логически делается только среди собственных постов: `DELETE FROM posts WHERE author_id=&current_user_id AND id=&post_id`.\\ -->
-<!-- А для администраторов добавляется отдельный доступный только им список постов, где можно делать всё что угодно. -->
+For previous example: `DELETE FROM posts WHERE author_id=&current_user_id AND id=&post_id` to delete only owned posts.\\
+And then you make separate action for administrators to do whatever they want.
 
-<!-- Проблемы, как видно из примера, две: -->
-<!-- 1. Действия приходится делать очень «узкими», чтобы с помощью субъекта и действия можно было как-то ограничивать доступ. -->
-<!-- 2. Там, где такой способ не позволяет полностью контролировать действие, ограничение переносится на уровень логики работы. -->
+There're two problems with that approach:
+1. Actions are very "narrow" so that subject and action alone are enough for proper restriction.
+2. Authorization is partially implemented within business logic.
 
-<!-- И если в первом случае ещё нет явных проблем (хотя архитектура интерфейса страдает), вторая проблема куда хуже. -->
+While first problem is usually ok (but still resolves to bulky interfaces), second one makes things really bad.
 
-<!-- Перенося разграничение прав на уровень логики мы **разделяем одно бизнес правило (нельзя/можно что-то делать) на несколько высказываний в коде**.\\ -->
-<!-- Таким образом программист, который откроет оригинальную задачу в трекере и начнёт искать соответствующий код в политиках авторизации может потратить на поиск ответственного участка кода больше времени.\\ -->
-<!-- Ну и бонусом: пользователь вместо ошибки 403 получит ошибку 404. Хотя чаще всего это не сильно портит проектирование интерфейса. -->
+Moving restricions from authorization to business logic we separate **a single business rule to separate definitions**.\\
+So, engineer might waste a lot of time looking for proper definition to fix or change something regarding certain business rule.\\
+Bonus is that user get 404 error instead of 403. Which is not that much of a problem usually.
 
 #### Somehow getting authorization object
-<!-- Казалось бы, на схеме всё исправляется просто: -->
+It looks like a simple thing on this diagram:
 
-<!-- ![Совершение действия с авторизацией и объектом в MVC](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization with object.png) -->
+![MVC Authorization with object](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization with object.png)
 
-<!-- Но в действительности теперь надо делать `select` в не в контроллере, а до него. -->
+But in real world `select` should be done before getting to controller.
 
-<!-- В модульной системе всё достаточно просто: добавляем перед контроллером и модулем авторизации блок, который предзагружает данные, а затем в контроллере делаем на пару селектов меньше: -->
-<!-- ```elixir -->
-<!-- defmodule App.PostController do -->
-<!--   use App, :controller -->
+With modular request processing system it's easy to do so: just put some code before controller and authorization module to preload data and possibly use this data later in controller:
+```elixir
+defmodule App.PostController do
+  use App, :controller
 
-<!--   plug( -->
-<!--     App.Plugs.PreloadObject, -->
-<!--     [function: &__MODULE__.preload_post/2, as: :post] -->
-<!--     when action in [:show, :update, :delete] -->
-<!--   ) -->
+  plug(
+    App.Plugs.PreloadObject,
+    [function: &__MODULE__.preload_post/2, as: :post]
+    when action in [:show, :update, :delete]
+  )
 
-<!--   plug(App.Plugs.Authorization, for: :post) -->
+  plug(App.Plugs.Authorization, for: :post)
 
-<!--   # ... -->
+  # ...
 
-<!--   def preload_post(_conn, %{"id" => id}), do: Posts.get!(id) -->
-<!-- ``` -->
+  def preload_post(_conn, %{"id" => id}), do: Posts.get!(id)
+```
 
-<!-- В данном случае `App.Plugs.PreloadObject` использует указанную функцию загрузки и складывает объект авторизации в `conn`, а затем `App.Plugs.Authorization` на основе этого объекта и правил авторизации определяет, можно ли выполнять действие. -->
+In this scenario `App.Plugs.PreloadObject` uses provided preloading function and puts authorization object into `conn`, then `App.Plugs.Authorization` uses this object to perform authorization check.
 
-<!-- Преимущества такого подхода очевидны: -->
-<!-- 1. Получаем возможность полноценно определить предикат {% raw %}$$p(\{s, a, o\})$${% endraw %}. -->
-<!-- 2. Ошибки 404 и 403 теперь чётко разграничены. -->
+So here're some pros for this approach
+1. It's possible to fully define predicate {% raw %}$$p(\{s, a, o\})$${% endraw %}.
+2. 404 and 403 errors are distinguished.
 
-<!-- Теперь о недостатках: -->
-<!-- 1. Теперь контроллер — не единственная точка работы с данными на пути обработки запроса! Если поменяется код работы (в частности `select`) с постами — надо будет идти потенциально в два места. -->
-<!-- 2. Теперь при определении полноценного предиката нет возможности проверить доступность до получения объекта. И хотя это — то, к чему мы осознанно шли, в высоконагруженных системах такое поведение может значительно добавить нагрузки в тех сценариях, когда большая часть запросов может быть отвергнута с использованием {% raw %}$$p(\{s, a\})$${% endraw %}. -->
+But here're cons:
+1. Controller is not the only data manipulation request handler! In case we need to change something about `select` for controller we'll have to change it **not** in the controller.
+2. Obtaining authorization object for every request is not a good idea for systems with high load. Despite going for this specifically there're scenarios where only {% raw %}$$p(\{s, a\})$${% endraw %} "subpredicate" could be used without unnecessary data loading.
 
 #### Applying predicate before authorization object identification
 <!-- Теоретическая возможность сделать двухэтапную авторизацию для высоконагруженных систем есть: достаточно свести предикат в области {% raw %}$$S×A×O$${% endraw %} к предикату в области {% raw %}$$S×A$${% endraw %}, но -->
