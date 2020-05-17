@@ -73,6 +73,7 @@ permalink: /gamelist/
 - [Prototype 2](http://store.steampowered.com/app/115320/Prototype_2/) — 27.03.2017
 - [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 22.05.2017
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 06.01.2017
+- [Quantum Break](https://store.steampowered.com/app/474960/Quantum_Break/) — 17.05.2020
 - [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 11.05.2019
 - [RAGE 2](https://store.steampowered.com/app/548570/RAGE_2/) — 17.05.2019
 - [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
