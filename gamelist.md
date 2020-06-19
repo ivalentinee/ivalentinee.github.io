@@ -33,7 +33,7 @@ permalink: /gamelist/
 - [Darksiders II](https://store.steampowered.com/app/388410/Darksiders_II_Deathinitive_Edition/) — 22.08.2018
 - [Darksiders III](https://store.steampowered.com/app/606280/Darksiders_III) — 15.11.2019
 - [Darksiders Genesis](https://store.steampowered.com/app/710920/Darksiders_Genesis/) — 21.01.2020
-- [Dead or Alive 6](https://store.steampowered.com/app/838380/DEAD_OR_ALIVE_6/) — 22.05.2020\
+- [Dead or Alive 6](https://store.steampowered.com/app/838380/DEAD_OR_ALIVE_6/) — 22.05.2020 \\
   Я про Story Mode, конечно.
 - [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 07.07.2017 \\
 Прошёл на сложности Deus Ex. Ачивоньки за стелс и пацифизм не получил — пару раз где-то оплошал, видимо.
