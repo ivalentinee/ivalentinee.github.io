@@ -53,6 +53,7 @@ permalink: /gamelist/
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [GRIS](https://store.steampowered.com/app/683320/GRIS/) — 28.01.2020
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
+- [Halo: CE](https://store.steampowered.com/app/1064221/Halo_Combat_Evolved_Anniversary/) — 19.06.2020
 - [Halo: Reach](https://store.steampowered.com/app/1064220/Halo_Reach/) — 11.01.2020
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 14.09.2017
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 13.05.2018 \\
