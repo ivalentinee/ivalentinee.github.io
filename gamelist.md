@@ -79,6 +79,7 @@ permalink: /gamelist/
 - [Quantum Break](https://store.steampowered.com/app/474960/Quantum_Break/) — 17.05.2020
 - [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 11.05.2019
 - [RAGE 2](https://store.steampowered.com/app/548570/RAGE_2/) — 17.05.2019
+- [RAGE 2: Rise of the Ghosts](https://store.steampowered.com/app/548570/RAGE_2/) — 21.08.2020
 - [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
   Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
