@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Using alias в Elixir"
+title:  "Using 'alias' in Elixir"
 date:   2020-08-22
 categories: programming
 uid: aliases-in-elixir
