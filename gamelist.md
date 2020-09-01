@@ -24,6 +24,7 @@ permalink: /gamelist/
 - [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 26.12.2018
 - [Assassin's Creed Origins](https://store.ubi.com/us/assassins-creed--origins-gold-edition/59245fb4adc724ef3f8b456e.html?lang=en_US&edition=Gold%20Edition) — 20.04.2020
 - [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) — 08.01.2019
+- [Battletoads](https://www.xbox.com/en-US/games/battletoads) — 01.09.2020
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 29.04.2017 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 28.12.2018
