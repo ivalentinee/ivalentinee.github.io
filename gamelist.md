@@ -15,7 +15,7 @@ permalink: /gamelist/
 
 Из списка исключены:
 1. Игры, для которых не могу подобрать критерий завершённости (вроде [Enter the Gungeon](http://store.steampowered.com/app/311690/Enter_the_Gungeon/) или [Rocket League](http://store.steampowered.com/app/252950/Rocket_League/)).
-2. Также не включаю в список игры, которые для меня неинтересны (хоть и оказались как-то у меня в библиотеке).
+2. Также не включаю в список игры, которые для меня неинтересны.
 
 ## Done
 Если кого-то заинтересует моё мнение относительно какой-то из игр, спрашивайте в [твитаче](https://twitter.com/ivalentinee_), например.
@@ -81,6 +81,8 @@ permalink: /gamelist/
 - [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 11.05.2019
 - [RAGE 2](https://store.steampowered.com/app/548570/RAGE_2/) — 17.05.2019
 - [RAGE 2: Rise of the Ghosts](https://store.steampowered.com/app/548570/RAGE_2/) — 21.08.2020
+- [ReCore](https://www.microsoft.com/en-us/p/recore/9nblggh1z6fq) — 13.09.2020 \\
+  На DLC забил
 - [Red Faction Guerrilla](http://store.steampowered.com/app/20500/Red_Faction_Guerrilla_Steam_Edition/) — 17.02.2018
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 01.10.2017 \\
   Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
