@@ -118,6 +118,8 @@ permalink: /gamelist/
   Клёво, но на середине сезона приелось.
 - Dirt Showdown (Ссылка в стиме потратилась) \\
   Неплохая игра, но Dirt 3 бы пройти. До Showdown руки точно не дойдут.
+- [Death's Gambit](https://www.microsoft.com/en-us/p/deaths-gambit/9mv537xvlvxr) \\
+  После хтонического уровня какая-то дичь начинается.
 - [Deus Ex Mankind Divided](http://store.steampowered.com/app/337000/Deus_Ex_Mankind_Divided/)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/) \\
   Слишком много времени для полного отсутствия экшона (ну, кнопки там пожмакать)
