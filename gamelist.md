@@ -44,6 +44,7 @@ permalink: /gamelist/
 - [Doki Doki Literature Club!](https://store.steampowered.com/app/698780/Doki_Doki_Literature_Club/) — 03.08.2019
 - [DOOM](https://store.steampowered.com/app/379720/DOOM/) — 07.09.2019
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 04.02.2015
+- [Dying Light](https://www.microsoft.com/en-us/p/dying-light/bxn9lb6r3zpg) — 02.12.2020
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 01.12.2016 \\
   Забил на DLC.
 - [Far Cry 5](https://store.ubi.com/us/far-cry--5/591567f6ca1a6460388b456a.html?lang=en_US) — 16.11.2019
