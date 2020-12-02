@@ -82,7 +82,7 @@ As system objects almost always can be changed building rules for every {% raw %
 It makes sense use non-intersecting {% raw %}$$D_{pi}$${% endraw %}, thus every lesser predicate {% raw %}$$P_i$${% endraw %} will exclusivly define each case: {% raw %}$$p(D_p) := \displaystyle\bigvee_{i=1}^{n} p_i(D_{pi}), D_{pi} ⊆ D_p, i ≠ j, D_{pi} ⊄ D_{pj}$${% endraw %}.
 
 ## Whole process
-![Authorized action diagram](/assets/img/posts/2019-05-04-MVC-authorization/Generic authorization flow.png)
+![Authorized action diagram](/assets/img/posts/2019-05-04-MVC-authorization/en/Generic authorization flow.png)
 
 ### Subject identification
 As noted above subject mapping is done by [authenticaiton or identification]({% uid_url authorization-authentication-and-identification %}). Both processes are well described in many books and articles, tons of technologies are developed ([kerberos?](https://ru.wikipedia.org/wiki/Kerberos), [tls?](https://en.wikipedia.org/wiki/Transport_Layer_Security#Client-authenticated_TLS_handshake)), so I won't touch that matter.
@@ -140,7 +140,7 @@ As ex-RoR and currently Elixir/Phoenix developer I'll describe things assuming [
 
 Usually it looks like this:
 
-![Authorized action in MVC application](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization.png)
+![Authorized action in MVC application](/assets/img/posts/2019-05-04-MVC-authorization/en/MVC authorization.png)
 
 ### Where's authorization object
 This was the first problem I encountered, when I was building real-world authorization.
@@ -167,7 +167,7 @@ Bonus is that user get 404 error instead of 403. Which is not that much of a pro
 #### Somehow getting authorization object
 It looks like a simple thing on this diagram:
 
-![MVC Authorization with object](/assets/img/posts/2019-05-04-MVC-authorization/MVC authorization with object.png)
+![MVC Authorization with object](/assets/img/posts/2019-05-04-MVC-authorization/en/MVC authorization with object.png)
 
 But in real world `select` should be done before getting to controller.
 
@@ -200,26 +200,22 @@ But here're cons:
 2. Obtaining authorization object for every request is not a good idea for systems with high load. Despite going for this specifically there're scenarios where only {% raw %}$$p(\{s, a\})$${% endraw %} "subpredicate" could be used without unnecessary data loading.
 
 #### Applying predicate before authorization object identification
-<!-- Теоретическая возможность сделать двухэтапную авторизацию для высоконагруженных систем есть: достаточно свести предикат в области {% raw %}$$S×A×O$${% endraw %} к предикату в области {% raw %}$$S×A$${% endraw %}, но -->
-<!-- 1. Это приведёт к поддержке в коде двух предикатов вместо одного. А в действительности это будет поддержка {% raw %}$$2·n$${% endraw %} меньших предикатов вместо {% raw %}$$n$${% endraw %}\\ -->
-<!-- ({% raw %}$$\displaystyle\bigvee_{i=1}^{n} {p_{i}(\{s, a\}) ∧ p_i(\{s, a, o\})}$${% endraw %} вместо {% raw %}$$\displaystyle\bigvee_{i=1}^{n} p_i(\{s, a, o\})$${% endraw %}). -->
-<!-- 2. На практике я такого не делал, поэтому про подводные камни рассказать не могу. -->
+In theory it's possible to make two-step authorization for highload system: {% raw %}$$S×A×O$${% endraw %} predicate could be reduced to {% raw %}$$S×A$${% endraw %}, but
+1. It results in writing two predicates instead of one. In real world it would be {% raw %}$$2·n$${% endraw %} predicates instead of {% raw %}$$n$${% endraw %}.\\
+   {% raw %}$$\displaystyle\bigvee_{i=1}^{n} {p_{i}(\{s, a\}) ∧ p_i(\{s, a, o\})}$${% endraw %} instead of {% raw %}$$\displaystyle\bigvee_{i=1}^{n} p_i(\{s, a, o\})$${% endraw %}).
+2. I'we never done that myself, so I'm not sure of all caveats of this approach.
 
 ### Action identification
-<!-- Тут тоже есть свои особенности в реальных системах. -->
+Problem is, action identification is done multiple times. First, external action is mapped into internal action at controller level, then controller maps internal action into one (or more) business logic actions, which then map these into lower level actions.
 
-<!-- Проблема в том, что отображение действия происходит не один раз: сначала внешнее действие отображается на внутреннее на уровне контроллера, потом контроллер отображает это на одно (или несколько) действий модуля бизнес-логики, которые уже отображают свои действия на действия уровня данных или низкоуровневые процедуры (например, печать). -->
+So we have to choose, which action level should be used for authorization.
 
-<!-- И тут встаёт проблема выбора уровня отображаемых действий для авторизации. -->
+Usually authorization libraries (like some for [Rails](https://github.com/varvet/pundit)) insist on authorizing business logic.
 
-<!-- Типичные библиотеки для описания авторизации (как минимум [рельсовые](https://github.com/varvet/pundit)) переносят это на уровень бизнес-логики (а с active record этот слой ещё и смешан со слоем хранения). -->
-
-<!-- Я же считаю, что для авторизации нужно использовать отображение как можно более близкое к вводу, потому что -->
-<!-- 1. Отображение уровня контроллера позволяет делать действия бизнес-логики и работы с данными максимально широкими, что уменьшает количество дублируемого кода и позволяет выстроить достаточно высокоуровневые абстракции. -->
-<!-- 2. В то же время действия уровня контроллера можно делать максимально узкими для построения минимально-необходимого интерфейса (что уменьшает уровень энтропии интерфейса). -->
-<!-- 2. Авторизация не будет «ломаться», если одно действие уровня контроллера будет отображатся на несколько действий более низкого уровня. -->
-
-<!-- Но в общем и целом, помня про текучие абстрации, можно руководствоваться подходом, при котором предикат будет иметь наименее объёмное определение. В частности иногда есть смысл авторизовать действие на уровне бизнес-логики, а не на уровне контроллера. -->
+I think that actions that are most close to user-facing IO (controller actions) should be authorized:
+1. Controller-level mapping allows for widest business logic and storage level actions, which reduces code duplication and makes it easier to operate with higher-level abstractions.
+2. Controller actions could be very "narrow" (specific) to build as small interface as possible (which reduces interface entropy).
+3. Authorization won't break if controller action is mapped into multiple business-logic level operations.
 
 ### Reverse authorization
 This is more of a hack, than a proper solution, but I had to do it.
