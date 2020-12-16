@@ -52,7 +52,8 @@ permalink: /gamelist/
 - [Gato Roboto](https://store.steampowered.com/app/916730/Gato_Roboto/) — 01.06.2019
 - [Gauntlet](http://store.steampowered.com/app/258970/Gauntlet_Slayer_Edition/) — 24.09.2016 \\
   Проходил не в соло. Ещё хотелось бы ачивку "We need to go Deeper - Gold", но сюжет пройден — игра пройдена.
-- [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f?activetab=pivot%3aoverviewtab) — 03.07.2018
+- [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f) — 03.07.2018
+- [Gears of War 2](https://www.microsoft.com/en-us/p/gears-of-war-2/c1sdbnrfxt1d) — 16.12.2020
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 08.06.2017
 - [GRIS](https://store.steampowered.com/app/683320/GRIS/) — 28.01.2020
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
