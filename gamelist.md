@@ -3,22 +3,8 @@ layout: page
 title: Список видеоигр
 permalink: /gamelist/
 ---
-Так-то этот список для меня, чтобы было проще отслеживать прогресс. Очень помогает [вот эта статья](https://dtf.ru/3668-kak-zastavit-sebya-prohodit-dlinnye-igry) при прохождении.
-
-Не для всех игорей даты завершения, потому как дело было давно, или просто восстановить не получилось.
-
-Для каждой игры свой критерий завершённости. Где-то это завершение сюжета, где-то — завершение сюжета и избранные (мной) достижения.
-
-В список включены:
-1. Личный свежак. Примерно с 2014 года.
-2. То, что есть в стиме — могу в любой момент начать (пере)проходить.
-
-Из списка исключены:
-1. Игры, для которых не могу подобрать критерий завершённости (вроде [Enter the Gungeon](http://store.steampowered.com/app/311690/Enter_the_Gungeon/) или [Rocket League](http://store.steampowered.com/app/252950/Rocket_League/)).
-2. Также не включаю в список игры, которые для меня неинтересны.
 
 ## Done
-Если кого-то заинтересует моё мнение относительно какой-то из игр, спрашивайте в [твитаче](https://twitter.com/ivalentinee_), например.
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 08.03.2018
 - [APE OUT](https://store.steampowered.com/app/447150/APE_OUT/) — 31.01.2020
 - [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 26.12.2018
@@ -116,6 +102,8 @@ permalink: /gamelist/
 
 ## Dropped
 - [Brutal Legend](http://store.steampowered.com/app/225260/Brutal_Legend/)
+- [CODE VEIN](https://store.steampowered.com/app/678960/CODE_VEIN/) \\
+  Думал, будет весело, но было скучно и нудно.
 - [Dead Sky](http://store.steampowered.com/app/259700/Dead_Sky/)
 - Dirt 3 (Ссылка в стиме потратилась) \\
   Клёво, но на середине сезона приелось.
@@ -148,7 +136,7 @@ permalink: /gamelist/
 - [Serious Sam 3: BFE](http://store.steampowered.com/app/41070/Serious_Sam_3_BFE/) \\
   Уже три раза дошёл до одного и того же места, а дальше становится однообразно и скучно.
 - [Spaceport Hope](http://store.steampowered.com/app/394540/Spaceport_Hope/) \\
-  Клёвая игрушка, но руки до неё точно не дойдут
+  Клёвая игрушка, но ~~руки до неё точно не дойдут~~ нарвался на баг, который не даёт пройти дальше.
 - [Strike Suit Zero](http://store.steampowered.com/app/209540/Strike_Suit_Zero/) \\
   Ниасилил крутиться в 3D.
 - [Styx: Master of Shadows](http://store.steampowered.com/app/242640/Styx_Master_of_Shadows/) \\
