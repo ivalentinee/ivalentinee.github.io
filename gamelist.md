@@ -84,6 +84,7 @@ permalink: /gamelist/
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 2019.02.02
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
+- [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
 - [The Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 2018.05.11
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 2014.03.01 \\
   Забил на DLC
