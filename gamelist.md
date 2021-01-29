@@ -82,6 +82,8 @@ permalink: /gamelist/
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
 - [Shadow Warrior](https://store.steampowered.com/app/233130/Shadow_Warrior/) — 2018.09.30
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 2019.02.02
+- [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30\
+  Проходил только Libra of Soul
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
 - [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
