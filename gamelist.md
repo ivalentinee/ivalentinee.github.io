@@ -40,6 +40,7 @@ permalink: /gamelist/
   Проходил не в соло. Ещё хотелось бы ачивку "We need to go Deeper - Gold", но сюжет пройден — игра пройдена.
 - [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f) — 2018.07.03
 - [Gears of War 2](https://www.microsoft.com/en-us/p/gears-of-war-2/c1sdbnrfxt1d) — 2020.12.16
+- [Gears of War 3](https://www.microsoft.com/en-us/p/gears-of-war-3/bpkdqssfq9wv) — 2021.02.18
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 2017.06.08
 - [GRIS](https://store.steampowered.com/app/683320/GRIS/) — 2020.01.28
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
@@ -82,7 +83,7 @@ permalink: /gamelist/
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
 - [Shadow Warrior](https://store.steampowered.com/app/233130/Shadow_Warrior/) — 2018.09.30
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 2019.02.02
-- [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30\
+- [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30 \\
   Проходил только Libra of Soul
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
