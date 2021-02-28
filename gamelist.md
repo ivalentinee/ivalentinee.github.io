@@ -86,6 +86,8 @@ permalink: /gamelist/
 - [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30 \\
   Проходил только Libra of Soul
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
+- [Super Lucky's Tale](https://www.microsoft.com/en-us/p/super-luckys-tale/9plmgfwcfz9g) — 2021.02.28 \\
+  Без DLC
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
 - [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
 - [The Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 2018.05.11
