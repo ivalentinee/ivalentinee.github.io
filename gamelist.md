@@ -100,16 +100,9 @@ permalink: /gamelist/
   Прошёл на Hard. На большей сложности, пожалуй, не буду.
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 2016.10.09
 
-## On hold
-- [Castle Crashers](http://store.steampowered.com/app/204360/Castle_Crashers/)
-- [Forced](http://store.steampowered.com/app/249990/FORCED_Slightly_Better_Edition/) \\
-  Весело играть только компанией, но все разбежались, так что доиграть не с кем =(.
-- [Furi](http://store.steampowered.com/app/423230/Furi/)
-- [Neon Chrome](http://store.steampowered.com/app/428750/Neon_Chrome/) \\
-  Прошёл пару первых уровней с одним другом. Жду Local Coop Party!
-
 ## Dropped
 - [Brutal Legend](http://store.steampowered.com/app/225260/Brutal_Legend/)
+- [Castle Crashers](http://store.steampowered.com/app/204360/Castle_Crashers/)
 - [CODE VEIN](https://store.steampowered.com/app/678960/CODE_VEIN/) \\
   Думал, будет весело, но было скучно и нудно.
 - [Dead Sky](http://store.steampowered.com/app/259700/Dead_Sky/)
@@ -122,6 +115,9 @@ permalink: /gamelist/
 - [Deus Ex Mankind Divided](http://store.steampowered.com/app/337000/Deus_Ex_Mankind_Divided/)
 - [Divinity Original Sin](http://store.steampowered.com/app/373420/Divinity_Original_Sin__Enhanced_Edition/) \\
   Слишком много времени для полного отсутствия экшона (ну, кнопки там пожмакать)
+- [Forced](http://store.steampowered.com/app/249990/FORCED_Slightly_Better_Edition/) \\
+  Весело играть только компанией, но все разбежались, так что доиграть не с кем =(.
+- [Furi](http://store.steampowered.com/app/423230/Furi/)
 - [Guacamelee](http://store.steampowered.com/app/275390/Guacamelee_Super_Turbo_Championship_Edition/) \\
   Надоело.
 - [Half Life 2](http://store.steampowered.com/app/220/HalfLife_2/)
@@ -135,6 +131,8 @@ permalink: /gamelist/
 - [Magicka](http://store.steampowered.com/app/42910/Magicka/)
 - Necro (Ссылка в стиме потратилась) \\
   Игра неплохая, но её забросили.
+- [Neon Chrome](http://store.steampowered.com/app/428750/Neon_Chrome/) \\
+  Прошёл пару первых уровней с одним другом. Дальше туго.
 - [Outland](http://store.steampowered.com/app/305050/Outland/) \\
   Красивая игрушка, но возвращаться на середину не хочется, а проходить с самого начала неохота.
 - [RWBY: Grimm Eclipse](http://store.steampowered.com/app/418340/RWBY_Grimm_Eclipse/) \\
