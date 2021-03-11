@@ -48,6 +48,8 @@ permalink: /gamelist/
 - [Halo: CE](https://store.steampowered.com/app/1064221/Halo_Combat_Evolved_Anniversary/) — 2020.06.19
 - [Halo 2](https://www.microsoft.com/en-us/p/halo-2-anniversary/9mwmbq1gnk6k) — 2020.12.23
 - [Halo 3](https://www.microsoft.com/en-us/p/halo-3/9nn5x5kw23vt) — 2021.01.10
+- [Halo 3: ODST](https://www.microsoft.com/en-us/p/halo-3-odst/9p6vzcrgxfmx) — 2021.03.09
+- [Halo 4](https://www.microsoft.com/en-us/p/halo-4/9p8cfxzh93ck) — 2021.03.11
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 2017.09.14
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 2018.05.13 \\
   Первая часть лучше
