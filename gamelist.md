@@ -15,6 +15,7 @@ permalink: /gamelist/
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 2018.12.28
 - [Carrion](https://www.microsoft.com/en-us/p/carrion/9npkknbj258v) — 2020.10.02
+- [Carto](https://www.microsoft.com/en-us/p/carto/9nj2xxpjvdrd) — 2020.03.20
 - [Castlevania: Lords of Shadow](https://store.steampowered.com/app/234080/Castlevania_Lords_of_Shadow__Ultimate_Edition/) — 2019.07.22
 - [Dandara](https://store.steampowered.com/app/612390/Dandara/) — 2019.04.10
 - [Darksiders](https://store.steampowered.com/app/462780/Darksiders_Warmastered_Edition/) — 2018.07.21
