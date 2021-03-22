@@ -30,6 +30,7 @@ permalink: /gamelist/
 На харде проходить не стал. Хотя очень хотелось.
 - [Doki Doki Literature Club!](https://store.steampowered.com/app/698780/Doki_Doki_Literature_Club/) — 2019.08.03
 - [DOOM](https://store.steampowered.com/app/379720/DOOM/) — 2019.09.07
+- [Drake Hollow](https://www.microsoft.com/en-us/p/drake-hollow/9pgnggwbx1nr) — 2021.03.28
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 2015.02.04
 - [Dying Light](https://www.microsoft.com/en-us/p/dying-light/bxn9lb6r3zpg) — 2020.12.02
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 2016.12.01 \\
