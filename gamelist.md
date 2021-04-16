@@ -43,6 +43,7 @@ permalink: /gamelist/
 - [Gears of War: Ultimate Edition](https://www.microsoft.com/en-us/p/gears-of-war-ultimate-edition/bqt21vxfs52f) — 2018.07.03
 - [Gears of War 2](https://www.microsoft.com/en-us/p/gears-of-war-2/c1sdbnrfxt1d) — 2020.12.16
 - [Gears of War 3](https://www.microsoft.com/en-us/p/gears-of-war-3/bpkdqssfq9wv) — 2021.02.18
+- [Gears of War 4](https://www.microsoft.com/en-us/p/gears-of-war-4/9nblggh4pbbm) — 2021.04.16
 - [Grand Theft Auto V](http://store.steampowered.com/app/271590/Grand_Theft_Auto_V/) — 2017.06.08
 - [GRIS](https://store.steampowered.com/app/683320/GRIS/) — 2020.01.28
 - [Half Life](http://store.steampowered.com/app/70/HalfLife/)
