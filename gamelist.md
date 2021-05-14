@@ -96,6 +96,7 @@ permalink: /gamelist/
   Без DLC
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
 - [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
+- [The Outer Worlds](https://www.microsoft.com/en-us/p/the-outer-worlds/bvtkn6cq8w5f) — 2021.05.14
 - [The Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 2018.05.11
 - [The Touryst](https://www.microsoft.com/en-us/p/the-touryst/9n9w1jk1x5qj) — 2021.03.06
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 2014.03.01 \\
