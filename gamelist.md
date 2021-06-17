@@ -35,6 +35,7 @@ permalink: /gamelist/
 - [Dying Light](https://www.microsoft.com/en-us/p/dying-light/bxn9lb6r3zpg) — 2020.12.02
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 2016.12.01 \\
   Забил на DLC.
+- [Far Cry 3](https://www.microsoft.com/en-us/p/far-cry-3-classic-edition/bv2zvp7pjzwl) — 2021.06.17
 - [Far Cry 5](https://store.ubi.com/us/far-cry--5/591567f6ca1a6460388b456a.html?lang=en_US) — 2019.11.16
 - [Far Cry New Dawn](https://store.ubi.com/us/far-cry-new-dawn/5bf319696b54a4ddc91e8843.html) — 2019.12.12
 - [Gato Roboto](https://store.steampowered.com/app/916730/Gato_Roboto/) — 2019.06.01
