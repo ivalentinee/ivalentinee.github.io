@@ -25,6 +25,7 @@ permalink: /gamelist/
 - [Darksiders Genesis](https://store.steampowered.com/app/710920/Darksiders_Genesis/) — 2020.01.21
 - [Dead or Alive 6](https://store.steampowered.com/app/838380/DEAD_OR_ALIVE_6/) — 2020.05.22 \\
   Я про Story Mode, конечно.
+- [Death's Door](https://www.microsoft.com/en-us/p/deaths-door-xbox/9ndz7nxff622) — 2021.07.21
 - [Deus Ex Human Revolution](http://store.steampowered.com/app/238010/Deus_Ex_Human_Revolution__Directors_Cut/) — 2017.07.07 \\
 Прошёл на сложности Deus Ex. Ачивоньки за стелс и пацифизм не получил — пару раз где-то оплошал, видимо.
 - [Devil May Cry 1](https://store.steampowered.com/app/631510/Devil_May_Cry_HD_Collection/) — 2018.07.10 \\
