@@ -31,6 +31,7 @@ permalink: /gamelist/
 - [Devil May Cry 1](https://store.steampowered.com/app/631510/Devil_May_Cry_HD_Collection/) — 2018.07.10 \\
 На харде проходить не стал. Хотя очень хотелось.
 - [Doki Doki Literature Club!](https://store.steampowered.com/app/698780/Doki_Doki_Literature_Club/) — 2019.08.03
+- [Donut County](https://www.microsoft.com/en-us/p/donut-county/9n6v2181ghlm) — 2021.07.31
 - [DOOM](https://store.steampowered.com/app/379720/DOOM/) — 2019.09.07
 - [Drake Hollow](https://www.microsoft.com/en-us/p/drake-hollow/9pgnggwbx1nr) — 2021.03.28
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 2015.02.04
