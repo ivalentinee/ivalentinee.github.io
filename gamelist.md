@@ -108,6 +108,7 @@ permalink: /gamelist/
 - [The Touryst](https://www.microsoft.com/en-us/p/the-touryst/9n9w1jk1x5qj) — 2021.03.06
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 2014.03.01 \\
   Забил на DLC
+- [Twelve Minutes](https://www.microsoft.com/en-us/p/twelve-minutes/9p55tjkcl1bc) — 2021.08.23
 - [UTOPIA 9 - A Volatile Vacation](http://store.steampowered.com/app/405000/UTOPIA_9__A_Volatile_Vacation/) — 2017.03.22 \\
   Дошёл до конца за туриста. Ещё можно в этой игре поразвлечься или пройти за гида, но считаю, что прошёл.
 - [Vanquish](http://store.steampowered.com/app/460810/Vanquish/) — 2017.09.13 \\
