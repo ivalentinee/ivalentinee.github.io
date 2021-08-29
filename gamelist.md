@@ -34,6 +34,7 @@ permalink: /gamelist/
 - [Donut County](https://www.microsoft.com/en-us/p/donut-county/9n6v2181ghlm) — 2021.07.31
 - [DOOM](https://store.steampowered.com/app/379720/DOOM/) — 2019.09.07
 - [Drake Hollow](https://www.microsoft.com/en-us/p/drake-hollow/9pgnggwbx1nr) — 2021.03.28
+- [Dungeon Keeper](https://www.origin.com/rus/en-us/store/dungeon-keeper/dungeon-keeper) — 2021.08.30
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 2015.02.04
 - [Dying Light](https://www.microsoft.com/en-us/p/dying-light/bxn9lb6r3zpg) — 2020.12.02
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 2016.12.01 \\
