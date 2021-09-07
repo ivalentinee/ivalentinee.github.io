@@ -100,6 +100,7 @@ permalink: /gamelist/
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [Super Lucky's Tale](https://www.microsoft.com/en-us/p/super-luckys-tale/9plmgfwcfz9g) — 2021.02.28 \\
   Без DLC
+- [The Ascent](https://www.microsoft.com/en-us/p/the-ascent/c27ql5jbkq8m) — 2021.09.07
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
 - [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
 - [The Outer Worlds](https://www.microsoft.com/en-us/p/the-outer-worlds/bvtkn6cq8w5f) — 2021.05.14
