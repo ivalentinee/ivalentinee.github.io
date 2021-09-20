@@ -18,6 +18,7 @@ permalink: /gamelist/
 - [Carto](https://www.microsoft.com/en-us/p/carto/9nj2xxpjvdrd) — 2020.03.20
 - [Castlevania: Lords of Shadow](https://store.steampowered.com/app/234080/Castlevania_Lords_of_Shadow__Ultimate_Edition/) — 2019.07.22
 - [Control](https://www.microsoft.com/en-us/p/control/bz6w9lrpc26w) — 2021.09.18
+- [Control: "The Foundation"](https://www.microsoft.com/en-us/p/control-expansion-1-the-foundation/c0tqdq1r3mqx) — 2021.09.21
 - [Crackdown 3](https://www.microsoft.com/en-us/p/crackdown-3/9nxr6469dm2p) — 2021.06.30
 - [Dandara](https://store.steampowered.com/app/612390/Dandara/) — 2019.04.10
 - [Darksiders](https://store.steampowered.com/app/462780/Darksiders_Warmastered_Edition/) — 2018.07.21
