@@ -99,6 +99,8 @@ permalink: /gamelist/
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 2019.02.02
 - [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30 \\
   Проходил только Libra of Soul
+- [Subnautica](https://www.microsoft.com/en-us/p/subnautica/bx3s1q5dvhrd) — 2021.04.28
+- [Subnautica: Below Zero](https://www.microsoft.com/en-us/p/subnautica-below-zero/9ndcjxl11096) — 2021.09.26
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [Super Lucky's Tale](https://www.microsoft.com/en-us/p/super-luckys-tale/9plmgfwcfz9g) — 2021.02.28 \\
   Без DLC
