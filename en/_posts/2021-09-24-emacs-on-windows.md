@@ -8,7 +8,7 @@ uid: emacs-on-windows
 ---
 
 ## How did I get there
-Due to workplace change I had to buy new laptop (I had give my old work laptop back).\\
+Due to workplace change I had to buy a new laptop (I had give laptop from my previous job back).\\
 Requirements on new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle.\\
 Since my old Lenovo Carbon (4 gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen).
 

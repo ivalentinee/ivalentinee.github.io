@@ -17,6 +17,8 @@ uid: alternative-phoenix-contexts-approach
 
 Описаний будет мало, в основном листинги.
 
+Так как с момента написания оригинального текста статьи прошло несколько лет, могу с уверенностью сказать, что все описанные подходы работают хорошо.
+
 ## Верхнеуровнево
 Контексты уезжают в папку `contexts`, модели уезжают в папку `models`, в ту же папку `models` складываем всё, что связано с `Ecto.Query`.
 
@@ -209,3 +211,101 @@ end
 Потому что одним и тем же словом "changeset" (да и механизмом, если смотреть под капот) мы описываем два совершенно разных действия: работу с базой данных и работу с пользовательским вводом.
 
 Единственное, что я могу придумать в данной ситуации — делать такие названия changeset'ам, чтобы было понятно, какие относятся к БД, а какие — к обработке пользовательских сценариев.
+
+## Шлюзы (UPD 2021-10-10)
+Ещё немного про структуру проекта.
+
+Многие сервисы взаимодействуют с другими сервисами (HTTP, MQ и т.п.).
+
+Такой слой "взаимодействия" должен быть отделён от всего прочего (по моему мнению). Обычно я использую для этого директорию "lib/my_app/gateways".
+
+Пример:
+```elixir
+# lib/my_app/gateways/some_other_service.ex
+
+defmodule MyApp.Gateways.SomeOtherService do
+  @items_url "http://example.com/items"
+
+  def get_items do
+    request = {@items_url, []}
+
+    with {:ok, { {_, 200, _}, _, raw_response}} <- :httpc.request(:get, request, [], []),
+         {:ok, response} <- Jason.decode(raw_response) do
+      response["items"]
+    end
+  end
+end
+```
+
+```elixir
+# lib/my_app/contexts/items.ex
+
+defmodule MyApp.Contexts.Items do
+  alias MyApp.Gateways.SomeOtherService, as: SomeOtherServiceGateway
+
+  def load_items do
+    case SomeOtherServiceGateway.get_items() do
+      {:ok, items} -> save_items(items)
+      error -> error
+    end
+  end
+
+  def save_items do
+    # save items to DB
+  end
+end
+```
+
+### Инверсия зависимостей
+Ну, почти.
+
+Чаще всего сторонний сервис недоступен с локальной машины, поэтому приходится использовать "подставной" сервис. В таком случае вместо использования модулей шлюзов напрямую могут быть получены модули в зависимости от конфигурации через вызов функции.
+
+Пример:
+```elixir
+# config/dev.exs
+# ...
+config :my_app, :use_fake_other_service, true
+# ...
+```
+```elixir
+# lib/my_app/gateways.ex
+
+defmodule MyApp.Gateways do
+  alias MyApp.Gateways.OtherService
+  alias MyApp.Gateways.OtherService.Fake, as: FakeOtherService
+
+  def other_service do
+    if Application.get_env(:my_app, :use_fake_other_service) do
+      FakeOtherService
+    else
+      OtherService
+    end
+  end
+end
+```
+```elixir
+# lib/my_app/gateways/other_service/fake.ex
+
+defmodule MyApp.Gateways.OtherService.Fake do
+  def get_items, do: {:ok, [1, 2, 3, 4, 5]}
+end
+```
+```elixir
+# lib/my_app/contexts/items.ex
+
+defmodule MyApp.Contexts.Items do
+  alias MyApp.Gateways
+
+  def load_items do
+    case Gateways.other_service().get_items() do
+      {:ok, items} -> save_items(items)
+      error -> error
+    end
+  end
+
+  def save_items do
+    # save items to DB
+  end
+end
+```

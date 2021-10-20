@@ -6,7 +6,6 @@ services:
     image: ivalentinee.github.io
     volumes: &web-volumes
       - ./:/app
-      - ~/.bash_history:/root/.bash_history
     ports:
       - "4000:4000"
     user: "1000:1000"

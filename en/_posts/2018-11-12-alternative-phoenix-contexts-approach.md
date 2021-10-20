@@ -116,7 +116,7 @@ defmodule MyApp.Contexts.Pizzas do
 end
 ```
 
-## More on changesets (UPD 2021.10.05)
+## More on changesets (UPD 2021-10-05)
 Apart from schemaless changesets my experience with Ecto tells me of two types of changesets: for *storing* and for *processing*.
 
 ### Storing changesets
@@ -201,7 +201,103 @@ end
 
 So instead of bloating storage layer with processing definitions like `def admin_changeset(struct, params)` and `def manager_changeset(struct, params)` we put 'em to **user story definition** that uses that exact changeset.
 
-### That looks not very good
+### That does not look very good
 Because we use the same word "changeset" (and even implementation under the hood) for two different things: *DB handling* and *user input validation and normalization*.
 
 The only thing I can think of to make it better is to name these changesets so it would be clear which changeset is for what.
+
+## Gateways (UPD 2021-10-10)
+More on project structure!
+
+Some systems have to communicate with other systems (HTTP, MQ, etc).
+
+That "communications" layer has to be separated from everything else (IMHO). I usually go with "lib/my_app/gateways" folder.
+
+Example:
+```elixir
+# lib/my_app/gateways/some_other_service.ex
+
+defmodule MyApp.Gateways.SomeOtherService do
+  @items_url "http://example.com/items"
+
+  def get_items do
+    request = {@items_url, []}
+
+    with {:ok, { {_, 200, _}, _, raw_response}} <- :httpc.request(:get, request, [], []),
+         {:ok, response} <- Jason.decode(raw_response) do
+      response["items"]
+    end
+  end
+end
+```
+
+```elixir
+# lib/my_app/contexts/items.ex
+
+defmodule MyApp.Contexts.Items do
+  alias MyApp.Gateways.SomeOtherService, as: SomeOtherServiceGateway
+
+  def load_items do
+    case SomeOtherServiceGateway.get_items() do
+      {:ok, items} -> save_items(items)
+      error -> error
+    end
+  end
+
+  def save_items do
+    # save items to DB
+  end
+end
+```
+
+### Dependency inversion
+Sort of.
+
+More often than not it's impossible to reach other service from local machine, so some kind of fake service implementation has to be used. In that case instead of using gateway modules one can just get preconfigured module by calling a function like this:
+```elixir
+# config/dev.exs
+# ...
+config :my_app, :use_fake_other_service, true
+# ...
+```
+```elixir
+# lib/my_app/gateways.ex
+
+defmodule MyApp.Gateways do
+  alias MyApp.Gateways.OtherService
+  alias MyApp.Gateways.OtherService.Fake, as: FakeOtherService
+
+  def other_service do
+    if Application.get_env(:my_app, :use_fake_other_service) do
+      FakeOtherService
+    else
+      OtherService
+    end
+  end
+end
+```
+```elixir
+# lib/my_app/gateways/other_service/fake.ex
+
+defmodule MyApp.Gateways.OtherService.Fake do
+  def get_items, do: {:ok, [1, 2, 3, 4, 5]}
+end
+```
+```elixir
+# lib/my_app/contexts/items.ex
+
+defmodule MyApp.Contexts.Items do
+  alias MyApp.Gateways
+
+  def load_items do
+    case Gateways.other_service().get_items() do
+      {:ok, items} -> save_items(items)
+      error -> error
+    end
+  end
+
+  def save_items do
+    # save items to DB
+  end
+end
+```
