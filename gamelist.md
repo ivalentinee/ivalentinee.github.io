@@ -11,6 +11,7 @@ permalink: /gamelist/
 - [Assassin's Creed Origins](https://store.ubi.com/us/assassins-creed--origins-gold-edition/59245fb4adc724ef3f8b456e.html?lang=en_US&edition=Gold%20Edition) — 2020.04.20
 - [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) — 2019.01.08
 - [Battletoads](https://www.xbox.com/en-US/games/battletoads) — 2020.09.01
+- [Before we leave](https://www.microsoft.com/en-us/p/before-we-leave/9n360tzqz0tr)
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 2017.04.29 \\
   Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 2018.12.28
