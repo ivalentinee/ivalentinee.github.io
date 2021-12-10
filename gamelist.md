@@ -123,6 +123,7 @@ permalink: /gamelist/
 - [Vanquish](http://store.steampowered.com/app/460810/Vanquish/) — 2017.09.13 \\
   Прошёл на Hard. На большей сложности, пожалуй, не буду.
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 2016.10.09
+- [Yakuza: Like a Dragon](https://www.xbox.com/en-us/games/store/yakuza-like-a-dragon/9nxcswcqtnfg) — 2021.12.10
 
 ## Dropped
 - [Brutal Legend](http://store.steampowered.com/app/225260/Brutal_Legend/)
