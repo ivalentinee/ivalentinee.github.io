@@ -64,6 +64,7 @@ permalink: /gamelist/
 - [Halo 3: ODST](https://www.microsoft.com/en-us/p/halo-3-odst/9p6vzcrgxfmx) — 2021.03.09
 - [Halo 4](https://www.microsoft.com/en-us/p/halo-4/9p8cfxzh93ck) — 2021.03.11
 - [Halo 5: Guardians](https://www.microsoft.com/en-us/p/halo-5-guardians/brrc2bp0g9p0) — 2021.03.15
+- [Halo: Infinite](https://www.microsoft.com/en-us/p/halo-infinite/9pp5g1f0c2b6) — 2021.12.18
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 2017.09.14
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 2018.05.13 \\
   Первая часть лучше
