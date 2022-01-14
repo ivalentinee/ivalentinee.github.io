@@ -71,6 +71,7 @@ permalink: /gamelist/
   Первая часть лучше
 - [Hyper Light Drifter](https://store.steampowered.com/app/257850/Hyper_Light_Drifter/) — 2018.09.09
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 2016.07.08
+- [It Takes Two](https://www.xbox.com/en-US/games/store/it-takes-two/9nkj0vzq4n0l) — 2022.01.14
 - [Just Cause 2](https://store.steampowered.com/app/8190/Just_Cause_2/) — 2018.05.28 \\
   Completitionist'а не делал, просто прошёл сюжетку.
 - [Just Cause 3](https://store.steampowered.com/app/225540/Just_Cause_3/) — 2017.04.23 \\
