@@ -89,6 +89,7 @@ permalink: /gamelist/
 - [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 2017.05.22
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 2017.01.06
 - [Ori and the Will of the Wisps](https://www.microsoft.com/en-us/p/ori-and-the-will-of-the-wisps/9n8cd0xzklp4) — 2021.10.13
+- [Outer wilds](https://www.xbox.com/en-US/games/store/outer-wilds/c596fkdkmqn7) — 2022.01.16
 - [Quantum Break](https://store.steampowered.com/app/474960/Quantum_Break/) — 2020.05.17
 - [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 2019.05.11
 - [RAGE 2](https://store.steampowered.com/app/548570/RAGE_2/) — 2019.05.17
