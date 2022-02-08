@@ -86,7 +86,8 @@ permalink: /gamelist/
 - [Portal 2](http://store.steampowered.com/app/620/Portal_2/)
 - [Prototype](http://store.steampowered.com/app/10150/Prototype/) — 2017.03.16
 - [Prototype 2](http://store.steampowered.com/app/115320/Prototype_2/) — 2017.03.27
-- [Nier: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 2017.05.22
+- [NieR: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 2017.05.22
+- [NieR Replicant ver.1.22474487139](https://www.xbox.com/en-us/games/store/nier-replicant-ver122474487139/9nmbk4v30xjr) — 2022.02.08
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 2017.01.06
 - [Ori and the Will of the Wisps](https://www.microsoft.com/en-us/p/ori-and-the-will-of-the-wisps/9n8cd0xzklp4) — 2021.10.13
 - [Outer wilds](https://www.xbox.com/en-US/games/store/outer-wilds/c596fkdkmqn7) — 2022.01.16
