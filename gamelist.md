@@ -121,6 +121,7 @@ permalink: /gamelist/
 - [The Pedestrian](https://www.xbox.com/ru-ru/games/store/the-pedestrian/9NTX07HR22TG) — 2022.01.06
 - [The Red Strings Club](https://store.steampowered.com/app/589780/The_Red_Strings_Club/) — 2018.05.11
 - [The Touryst](https://www.microsoft.com/en-us/p/the-touryst/9n9w1jk1x5qj) — 2021.03.06
+- [Tomb Raider (2013)](https://www.xbox.com/en-US/games/store/tomb-raider-definitive-edition/bqxts0sx4w0n) — 2022.03.23
 - [Trine 2](http://store.steampowered.com/app/35720/Trine_2_Complete_Story/) — 2014.03.01 \\
   Забил на DLC
 - [Twelve Minutes](https://www.microsoft.com/en-us/p/twelve-minutes/9p55tjkcl1bc) — 2021.08.23
