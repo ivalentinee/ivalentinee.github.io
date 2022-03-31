@@ -105,6 +105,7 @@ permalink: /gamelist/
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
 - [Shadow Warrior](https://store.steampowered.com/app/233130/Shadow_Warrior/) — 2018.09.30
 - [Shadow Warrior 2](https://store.steampowered.com/app/324800/Shadow_Warrior_2/) — 2019.02.02
+- [Shadow Warrior 3](https://www.xbox.com/en-us/games/store/shadow-warrior-3/9p6n45qzr81r) — 2022.04.01
 - [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30 \\
   Проходил только Libra of Soul
 - [Subnautica](https://www.microsoft.com/en-us/p/subnautica/bx3s1q5dvhrd) — 2021.04.28
