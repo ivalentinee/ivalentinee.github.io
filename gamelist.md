@@ -82,6 +82,7 @@ permalink: /gamelist/
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 2017.06.09 \\
   На DLC и NG+ забил.
 - [My Friend Perdo](https://store.steampowered.com/app/557340/My_Friend_Pedro/) — 2019.06.21
+- [Outriders](https://www.xbox.com/en-US/games/store/outriders/c083g6bgj334) — 2022.05.07
 - [Portal](http://store.steampowered.com/app/400/Portal/)
 - [Portal 2](http://store.steampowered.com/app/620/Portal_2/)
 - [Prototype](http://store.steampowered.com/app/10150/Prototype/) — 2017.03.16
