@@ -132,6 +132,7 @@ permalink: /gamelist/
 - [Vanquish](http://store.steampowered.com/app/460810/Vanquish/) — 2017.09.13 \\
   Прошёл на Hard. На большей сложности, пожалуй, не буду.
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 2016.10.09
+- [Wolfenstein: The New Order](https://www.xbox.com/en-US/games/store/wolfenstein-the-new-order/bt9fflg51vvg) — 2022.06.21
 - [Yakuza: Like a Dragon](https://www.xbox.com/en-us/games/store/yakuza-like-a-dragon/9nxcswcqtnfg) — 2021.12.10
 
 ## Dropped
