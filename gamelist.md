@@ -40,6 +40,7 @@ permalink: /gamelist/
 - [Dungeon Keeper](https://www.origin.com/rus/en-us/store/dungeon-keeper/dungeon-keeper) — 2021.08.30
 - [Dust An Elysian Tail](http://store.steampowered.com/app/236090/Dust_An_Elysian_Tail/) — 2015.02.04
 - [Dying Light](https://www.microsoft.com/en-us/p/dying-light/bxn9lb6r3zpg) — 2020.12.02
+- [Dying Light 2: Stay Human](https://www.xbox.com/en-US/games/dying-light-2) — 2022.07.29
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 2016.12.01 \\
   Забил на DLC.
 - [Far Cry 3](https://www.microsoft.com/en-us/p/far-cry-3-classic-edition/bv2zvp7pjzwl) — 2021.06.17
