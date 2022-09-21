@@ -8,23 +8,23 @@ uid: emacs-on-windows
 ---
 
 ## How did I get there
-Due to workplace change I had to buy a new laptop (I had give laptop from my previous job back).\\
-Requirements on new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle.\\
-Since my old Lenovo Carbon (4 gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen).
+Due to job change I had to buy a new laptop (I had to give laptop from my previous job back).\\
+Requirements for the new laptop were pretty clear: 16G RAM, 512G SSD and — that was the worst — it has to be able to run linux without too much hassle.\\
+Since my old Lenovo Carbon (4th gen I suppose) worked for many years without any problem the choice was simple and I got another Lenovo Carbon (9 gen).
 
-When my new laptop arrived I logged into Windows 10 Pro (OEM) and... decided to keep windows. Why? This laptop (suddenly!) had touchscreen, fingerprint scanner, power modes to keep battery last longer... Well, I didn't want to make it all work in Linux, but wanted to use all these features.
+When my new laptop arrived I logged into Windows 10 Pro (OEM) and... decided to keep Windows. Why? This laptop (suddenly!) had touchscreen, fingerprint scanner, power modes to let battery last longer... Well, I didn't want to make it all work on Linux, but wanted to use all these features.
 
-I got WSL2, Docker and [Emacs under WSL2](https://emacsredux.com/blog/2020/09/23/using-emacs-on-windows-with-wsl2/) working in two days so I was able to go around my day job.
+I got WSL2, Docker and [Emacs on WSL2](https://emacsredux.com/blog/2020/09/23/using-emacs-on-windows-with-wsl2/) working in two days so I was able to go around my day job.
 
-A month later I had to download lots of files, edit them and send back. As almost all applications (apart from Docker and Emacs) were running on windows using WSL emacs was not very convenient. So I decided to make Emacs work on Windows. As most of my questions took some hours to google answers to I decided to put these answers here.
+A month later I had to download lots of files, edit them and send back. As almost all applications (apart from Docker and Emacs) were running on Windows using WSL emacs was not very convenient. So I decided to make Emacs work on Windows. As most of my questions took some hours to google answers I decided to put these answers here.
 
 ## Installing
 That's the easiest part: go to [https://www.gnu.org/software/emacs/](https://www.gnu.org/software/emacs/), download, install.
 
 ## Configuring
-Emacs by default looks for configuration not in `C:\Users\<Username>` but in `C:\Users\<Username>\AppData\Roaming`. So that's where we put it
+Emacs by default looks for configuration not in `C:\Users\<Username>` but in `C:\Users\<Username>\AppData\Roaming`. So that's where we put it.
 
-As I keep emacs dotfiles in Git I cloned my repo to `C:\Users\<Username>\Code\emacs_config` and made symbolic links in PowerShell (under Administrator):
+As I keep emacs dotfiles in Git I cloned my repo to `C:\Users\<Username>\Code\emacs_config` and made symbolic links in PowerShell (as Administrator):
 ```
  C:\Users\Valen> mkdir .emacs.d
  C:\Users\Valen> New-Item -ItemType SymbolicLink -Path C:\Users\Valen\ -Name .emacs -Value 'C:\Users\Valen\Code\emacs_config\.emacs'
@@ -62,7 +62,7 @@ Where `-f "c:\Users\Valen\.emacs.d\server\server"` points to daemon socket. Reme
 ## Adopting emacs configuration
 Emacs config from Linux didn't allow Emacs to start normally, so I had to fix it.
 
-Specifically, I had to turn off pinentry integration (it makes no sense in Windows anyway):
+Specifically, I had to turn off pinentry integration (it makes no sense on Windows anyway):
 ```elisp
 (if (string= system-type "gnu/linux")
     (progn (setenv "INSIDE_EMACS" (format "%s,comint" emacs-version))
@@ -71,7 +71,7 @@ Specifically, I had to turn off pinentry integration (it makes no sense in Windo
 ```
 
 ## PowerShell
-Cmd was not an option, so I had to make PowerShell work inside shell-mode:
+Cmd was not an option, so I had to make PowerShell work in shell-mode:
 ```elisp
 (if (string= system-type "windows-nt")
     (setq
@@ -82,10 +82,10 @@ Cmd was not an option, so I had to make PowerShell work inside shell-mode:
 Autocompletition doesn't work though.
 
 ## What else?
-Well, neigher grep nor silversearcher-ag are easy to install for PowerShell which is sad.\\
-And I didn't bother wit git integration because I don't write too much code in Windows.
+Well, neither grep nor silversearcher-ag are easy to install for PowerShell which is sad.\\
+And I didn't bother wit git integration because I don't write too much code on Windows.
 
 ## Small recap
-In WSL2 it (Emacs) still runs faster and is easier to use. So I ended up making `/mnt/c/Users/Valen → ~/winhome` symlink ans use Emacs inside WSL.
+In WSL2 it (Emacs) still runs faster and is easier to use. So I ended up making `/mnt/c/Users/Valen → ~/winhome` symlink ans use Emacs on WSL.
 
-And yeah, I saw Surface Laptop Studio announce and now I regret that I got Lenovo Carbon. But at least it was a way to know that development under Windows (with WSL) works pretty well (so I don't need Linux as host system).
+And yeah, I saw Surface Laptop Studio announce and now I regret that I got Lenovo Carbon. But at least it was a way to know that development on Windows (with WSL) works pretty well (so I don't need Linux as host system).

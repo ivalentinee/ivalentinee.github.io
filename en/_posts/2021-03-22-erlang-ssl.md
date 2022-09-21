@@ -29,7 +29,7 @@ Then configure cert file. Ubuntu with `openssl` installed have them at `/etc/ssl
 ```elixir
 cacertfile: '/etc/ssl/certs/ca-certificates.crt'
 ```
-Next, to enable wildcard sertificates we should specify custom (somewhat) hostname check function:
+Next, to enable wildcard certificates we should specify custom (somewhat) hostname check function:
 ```elixir
 customize_hostname_check: [
   match_fun: :public_key.pkix_verify_hostname_match_fun(:https)
