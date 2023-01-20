@@ -47,6 +47,7 @@ permalink: /gamelist/
 - [Far Cry 3](https://www.microsoft.com/en-us/p/far-cry-3-classic-edition/bv2zvp7pjzwl) — 2021.06.17
 - [Far Cry 5](https://store.ubi.com/us/far-cry--5/591567f6ca1a6460388b456a.html?lang=en_US) — 2019.11.16
 - [Far Cry New Dawn](https://store.ubi.com/us/far-cry-new-dawn/5bf319696b54a4ddc91e8843.html) — 2019.12.12
+- [Far Cry 6](https://www.xbox.com/en-US/games/far-cry-6) — 2022.12.16
 - [Firewatch](https://www.xbox.com/en-US/games/store/firewatch/bqqkg9h2stc0) — 2022.01.11
 - [Gato Roboto](https://store.steampowered.com/app/916730/Gato_Roboto/) — 2019.06.01
 - [Gauntlet](http://store.steampowered.com/app/258970/Gauntlet_Slayer_Edition/) — 2016.09.24 \\
@@ -117,6 +118,8 @@ permalink: /gamelist/
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [Super Lucky's Tale](https://www.microsoft.com/en-us/p/super-luckys-tale/9plmgfwcfz9g) — 2021.02.28 \\
   Без DLC
+- [Super Mario Odyssey](https://www.nintendo.com/store/products/super-mario-odyssey-switch/) — 2023.01.20 \\
+  Закончил на «Тёмной стороне луны». 500 лун (и уж тем более 999) собирать не стал.
 - [The Ascent](https://www.microsoft.com/en-us/p/the-ascent/c27ql5jbkq8m) — 2021.09.07
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
 - [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
