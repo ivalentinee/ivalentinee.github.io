@@ -84,6 +84,7 @@ permalink: /gamelist/
 - [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 2017.09.21
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 2017.06.09 \\
   На DLC и NG+ забил.
+- [Metroid Dread](https://www.nintendo.com/store/products/metroid-dread-switch/) — 2023.01.26
 - [My Friend Perdo](https://store.steampowered.com/app/557340/My_Friend_Pedro/) — 2019.06.21
 - [Outriders](https://www.xbox.com/en-US/games/store/outriders/c083g6bgj334) — 2022.05.07
 - [Portal](http://store.steampowered.com/app/400/Portal/)
