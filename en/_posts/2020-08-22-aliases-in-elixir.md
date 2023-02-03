@@ -8,9 +8,9 @@ uid: aliases-in-elixir
 
 This one is short, but I think I should white down this insight.
 
-My main argument (not just against [Ruby](https://www.ruby-lang.org/), but overall) looks like this: "Code should annotate not only dependancies, but dependants".
+My main argument (not just against [Ruby](https://www.ruby-lang.org/), but overall) looks like this: "Code should annotate not only dependencies, but dependants".
 
-In case of Elixir dependancies are easy to track just by looking at `alias` and `import` (rarely `use`). However, annotating dependants would make writing code an unpleasant experience. But there's a way.
+In case of Elixir dependencies are easy to track just by looking at `alias` and `import` (rarely `use`). However, annotating dependants would make writing code an unpleasant experience. But there's a way.
 
 There're 2 (okay, 1.5) ways to write `alias`:
 ```elixir
