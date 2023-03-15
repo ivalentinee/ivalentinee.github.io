@@ -16,7 +16,7 @@ I used these articles:
 - [Erlang (and Elixir) distribution without epmd](https://www.erlang-solutions.com/blog/erlang-and-elixir-distribution-without-epmd.html) (more to understand what's going on)
 - [Clustering Elixir/Erlang applications in Kubernetes](https://blog.ispirata.com/clustering-elixir-erlang-applications-in-kubernetes-part-1-the-theory-ca658acbf101) (as an example for the setup)
 
-## Начнём
+## Let's begin
 So, this is the situation: there's production app with N services (N ≤ 10) deployed to k8s ([openshift](https://www.openshift.com/) actually, but that doesnt matter) as a set of deploymentconfig, some deployments have [k8s services](https://kubernetes.io/docs/concepts/services-networking/service/) and [routes](https://docs.openshift.com/enterprise/3.0/architecture/core_concepts/routes.html) pointed at them. Some services (not k8s services) use redis/memcached/PG/kafka/whatever to exchange data.
 
 But *suddenly* (as it usually goes) a need for direct service communication appeared. For an Elixir app there're more than one (two actually) ways of such communication:
