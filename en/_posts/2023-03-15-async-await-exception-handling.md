@@ -140,4 +140,4 @@ Yes, excessive promise wrapping/unwrapping will cause more event loop cycles to 
 ## Conclusion
 It turned out, problematic code is usually written by developers that have almost no experience with NodeJS – those who write code for browser or write so little code that such async-related problems never occur.
 
-Now I use this question (async/await with exceptions) on interviews to find out if applicant actually used NodeJS or just played with it.
+Now I use this question (async/await with exceptions) on interviews to find out if candidate actually used NodeJS or just played with it.
