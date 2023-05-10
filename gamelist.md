@@ -138,6 +138,8 @@ permalink: /gamelist/
 - [Twelve Minutes](https://www.microsoft.com/en-us/p/twelve-minutes/9p55tjkcl1bc) — 2021.08.23
 - [UTOPIA 9 - A Volatile Vacation](http://store.steampowered.com/app/405000/UTOPIA_9__A_Volatile_Vacation/) — 2017.03.22 \\
   Дошёл до конца за туриста. Ещё можно в этой игре поразвлечься или пройти за гида, но считаю, что прошёл.
+- [Valheim](https://www.xbox.com/en-US/games/valheim) — 2023.05.10 \\
+  Прошёл последнего босса в Mistlands (The Queen). Полагаю, будет ещё один босс в Ashlands, но когда его ждать — не ясно.
 - [Vanquish](http://store.steampowered.com/app/460810/Vanquish/) — 2017.09.13 \\
   Прошёл на Hard. На большей сложности, пожалуй, не буду.
 - [Victor Vran](http://store.steampowered.com/app/345180/Victor_Vran_ARPG/) — 2016.10.09
