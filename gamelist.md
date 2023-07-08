@@ -78,6 +78,8 @@ permalink: /gamelist/
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 2018.05.13 \\
   Первая часть лучше
 - [Hyper Light Drifter](https://store.steampowered.com/app/257850/Hyper_Light_Drifter/) — 2018.09.09
+- [Immortals Fenyx Rising](https://www.xbox.com/en-US/games/store/immortals-fenyx-rising/c07kjzrh0l7s) — 2023.07.08 \\
+  Без DLC
 - [INSIDE](http://store.steampowered.com/app/304430/INSIDE/) — 2016.07.08
 - [It Takes Two](https://www.xbox.com/en-US/games/store/it-takes-two/9nkj0vzq4n0l) — 2022.01.14
 - [Just Cause 2](https://store.steampowered.com/app/8190/Just_Cause_2/) — 2018.05.28 \\
