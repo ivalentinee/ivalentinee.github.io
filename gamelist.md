@@ -6,6 +6,7 @@ permalink: /gamelist/
 
 ## Done
 - [Agents of Mayhem](http://store.steampowered.com/app/304530/Agents_of_Mayhem/) — 2018.03.08
+- [Airborn Kingdom](https://www.xbox.com/en-US/games/store/airborne-kingdom/9NCX7DGDZGF4) — 2023.08.23
 - [APE OUT](https://store.steampowered.com/app/447150/APE_OUT/) — 2020.01.31
 - [Assassin's Creed Odyssey](https://store.ubi.com/us/assassins-creed-odyssey-ultimate-edition/5afda8aa6b54a4271407a875.html?lang=en_US) — 2018.12.26
 - [Assassin's Creed Origins](https://store.ubi.com/us/assassins-creed--origins-gold-edition/59245fb4adc724ef3f8b456e.html?lang=en_US&edition=Gold%20Edition) — 2020.04.20
