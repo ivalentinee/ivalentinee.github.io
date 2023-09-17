@@ -16,7 +16,7 @@ permalink: /gamelist/
 - [Battletoads](https://www.xbox.com/en-US/games/battletoads) — 2020.09.01
 - [Before we leave](https://www.microsoft.com/en-us/p/before-we-leave/9n360tzqz0tr)
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 2017.04.29 \\
-  Прошёл на Normal, остальные уровни сложности было бы прикольно пройти, но лень.
+  Прошёл на Normal, ~~остальные уровни сложности было бы прикольно пройти, но лень.~~ Прошёл Hard [на nintendo switch](https://www.nintendo.com/store/products/bayonetta-switch/) 2023.09.17
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 2018.12.28
 - [Carrion](https://www.microsoft.com/en-us/p/carrion/9npkknbj258v) — 2020.10.02
 - [Carto](https://www.microsoft.com/en-us/p/carto/9nj2xxpjvdrd) — 2020.03.20
