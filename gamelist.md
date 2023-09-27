@@ -115,6 +115,7 @@ permalink: /gamelist/
 - [Ruiner](http://store.steampowered.com/app/464060/RUINER/) — 2017.10.01 \\
   Это просто топчик. 12/10. Но играть лучше только на харде (не меньше)
 - [Saints Row (2022)](https://www.xbox.com/en-US/games/saints-row) — 2022.10.05
+- [Sea of Stars](https://www.xbox.com/en-US/games/store/sea-of-stars/9nllttjzh40l) — 2023.09.27
 - [Shadowrun Returns](http://store.steampowered.com/app/234650/Shadowrun_Returns/)
 - [Shadowrun Dragonfall](http://store.steampowered.com/app/300550/Shadowrun_Dragonfall__Directors_Cut/) \\
   Проходил ещё когда это было дополнение для оригинальной Shadowrun Returns
