@@ -18,6 +18,7 @@ permalink: /gamelist/
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 2017.04.29 \\
   Прошёл на Normal, ~~остальные уровни сложности было бы прикольно пройти, но лень.~~ Прошёл Hard [на nintendo switch](https://www.nintendo.com/store/products/bayonetta-switch/) 2023.09.17
 - [Bayonetta 2](https://www.nintendo.com/us/store/products/bayonetta-2-switch/) — 2023.11.28
+- [Bayonetta 3](https://www.nintendo.com/us/store/products/bayonetta-3-switch/) — 2023.12.30
 - [Bulletstorm](https://store.steampowered.com/app/501590/Bulletstorm_Full_Clip_Edition/) — 2018.12.28
 - [Carrion](https://www.microsoft.com/en-us/p/carrion/9npkknbj258v) — 2020.10.02
 - [Carto](https://www.microsoft.com/en-us/p/carto/9nj2xxpjvdrd) — 2020.03.20
