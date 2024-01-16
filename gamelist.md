@@ -134,6 +134,8 @@ permalink: /gamelist/
 - [Super Mario Odyssey](https://www.nintendo.com/store/products/super-mario-odyssey-switch/) — 2023.01.20 \\
   Закончил на «Тёмной стороне луны». 500 лун (и уж тем более 999) собирать не стал.
 - [The Ascent](https://www.microsoft.com/en-us/p/the-ascent/c27ql5jbkq8m) — 2021.09.07
+- [The Legend of Zelda: Breath of the Wild](https://zelda.nintendo.com/breath-of-the-wild/) — 2024.01.16 \\
+  Святилища все не вычищал, все сайды не закрывал. Прошёл сюжетку и хватит.
 - [The Messenger](https://store.steampowered.com/app/764790/The_Messenger/) — 2019.06.20
 - [The Messenger: Picnic Panic](https://www.microsoft.com/en-us/p/the-messenger-picnic-panic/9n420xndblfh) — 2021.01.22
 - [The Outer Worlds](https://www.microsoft.com/en-us/p/the-outer-worlds/bvtkn6cq8w5f) — 2021.05.14
