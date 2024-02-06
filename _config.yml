@@ -54,7 +54,7 @@ defaults:
     values:
       lang: ru
       base-url: "/ru/"
-      comments: true
+      comments: false
       math: false
   -
     scope:
@@ -62,5 +62,5 @@ defaults:
     values:
       lang: en
       base-url: "/en/"
-      comments: true
+      comments: false
       math: false
