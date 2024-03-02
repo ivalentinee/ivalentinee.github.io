@@ -32,6 +32,8 @@ permalink: /gamelist/
 - [Darksiders II](https://store.steampowered.com/app/388410/Darksiders_II_Deathinitive_Edition/) — 2018.08.22
 - [Darksiders III](https://store.steampowered.com/app/606280/Darksiders_III) — 2019.11.15
 - [Darksiders Genesis](https://store.steampowered.com/app/710920/Darksiders_Genesis/) — 2020.01.21
+- [Dead Island 2](https://www.xbox.com/en-us/games/store/dead-island-2/c3l4j3h7h12r) — 2024.02.03 \\
+  Проходил в коопе
 - [Dead or Alive 6](https://store.steampowered.com/app/838380/DEAD_OR_ALIVE_6/) — 2020.05.22 \\
   Я про Story Mode, конечно.
 - [Death's Door](https://www.microsoft.com/en-us/p/deaths-door-xbox/9ndz7nxff622) — 2021.07.21
