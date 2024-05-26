@@ -97,6 +97,7 @@ permalink: /gamelist/
 - [Lead of Fate](https://store.steampowered.com/app/363420/Leap_of_Fate/) — 2024.05.06 \\
   Прошёл на Hard за одного из персонажей (Mukai). За всех персонажей решил не добивать.
 - [LIMBO](http://store.steampowered.com/app/48000/LIMBO/) — 2017.09.21
+- [Little Kitty, Big City](https://www.xbox.com/en-US/games/store/little-kitty-big-city/9NF5S7MLM8XT) — 2024.05.27
 - [Mark of the Ninja](http://store.steampowered.com/app/214560/Mark_of_the_Ninja/) — 2017.06.09 \\
   На DLC и NG+ забил.
 - [Metroid Dread](https://www.nintendo.com/store/products/metroid-dread-switch/) — 2023.01.26
