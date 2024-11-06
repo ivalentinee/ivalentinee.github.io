@@ -104,6 +104,9 @@ permalink: /gamelist/
   На DLC и NG+ забил.
 - [Metroid Dread](https://www.nintendo.com/store/products/metroid-dread-switch/) — 2023.01.26
 - [Metroid Prime Remastered](https://www.nintendo.com/us/store/products/metroid-prime-remastered-switch/) — 2024.10.10
+- [Monster Hunter Rise](https://www.nintendo.com/us/store/products/monster-hunter-rise-switch/) — 2024.11.06 \\
+  HR: 244, MR: 101, AR: 148, Amatsu — done, Primordial Malzeno — done \\
+  230 часов в это укатал
 - [My Friend Perdo](https://store.steampowered.com/app/557340/My_Friend_Pedro/) — 2019.06.21
 - [Outriders](https://www.xbox.com/en-US/games/store/outriders/c083g6bgj334) — 2022.05.07
 - [Portal](http://store.steampowered.com/app/400/Portal/)
