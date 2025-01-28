@@ -117,12 +117,13 @@ permalink: /gamelist/
 - [Prototype 2](http://store.steampowered.com/app/115320/Prototype_2/) — 2017.03.27
 - [NieR: Automata](http://store.steampowered.com/app/524220/NieRAutomata/) — 2017.05.22
 - [NieR Replicant ver.1.22474487139](https://www.xbox.com/en-us/games/store/nier-replicant-ver122474487139/9nmbk4v30xjr) — 2022.02.08
+- [Okami](https://www.nintendo.com/us/store/products/okami-hd-switch/) — 2025.01.29
 - [Ori and the Blind Forest](http://store.steampowered.com/app/387290/Ori_and_the_Blind_Forest_Definitive_Edition/) — 2017.01.06
 - [Ori and the Will of the Wisps](https://www.microsoft.com/en-us/p/ori-and-the-will-of-the-wisps/9n8cd0xzklp4) — 2021.10.13
-- [Phantom Abyss](https://www.xbox.com/en-US/games/store/phantom-abyss/9NH9W1N1XWV5) — 2024.02.19 \\
-  Играл ещё в бетку, но решил пройти сюжет в релизной версии
 - [Outer wilds](https://www.xbox.com/en-US/games/store/outer-wilds/c596fkdkmqn7) — 2022.01.16
 - [Quantum Break](https://store.steampowered.com/app/474960/Quantum_Break/) — 2020.05.17
+- [Phantom Abyss](https://www.xbox.com/en-US/games/store/phantom-abyss/9NH9W1N1XWV5) — 2024.02.19 \\
+  Играл ещё в бетку, но решил пройти сюжет в релизной версии
 - [RAGE](https://store.steampowered.com/app/9200/RAGE/) — 2019.05.11
 - [RAGE 2](https://store.steampowered.com/app/548570/RAGE_2/) — 2019.05.17
 - [RAGE 2: Rise of the Ghosts](https://store.steampowered.com/app/548570/RAGE_2/) — 2020.08.21
