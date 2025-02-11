@@ -110,6 +110,7 @@ permalink: /gamelist/
   HR: 244, MR: 101, AR: 148, Amatsu — done, Primordial Malzeno — done \\
   230 часов в это укатал
 - [My Friend Perdo](https://store.steampowered.com/app/557340/My_Friend_Pedro/) — 2019.06.21
+- [Neon White](https://www.xbox.com/en-US/games/store/neon-white/9mtgvhf37dfk) — 2025.02.11
 - [Outriders](https://www.xbox.com/en-US/games/store/outriders/c083g6bgj334) — 2022.05.07
 - [Portal](http://store.steampowered.com/app/400/Portal/)
 - [Portal 2](http://store.steampowered.com/app/620/Portal_2/)
