@@ -52,6 +52,7 @@ permalink: /gamelist/
 - [Dying Light 2: Stay Human](https://www.xbox.com/en-US/games/dying-light-2) — 2022.07.29
 - [Enslaved: An Odyssey to the West](http://store.steampowered.com/app/245280/ENSLAVED_Odyssey_to_the_West_Premium_Edition/) — 2016.12.01 \\
   Забил на DLC.
+- [Eternal Strands](https://www.xbox.com/en-US/games/store/eternal-strands/9nnkjnrkft0g) — 2025.02.18
 - [Far Cry 3](https://www.microsoft.com/en-us/p/far-cry-3-classic-edition/bv2zvp7pjzwl) — 2021.06.17
 - [Far Cry 5](https://store.ubi.com/us/far-cry--5/591567f6ca1a6460388b456a.html?lang=en_US) — 2019.11.16
 - [Far Cry New Dawn](https://store.ubi.com/us/far-cry-new-dawn/5bf319696b54a4ddc91e8843.html) — 2019.12.12
