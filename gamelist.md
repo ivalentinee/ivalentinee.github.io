@@ -146,6 +146,7 @@ permalink: /gamelist/
 - [Soulcalibur VI](https://www.microsoft.com/en-us/p/soulcalibur-vi/c3v22fqd8n84) — 2021.01.30 \\
   Проходил только Libra of Soul
 - [SteamWorld Build](https://www.xbox.com/en-US/games/store/steamworld-build/9mvrdc1bw8tq) — 2024.02.12
+- [SteamWorld Dig](https://www.xbox.com/en-US/games/store/steamworld-dig/c289kch8wp0f) — 2025.03.20
 - [Subnautica](https://www.microsoft.com/en-us/p/subnautica/bx3s1q5dvhrd) — 2021.04.28
 - [Subnautica: Below Zero](https://www.microsoft.com/en-us/p/subnautica-below-zero/9ndcjxl11096) — 2021.09.26
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
