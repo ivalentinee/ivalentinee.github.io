@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="{{ page.lang | default: site.lang | default: "en" }}">
+
+  {%- include head.html -%}
+
+  <body>
+
+    <main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <h1 class="post-title" itemprop="name headline">
+          {{ page.title | escape }}
+          {% if page.back %}
+          <div><a href="{{page.back}}">←</a></div>
+          {% endif %}
+        </h1>
+
+        {{ content | toc }}
+      </div>
+    </main>
+
+  </body>
+
+</html>
