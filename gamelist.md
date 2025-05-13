@@ -13,6 +13,7 @@ permalink: /gamelist/
 - [Assault Android Cactus](http://store.steampowered.com/app/250110/Assault_Android_Cactus/) — 2019.01.08
 - [Astral Chain](https://www.nintendo.com/store/products/astral-chain-switch/) — 2023.05.23 \\
   Не пылесосил File 12, закончил только сюжет на Pt Standard
+- [Atlas Fallen](https://www.xbox.com/en-US/games/store/atlas-fallen/9PCQ7JRJVBVD) — 2025.05.14
 - [Battletoads](https://www.xbox.com/en-US/games/battletoads) — 2020.09.01
 - [Before we leave](https://www.microsoft.com/en-us/p/before-we-leave/9n360tzqz0tr)
 - [Bayonetta](http://store.steampowered.com/app/460790/agecheck) — 2017.04.29 \\
