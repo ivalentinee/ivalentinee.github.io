@@ -6,6 +6,10 @@ toc: true
 back: /roleplay/the-cities-of-progress/
 ---
 
+# Ограничения
+Можно использовать всё, что есть в [Основной книге игрока](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka).\\
+[Основная книга игрока 2](https://pf2.ru/sources/player%20core%202) и прочие источники недоступны.
+
 # Классы
 Мне лень расписывать специфику классов для этого мира, так что просто перечислю разрешённые (все из Player Core):
 - Бард
