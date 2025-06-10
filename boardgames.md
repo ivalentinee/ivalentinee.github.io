@@ -32,6 +32,11 @@ permalink: /boardgames/
 
 В это лучше один раз поиграть, желательно без предварительных спойлеров.
 
+### [Осколки бесконечности (2, PvP)](https://tesera.ru/game/Shards-of-Infinity/)
+![Осколки бесконечности](/assets/img/boardgames/shards-of-infinity.jpg){: width="300" }
+
+Весьма примитивная колодостроительная дуэлька.
+
 ### [Карета к Замку Дьявола (3–8, PvP)](https://tesera.ru/game/coach-ride-to-devils-castle/)
 ![Карета к Замку Дьявола](/assets/img/boardgames/coach-ride-to-devils-castle.jpg){: width="300" }
 
@@ -52,11 +57,6 @@ permalink: /boardgames/
 
 Понятия не имею, что это такое, ни разу не играл.
 
-### [Диксит (3–6, PvP)](https://tesera.ru/game/dixit/)
-![Диксит](/assets/img/boardgames/dixit.jpg){: width="300" }
-
-Играл один раз, комментировать не буду.
-
 ### [Шазар (2–4, PvP)](https://tesera.ru/game/Shazar/)
 ![Шазар](/assets/img/boardgames/shazar.jpg){: width="300" }
 
@@ -71,6 +71,12 @@ permalink: /boardgames/
 ![Адреналин](/assets/img/boardgames/adrenaline.jpg){: width="300" }
 
 Лучшее описание, которое приходит на ум — настольный Quake. Собираем по карте оружие, боеприпасы и расстреливаем друг-друга. Кто первый набрал больше всех фрагов — тот и победил. Есть [видео-туториал](https://youtu.be/hxZ1rSI9EvU), который хорошо объясняет игровой процесс.
+
+### [Непостижимое (3-6, PvE с предателем)](https://tesera.ru/game/Unfathomable/)
+![Непостижимое](/assets/img/boardgames/unfathomable.jpg){: width="300" }
+
+Ктулхианированная версия [Battlestar Galactica](https://tesera.ru/game/battlestar-galactica/).\\
+Задача игроков — доплыть, попутно решая кризисы разных масштабов, задача предателя — не дать остальным доплыть.
 
 ### [Войны магов (2, PvP)](https://tesera.ru/game/MageWars/)
 ![Войны магов](/assets/img/boardgames/mage-wars.jpg){: width="300" }
