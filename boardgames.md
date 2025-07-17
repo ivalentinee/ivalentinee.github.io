@@ -67,6 +67,18 @@ permalink: /boardgames/
 
 Спинофф самого [«Берсерка»](https://berserk.ru/)! Игра про коллективную защиту замка, где нет привычных игральных костей, а есть фиксированные ресурсы и случайно выпадающие враги. По сути эдакий «ресурс-менеджмент» с небольшим количеством логистики.
 
+### [Aeon's End (1-4, PvE)](https://tesera.ru/game/aeons-end/)
+![Конец Вечности](/assets/img/boardgames/aeons-end.jpg){: width="300" }
+![Конец Вечности](/assets/img/boardgames/aeons-end-2.jpg){: width="400" }
+
++ [Aeon's End: War Eternal](https://tesera.ru/game/aeons-end-war-eternal/)
++ [Aeon's End: The Depts](https://tesera.ru/game/aeons-end-the-depths/)
++ [Aeon's End: The Nameless](https://tesera.ru/game/aeons-end-the-nameless/)
++ [Aeon's End: The Outer Dark](https://tesera.ru/game/aeons-end-the-outer-dark/)
++ [Aeon's End: The Void](https://tesera.ru/game/aeons-end-the-void/)
+
+Колодостроительный кооператив (да, такие бывают). Правила достаточно простые, противники — от простых до "как его вообще победить?"
+
 ### [Адреналин (3–5, PvP)](https://tesera.ru/game/adrenaline/)
 ![Адреналин](/assets/img/boardgames/adrenaline.jpg){: width="300" }
 
