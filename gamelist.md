@@ -156,6 +156,7 @@ permalink: /gamelist/
   Без DLC
 - [Super Mario Odyssey](https://www.nintendo.com/store/products/super-mario-odyssey-switch/) — 2023.01.20 \\
   Закончил на «Тёмной стороне луны». 500 лун (и уж тем более 999) собирать не стал.
+- [The Alters](https://www.xbox.com/en-US/games/store/the-alters/9n0p25wjhm8c) — 2025.08.22
 - [The Ascent](https://www.microsoft.com/en-us/p/the-ascent/c27ql5jbkq8m) — 2021.09.07
 - [The Legend of Zelda: Breath of the Wild](https://zelda.nintendo.com/breath-of-the-wild/) — 2024.01.16 \\
   Святилища все не вычищал, все сайды не закрывал. Прошёл сюжетку и хватит.
