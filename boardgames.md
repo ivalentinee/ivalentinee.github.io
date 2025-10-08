@@ -57,6 +57,11 @@ permalink: /boardgames/
 
 Понятия не имею, что это такое, ни разу не играл.
 
+### [Берсерк: Русы против Ящеров](https://tesera.ru/game/berserk-rusy-protiv-yashcherov/)
+![Берсерк: Русы против Ящеров](/assets/img/boardgames/berserk-rus.jpg){: width="300" }
+
+Дуэлька с правилами [Берсерка](https://berserk.ru/). Несовместима с основной ККИ, но для мемщиков подойдёт.
+
 ### [Шазар (2–4, PvP)](https://tesera.ru/game/Shazar/)
 ![Шазар](/assets/img/boardgames/shazar.jpg){: width="300" }
 
@@ -81,11 +86,13 @@ permalink: /boardgames/
 
 ### [Адреналин (3–5, PvP)](https://tesera.ru/game/adrenaline/)
 ![Адреналин](/assets/img/boardgames/adrenaline.jpg){: width="300" }
+![Adrenaline: Team Play DLC](/assets/img/boardgames/adrenaline-team-play.jpg){: width="300" }
 
 Лучшее описание, которое приходит на ум — настольный Quake. Собираем по карте оружие, боеприпасы и расстреливаем друг-друга. Кто первый набрал больше всех фрагов — тот и победил. Есть [видео-туториал](https://youtu.be/hxZ1rSI9EvU), который хорошо объясняет игровой процесс.
 
 ### [Непостижимое (3-6, PvE с предателем)](https://tesera.ru/game/Unfathomable/)
 ![Непостижимое](/assets/img/boardgames/unfathomable.jpg){: width="300" }
+![Непостижимое](/assets/img/boardgames/unfathomable-from-the-depths.jpg){: width="250" }
 
 Ктулхианированная версия [Battlestar Galactica](https://tesera.ru/game/battlestar-galactica/).\\
 Задача игроков — доплыть, попутно решая кризисы разных масштабов, задача предателя — не дать остальным доплыть.
@@ -97,8 +104,11 @@ permalink: /boardgames/
 
 ### [Runebound (2–4, PvEvP)](https://tesera.ru/game/Runebound-Third-Edition/)
 ![Runebound](/assets/img/boardgames/runebound.jpg){: width="300" }
+![Runebound: Unbreakable Bonds](/assets/img/boardgames/runebound-unbreakable-bonds.jpg){: width="250" }
 
-Вышки из типичной игры от Юбиков, но вообще без веселья. Душная и нудная игра, которую я взял по рекомендации продавца зайдя в магазин «просто посмотреть». Может быть я играю в это неправильно, конечно. Побеждает игрок, который напевеешил больше всего очков к концу игры, если зло не победило.
+Вышки из типичной игры от Юбиков~~, но вообще без веселья. Душная и нудная игра, которую я взял по рекомендации продавца зайдя в магазин «просто посмотреть». Может быть я играю в это неправильно, конечно. Побеждает игрок, который напевеешил больше всего очков к концу игры, если зло не победило.~~
+
+Если взять к этой игре доп «Нерушимые Узы» и не пытаться в соревновательное PvE, то, оказывается, Runebound — вполне неплохая (пусть и механически несколько устаревшая) приключенческая игра.
 
 ### [Castle Ravenloft (1–5, PvE)](https://tesera.ru/game/Dungeons-and-Dragons-Castle-Ravenloft/)
 ![Castle Ravenloft](/assets/img/boardgames/castle-ravenloft.jpg){: width="300" }
@@ -110,7 +120,9 @@ permalink: /boardgames/
 
 То же самое, что и Castle Ravenloft, только сложнее. У противников и подземелья появились новые возможности унижать, а персонажей игроков понерфили, поэтому вероятность победы сильно снижена в сравнении с Castle Ravenloft. Обе коробки полностью совместимы, поэтому можно их смешивать в любых пропорциях и играть.
 
-### [D&D, Стартовый набор (2–6, PvE)](https://tesera.ru/game/dungeons-dragons-starter-set-fantasy-roleplaying-fundamentals/)
-![D&D, Стартовый набор](/assets/img/boardgames/dnd-starter-set.jpg){: width="300" }
+### [Dune: A Game of Conquest and Diplomacy (2–4, PvP)](https://tesera.ru/game/DuneAgameofConquest/)
+![Dune: AGoCaD](/assets/img/boardgames/dune.jpg){: width="300" }
 
-Если я хоть раз пройду эту коробку до конца, думаю, настанет мир во всём мире, а с неба посыпется молочная вата. То есть никогда. А вообще действительно неплохая коробка для тех, кто хочет начать играть в D&D, но не хочет заморачиваться.
+По описанию — какое-то тактическое PvP, хотя я ни разу даже не открывал коробку.
+
+Прислали в подарок из заморских краёв.
