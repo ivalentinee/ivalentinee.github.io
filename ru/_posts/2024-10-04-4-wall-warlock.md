@@ -2,7 +2,7 @@
 layout: post
 title:  "Пробиваем колдуном 4 стену"
 date:   2024-10-04
-categories: dnd
+categories: roleplay
 uid: 4-wall-warlock
 ---
 
