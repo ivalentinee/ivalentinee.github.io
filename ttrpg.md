@@ -5,7 +5,7 @@ toc: true
 permalink: /ttrpg/
 ---
 
-Чисто своё ЧСВ потешить.
+Чисто свои фетиши потешить.
 
 ## D&D 5E (2014)
 
@@ -78,10 +78,20 @@ permalink: /ttrpg/
 
 Кроме чисел типовых проверок по уровням и сложности особо не помогает (зачем мне цена на пиво на ГМной ширме?). Но есть куда вешать бумажки для отслеживания инициативы.
 
+## D&D 5E (2024)
+
+### [Player's Handbook](https://marketplace.dndbeyond.com/core-rules/3709000)
+![D&D 2024 PHB](/assets/img/ttrpg/dnd-2024-phb-closed.jpg){: height="300" }
+![D&D PHB Open](/assets/img/ttrpg/dnd-2024-phb-open.jpg){: height="300" }
+
+Пригласили в кампанию по 2024 правилам. Пришлось закупиться.
+
 ## Pathfinder 2E
 Если в D&D я участвую уже только как игрок, то Pathfinder я приобретал исключительно для того, чтобы игры вести.
 
-### [Основная книга игрока](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka)
+### Книги
+
+#### [Основная книга игрока](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka)
 ![PF2E Player Core](/assets/img/ttrpg/pf2-player-core-closed.jpg){: height="300" }
 ![PF2E Player Core Open](/assets/img/ttrpg/pf2-player-core-open.jpg){: height="300" }
 
@@ -94,7 +104,7 @@ permalink: /ttrpg/
 
 Очевидно [Paizo](https://en.wikipedia.org/wiki/Paizo) хотят всему миру сказать, что они всё делают не так как [WotC](https://ru.wikipedia.org/wiki/Wizards_of_the_Coast), но вот картинки в линейке PF2E хоть и имеют хорошо узнаваемый стиль, с задачей своей совсем не справляются.
 
-### [Основная книга ведущего](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-vedushhego)
+#### [Основная книга ведущего](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-vedushhego)
 ![PF2E GM Core](/assets/img/ttrpg/pf2-gm-core-closed.jpg){: height="300" }
 ![PF2E GM Core Open](/assets/img/ttrpg/pf2-gm-core-open.jpg){: height="300" }
 
@@ -108,7 +118,17 @@ permalink: /ttrpg/
 
 Конечно, сеттинг у Пасфайндера своеобразный, и главу про Голарион я пролистал и забыл как страшный сон. Благо в этой книге сеттинг только обзорно описан, и для любителей есть [отдельная серия книг](https://paizo.com/store/pathfinder/setting).
 
-### [Бестиарий (доремастер)](https://hobbygames.ru/pathfinder-nastolnaja-rolevaja-igra-vtoraja-redakcija-bestiarij)
+#### [Основной бестиарий](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnoj-bestiarij)
+![PF2E Monster Core](/assets/img/ttrpg/pf2-monster-core-closed.jpg){: height="300" }
+![PF2E Monster Core Open](/assets/img/ttrpg/pf2-monster-core-open.jpg){: height="300" }
+
+Наконец-то локализовали ремастернутый бестиарий.
+
+Я думал, что портирование монстров из доремастера будет проще, но как только появляется что-то с заклинаниями или магическими способностями...
+
+Да, за матовую обложку отдельное спасибо!
+
+#### [Бестиарий (доремастер)](https://hobbygames.ru/pathfinder-nastolnaja-rolevaja-igra-vtoraja-redakcija-bestiarij)
 ![PF2E Bestiary](/assets/img/ttrpg/pf2-bestiary-closed.jpg){: height="300" }
 ![PF2E Bestiary Open](/assets/img/ttrpg/pf2-bestiary-open.jpg){: height="300" }
 
@@ -118,7 +138,49 @@ permalink: /ttrpg/
 
 Жду ремастернутый «Основной бестиарий», потому что надоело конвертить вручную (да, я в курсе про [AoN](https://www.aonprd.com/), но я люблю бумагу).
 
-### [Ширма для основной книги ведущего](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-shirma-dlja-osnovnoj-knigi-vedushhego)
+#### [NPC Core](https://store.paizo.com/pathfinder-npc-core/)
+![PF2E NPC Core](/assets/img/ttrpg/pf2-npc-core-closed.jpg){: height="300" }
+![PF2E NPC Core Open](/assets/img/ttrpg/pf2-npc-core-open.jpg){: height="300" }
+
+Кампания, которую я веду, в основном выставляет противниками не монстров, а враждебных неписей, поэтому выпросил себе в подарок эту книгу из этих ваших Европ.
+
+### Фишки
+
+Удивительно, но удобнее, чем миньки, потому что меньше весят и занимают меньше места. И ещё дешевле.
+
+#### [Набор фишек к Основному Бестиарию](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnoj-bestiarij-nabor-fishek)
+
+![PF2E Pawns: Monster Core](/assets/img/ttrpg/pf2-pawns-monster-core.jpg){: height="300" }
+
+Честно говоря, ожидал маленькую коробочку, а приехало столько картона, что им можно голову проломить (если размахнуться).
+
+#### [Призыв чудовищ](https://hobbygames.ru/pathfinder-nri-priziv-chudovishh-nabor-fishek)
+
+![PF2E Pawns: Summon](/assets/img/ttrpg/pf2-pawns-summon.jpg){: height="300" }
+
+#### [Боевые столкновения](https://hobbygames.ru/pathfinder-nri-boevie-stolknovenija-nabor-fishek)
+
+![PF2E Pawns: Battle](/assets/img/ttrpg/pf2-pawns-battle.jpg){: height="300" }
+
+### Приключения
+
+#### [Падение Чумного Камня](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-prikljuchenie-padenie-chumnogo-kamnja)
+![PF2E The Fall of Plaguestone](/assets/img/ttrpg/pf2-the-fall-oflplaguestone.jpg){: height="300" }
+
+Куплен, чтобы иметь на руках пример одиночного приключения.
+
+Не смотря на то, что само приключение не играл, о покупке не пожалел — взял оттуда на вооружение немало.
+
+#### [Зловещие Катакомбы](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-serija-prikljuchenij-zloveshhie-katakombi)
+![PF2E Abomination Vaults](/assets/img/ttrpg/pf2-abomination-vaults-closed.jpg){: height="200" }
+![PF2E Abomination Vaults Open](/assets/img/ttrpg/pf2-abomination-vaults-open.jpg){: height="200" }
+![PF2E Abomination Vaults Cards](/assets/img/ttrpg/pf2-abomination-vaults-cards.jpg){: height="200" }
+
+Брал, чтобы оттуда воровать монстров и карты для игр в своём сеттинге, но может однажды и сыграю с кем-нибудь.
+
+### Прочее
+
+#### [Ширма для основной книги ведущего](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-shirma-dlja-osnovnoj-knigi-vedushhego)
 ![PF2E GM Screen Cover](/assets/img/ttrpg/pf2-screen-cover.jpg){: height="200" }
 
 ![PF2E GM Screen Outside](/assets/img/ttrpg/pf2-screen-outside.jpg){: height="150" }
@@ -129,27 +191,13 @@ permalink: /ttrpg/
 
 Одна только «проблема»: плотность информации такая, что ориентироваться сложнее, чем со многими другими ГМнымы ширмами.
 
-### [Карты состояний](https://hobbygames.ru/pathfinder-nastolnaja-rolevaja-igra-vtoraja-redakcija-karti-sostojanij)
+#### [Карты состояний](https://hobbygames.ru/pathfinder-nastolnaja-rolevaja-igra-vtoraja-redakcija-karti-sostojanij)
 ![PF2E Condition Cards](/assets/img/ttrpg/pf2-condition-cards.jpg){: height="300" }
 ![PF2E Condition Cards Album](/assets/img/ttrpg/pf2-condition-cards-album.jpg){: height="300" }
 
 Учитывая то, что Pathfinder всё-таки сложнее D&D, карточки, которые позволяют не слишком часто лезть в правила чтобы вспомнить алгоритмы состояний — удобно (хотя вся эта информация есть на ширме мастера).
 
 По совету ребят с Reddit'а сложил карточки в альбом.
-
-### [Приключение «Падение Чумного Камня»](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-prikljuchenie-padenie-chumnogo-kamnja)
-![PF2E The Fall of Plaguestone](/assets/img/ttrpg/pf2-the-fall-oflplaguestone.jpg){: height="300" }
-
-Куплен, чтобы иметь на руках пример одиночного приключения.
-
-Не смотря на то, что само приключение не играл, о покупке не пожалел — взял оттуда на вооружение немало.
-
-### [Серия приключений «Зловещие Катакомбы»](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-serija-prikljuchenij-zloveshhie-katakombi)
-![PF2E Abomination Vaults](/assets/img/ttrpg/pf2-abomination-vaults-closed.jpg){: height="200" }
-![PF2E Abomination Vaults Open](/assets/img/ttrpg/pf2-abomination-vaults-open.jpg){: height="200" }
-![PF2E Abomination Vaults Cards](/assets/img/ttrpg/pf2-abomination-vaults-cards.jpg){: height="200" }
-
-Брал, чтобы оттуда воровать монстров и карты для игр в своём сеттинге, но может однажды и сыграю с кем-нибудь.
 
 ## Call of Cthulhu
 Хочу тут сказать спасибо Рустаму и ульяновскому филиалу Hobby Games за то, что затащили меня поиграть в [Call of Cthulhu](https://www.chaosium.com/call-of-cthulhu-rpg/).
@@ -163,6 +211,22 @@ permalink: /ttrpg/
 Книга — супер.
 
 Я вовремя успел закупиться, потому что _(как мне подсказывает интуиция)_ тиражей больше не будет, а в онлайн-магазине Hobby Games всё выкупили.
+
+## Savage Worlds: Adventure Edition
+
+### [Savage Worlds: Дневник Авантюриста](https://www.ttrpg-store.ru/collection/pravila-nri-i-knigi-igry/product/savage-worlds-dnevnik-avantyurista)
+aka «Книга правил».
+
+![SWADE Rulebook](/assets/img/ttrpg/swade-rulebook-closed.jpg){: height="300" }
+![SWADE Rulebook Open](/assets/img/ttrpg/swade-rulebook-open.jpg){: height="300" }
+
+Очень надеюсь когда-нибудь поиграть, но пока возможности не нашёл.
+
+### [Savage Worlds: Колоды карт](https://www.ttrpg-store.ru/collection/all/product/tri-kolody-dlya-dnevnika-avantyurista)
+
+![SWADE Card Decks](/assets/img/ttrpg/swade-decks.jpg){: height="300" }
+
+Так-то кроме «Колоды приключений» ничего особо не нужно, но было по скидке, и я решил взять весь набор.
 
 ## VtM 20th Anniversary Edition
 Книги по VtM'у брал чтобы читать их как художку, а не играть _(и потому что мне деньги некуда было тратить)_, поэтому комментировать не буду — просто приложу картинки
@@ -203,3 +267,9 @@ permalink: /ttrpg/
 ### [Как воскресить Ильича?](https://studio101.ru/products/std0406)
 ![Ilyich](/assets/img/ttrpg/ilyich.jpg){: height="300" }
 ![Ilyich Open](/assets/img/ttrpg/ilyich-open.jpg){: height="300" }
+
+## [Ящеры против русов](https://silverhoofgames.ru/product/%D1%8F%D1%89%D0%B5%D1%80%D1%8B-%D0%BF%D1%80%D0%BE%D1%82%D0%B8%D0%B2-%D1%80%D1%83%D1%81%D0%BE%D0%B2/)
+Подарили на ДР =)
+
+![Lizard vs Rus](/assets/img/ttrpg/lizard-vs-rus-closed.jpg){: height="300" }
+![Lizard vs Rus Open](/assets/img/ttrpg/lizard-vs-rus-open.jpg){: height="300" }
