@@ -86,6 +86,7 @@ permalink: /gamelist/
 - [Hi-Fi RUSH](https://www.xbox.com/en-US/games/store/hi-fi-rush/9nftc552k3gj) — 2023.02.09\\
   Комнаты закрыл чуть позже — 2023.02.12
 - [High on Life](https://www.xbox.com/en-US/games/store/high-on-life/9NL4714VTLRS) — 2023.07.23
+- [High on Life 2](https://www.xbox.com/en-US/games/store/high-on-life-2/9NF6XPSBTTGB) — 2026.03.29
 - [Hotline Miami](http://store.steampowered.com/app/219150/Hotline_Miami/) — 2017.09.14
 - [Hotline Miami 2](http://store.steampowered.com/app/274170/Hotline_Miami_2_Wrong_Number/) — 2018.05.13 \\
   Первая часть лучше
