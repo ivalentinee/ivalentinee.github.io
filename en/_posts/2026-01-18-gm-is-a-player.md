@@ -9,7 +9,7 @@ uid: gm-is-a-player
 ## Is this original? Is this relevant?
 Good question(s)!
 
-I'm *(well, was till I decided to stop a year ago)* a regular d&dtube, pathtube and overall ttrpgtube viewer *(you're my hero, [Deficient](https://www.youtube.com/@DeficientMaster)!)*, and I'm subscribed to [D&D](https://www.reddit.com/r/DnD/) and [Pathfinder2E](https://www.reddit.com/r/Pathfinder2e/) subreddits, but haven't seen this topic being broadly discussed, so I decided to put in my 2 cents on the problem of GM agency *(weird, I know)*.
+I'm *(well, was till I decided to stop a year ago)* a regular d&dtube, pathtube and overall ttrpgtube watcher *(you're my hero, [Deficient](https://www.youtube.com/@DeficientMaster)!)*, and I'm subscribed to [D&D](https://www.reddit.com/r/DnD/) and [Pathfinder2E](https://www.reddit.com/r/Pathfinder2e/) subreddits, but haven't seen this topic being broadly discussed, so I decided to put in my 2 cents on the problem of GM agency *(weird, I know)*.
 
 Also please note, that I have a perspective of a [D&D](http://dnd.wizards.com/)/[PF2E](https://paizo.com/pathfinder) player and GM, so, even though I have a rough idea of what [SWADE](https://peginc.com/savage-settings/savage-worlds/), [Call of Cthulhu](https://www.chaosium.com/call-of-cthulhu-rpg/) and [VtM](https://en.wikipedia.org/wiki/Vampire:_The_Masquerade) are, I know nothing of things like [Fate Core](https://evilhat.com/product/fate-core-system/) and many many others.
 
