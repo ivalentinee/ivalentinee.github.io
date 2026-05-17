@@ -154,6 +154,8 @@ permalink: /gamelist/
 - [SteamWorld Dig 2](https://www.xbox.com/en-US/games/store/steamworld-dig-2/9p45llrndp1r) — 2025.04.16
 - [Subnautica](https://www.microsoft.com/en-us/p/subnautica/bx3s1q5dvhrd) — 2021.04.28
 - [Subnautica: Below Zero](https://www.microsoft.com/en-us/p/subnautica-below-zero/9ndcjxl11096) — 2021.09.26
+- [Subnautica 2 (preview)](https://www.xbox.com/en-US/games/store/subnautica-2-game-preview/9pjpcb188svg) — 2026.05.18 \\
+  Очевидно, закрыл только то, что было доступно в раннем доступе
 - [Sunset Overdrive](https://store.steampowered.com/app/847370/Sunset_Overdrive/) — 2019.03.02
 - [Super Lucky's Tale](https://www.microsoft.com/en-us/p/super-luckys-tale/9plmgfwcfz9g) — 2021.02.28 \\
   Без DLC
