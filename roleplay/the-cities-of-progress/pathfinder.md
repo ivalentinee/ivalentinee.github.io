@@ -6,68 +6,17 @@ toc: true
 back: /roleplay/the-cities-of-progress/
 ---
 
-# Ограничения
-Можно использовать всё, что есть в [Основной книге игрока](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka).\\
-[Основная книга игрока 2](https://pf2.ru/sources/player%20core%202) и прочие источники недоступны.
+# [Ограничения](/roleplay/the-cities-of-progress/wiki/dostupnye-istochniki)
+Можно использовать всё, что есть в [Основной книге игрока](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka), [Основной книге игрока 2](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka-2), [Guns & Gears](https://store.paizo.com/pathfinder-guns-gears-remastered/), [Treasure Vault](https://store.paizo.com/treasure-vault-remastered/)
 
-# Классы
-Мне лень расписывать специфику классов для этого мира, так что просто перечислю разрешённые (все из Player Core):
-- [Бард](https://pf2.ru/classes/bard)
-- [Ведьма](https://pf2.ru/classes/witch)
-- [Воин](https://pf2.ru/classes/fighter)
-- [Волшебник](https://pf2.ru/classes/wizard)
-- [Друид](https://pf2.ru/classes/druid)
-- [Жрец](https://pf2.ru/classes/cleric)
-- [Плут](https://pf2.ru/classes/rogue)
-- [Следопыт](https://pf2.ru/classes/ranger)
+# [Классы](/roleplay/the-cities-of-progress/wiki/dostupnye-klassy)
+Список доступных классов в [справочнике](/roleplay/the-cities-of-progress/wiki/dostupnye-klassy)
 
-*Если есть желание как-то более конкретно вписать какой-то класс в сеттинг — пишите, сделаем.*
+# [Происхождения](/roleplay/the-cities-of-progress/wiki/dostupnye-proiskhozhdeniya)
+Список доступных происхождений в [справочнике](/roleplay/the-cities-of-progress/wiki/dostupnye-proiskhozhdeniya)
 
-# Происхождения
-Описания берите из Основной Книги Игрока (или на [pf2.ru](https://pf2.ru/classes/bard)), вот список доступных:
-- [Адвокат](https://pf2.ru/backgrounds/barrister)
-- [Адепт боевых искусств](https://pf2.ru/backgrounds/martial%20disciple)
-- [Азартный игрок](https://pf2.ru/backgrounds/gambler)
-- [Акробат](https://pf2.ru/backgrounds/acrobat)
-- [Артист](https://pf2.ru/backgrounds/entertainer)
-- [Благородный](https://pf2.ru/backgrounds/noble)
-- [Боец](https://pf2.ru/backgrounds/warrior)
-- [Бродяга](https://pf2.ru/backgrounds/street%20urchin)
-- [Воспитанный в вере](https://pf2.ru/backgrounds/raised%20by%20belief)
-- [Гадатель](https://pf2.ru/backgrounds/fortune%20teller)
-- [Гладиатор](https://pf2.ru/backgrounds/gladiator)
-- [Друг животных](https://pf2.ru/backgrounds/animal%20whisperer)
-- [Заключённый](https://pf2.ru/backgrounds/prisoner)
-- [Землепашец](https://pf2.ru/backgrounds/farmhand)
-- [Кочевник](https://pf2.ru/backgrounds/nomad)
-- [Культист](https://pf2.ru/backgrounds/cultist)
-- [Купец](https://pf2.ru/backgrounds/merchant)
-- [Механик](https://pf2.ru/backgrounds/tinker)
-- [Моряк](https://pf2.ru/backgrounds/sailor)
-- [Отшельник](https://pf2.ru/backgrounds/hermit)
-- [Охотник](https://pf2.ru/backgrounds/hunter)
-- [Охотник за головами](https://pf2.ru/backgrounds/bounty%20hunter)
-- [Повар](https://pf2.ru/backgrounds/cook)
-- [Полевой медик](https://pf2.ru/backgrounds/field%20medic)
-- [Посланник](https://pf2.ru/backgrounds/emissary)
-- [Послушник](https://pf2.ru/backgrounds/acolyte)
-- [Преступник](https://pf2.ru/backgrounds/criminal)
-- [Разбойник](https://pf2.ru/backgrounds/bandit)
-- [Разведчик](https://pf2.ru/backgrounds/scout)
-- [Разнорабочий](https://pf2.ru/backgrounds/laborer)
-- [Ремесленник](https://pf2.ru/backgrounds/artisan)
-- [Рудокоп](https://pf2.ru/backgrounds/miner)
-- [Стражник](https://pf2.ru/backgrounds/guard)
-- [Сыщик](https://pf2.ru/backgrounds/detective)
-- [Травник](https://pf2.ru/backgrounds/herbalist)
-- [Трактирщик](https://pf2.ru/backgrounds/barkeep)
-- [Учёный](https://pf2.ru/backgrounds/scholar)
-- [Учитель](https://pf2.ru/backgrounds/teacher)
-- [Художник](https://pf2.ru/backgrounds/artist)
-- [Шарлатан](https://pf2.ru/backgrounds/charlatan)
-
-# Народы
-*Тут я описываю какие-то отличия и особенности для данного мира. За остальным — смотрите в Player Core.*
+# [Народы](/roleplay/the-cities-of-progress/wiki/index-peoples)
+*Тут я описываю какие-то отличия и особенности для данного мира. За остальным — смотрите в книге или на pf2.ru/AoN*
 
 ## [Люди](https://pf2.ru/ancestries/human)
 Люди — основная движущая сила и большая часть населения как в Московском Царстве, так и в Городах Прогресса.
@@ -145,12 +94,12 @@ back: /roleplay/the-cities-of-progress/
 
 
 ## [Нефилимы](https://pf2.ru/ancestries/nephilim)
-Нефилимы — существа, которые родились в месте и времени схождения планов.\\
+[Нефилимы](/roleplay/the-cities-of-progress/wiki/nefilimy) — существа, которые родились в месте и времени схождения планов.\\
 Так что никаких дьявольских родителей — просто магия немножно разыгралась.
 
 
-## [Подменыши](https://pf2.ru/heritages/changeling)
-*Не могу ничего добавить сверх описания из Player Core*
+## ~~[Подменыши](https://pf2.ru/heritages/changeling)~~
+*Давайте их не использовать пожалуйста*
 
 
 # [Языки](https://pf2.ru/rules/languages?rule=2095)

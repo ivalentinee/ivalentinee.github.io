@@ -11,6 +11,7 @@ permalink: /roleplay/the-cities-of-progress/
 - [Симбирск](/roleplay/the-cities-of-progress/simbirsk)
 - [Отряды прогресса](/roleplay/the-cities-of-progress/progress-squads)
 - [Pathfinder — классы, народы и языки](/roleplay/the-cities-of-progress/pathfinder)
+- [Справочник сеттинга](/roleplay/the-cities-of-progress/wiki/)
 
 ## TL/DR
 Уверовавшие в *Прогресс* освободились и — после долгой войны — отделились от Московского Царства, основав союз маготехнологических городов-государств от Среднего Поволжья до Урала.
