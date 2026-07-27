@@ -11,8 +11,7 @@ tags:
 
 Главный город Городов Прогресса. Родина Ленина и центр движения. Управляется Городским Советом (избранные Служители Прогресса).
 
-Управление
-----------
+## Управление
 
 Городской Совет (бюрократия, текущие дела)
 
@@ -31,15 +30,13 @@ tags:
 </details>
 
 
-Законы
-------
+## Законы
 
 -   Гражданство через многолетнее служение или рождение
 -   Магия и оружие в открытую запрещены (штраф/тюрьма)
 -   Валюта: копейки (медь), 10 копеек (серебро), рубли (золото), червонцы (платина)
 
-Районы
-------
+## Районы
 
 -   **Центральный** --- площадь, рынок, Дома Прогресса, [Лавка Исторических Ценностей](/roleplay/the-cities-of-progress/wiki/lavka-istoricheskikh-tsennostey)
 -   **Институт Магии**
@@ -48,13 +45,11 @@ tags:
 -   **Мост через Волгу**
 -   **[Аркана-Стар](/roleplay/the-cities-of-progress/wiki/arkana-star)** --- секретный комплекс за мостом
 
-Экономика
----------
+## Экономика
 
 [Контролируемый рынок](/roleplay/the-cities-of-progress/wiki/ekonomicheskaya-model): тресты, артели, концессии, частные предприятия. Контраст с [Самарой](/roleplay/the-cities-of-progress/wiki/samara) (полная свобода) и [Саратовом](/roleplay/the-cities-of-progress/wiki/saratov) (полный госконтроль).
 
-Ключевые организации
---------------------
+## Ключевые организации
 
 Государственные:
 
@@ -73,8 +68,7 @@ tags:
 -   [Сторожевая артель Степанова](/roleplay/the-cities-of-progress/wiki/storozhevaya-artel-stepanova)
 -   [Чёрные Копатели](/roleplay/the-cities-of-progress/wiki/chyornye-kopateli) / [Лавка Исторических Ценностей](/roleplay/the-cities-of-progress/wiki/lavka-istoricheskikh-tsennostey)
 
-Связи
------
+## Связи
 
 -   [Экономическая модель](/roleplay/the-cities-of-progress/wiki/ekonomicheskaya-model)
 -   [Тайный совет](/roleplay/the-cities-of-progress/wiki/taynyy-sovet-simbirska)

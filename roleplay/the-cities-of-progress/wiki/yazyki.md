@@ -10,14 +10,12 @@ tags:
 
 Обзор языков, используемых в Городах Прогресса и окрестных территориях.
 
-Региональные языки
-------------------
+## Региональные языки
 
 -   [Русский](/roleplay/the-cities-of-progress/wiki/russkiy-yazyk) --- основной язык региона
 -   Другие человеческие языки (балканские, кавказские, сибирские) --- существуют, но в Городах Прогресса редки
 
-Языки народов
--------------
+## Языки народов
 
 -   [Язык Древних](/roleplay/the-cities-of-progress/wiki/yazyk-drevnikh) --- легендарный праязык
 -   [Эльфийский](/roleplay/the-cities-of-progress/wiki/elfiyskiy-yazyk) --- диалекты на основе Языка Древних
@@ -25,8 +23,7 @@ tags:
 -   [Полуросличий](/roleplay/the-cities-of-progress/wiki/poluroslichiy-yazyk) --- примитивный, без письменности
 -   Гномьи языки --- каждое государство развило свой, единого нет
 
-Связи
------
+## Связи
 
 -   [Люди](/roleplay/the-cities-of-progress/wiki/lyudi)
 -   [Эльфы](/roleplay/the-cities-of-progress/wiki/elfy)

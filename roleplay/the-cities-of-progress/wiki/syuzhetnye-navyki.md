@@ -10,8 +10,7 @@ tags:
 
 Дополнительные навыки типа «Знание» (Lore), специфичные для кампании в [Симбирске](/roleplay/the-cities-of-progress/wiki/simbirsk).
 
-Список
-------
+## Список
 
 ### Знание: Война за освобождение
 
@@ -33,8 +32,7 @@ tags:
 
 Осведомлённость о преступных организациях и нелегальных услугах в городе. [Артель Степанова](/roleplay/the-cities-of-progress/wiki/storozhevaya-artel-stepanova), [Чёрные Копатели](/roleplay/the-cities-of-progress/wiki/chyornye-kopateli), контрабандные каналы, подпольные рынки.
 
-Связи
------
+## Связи
 
 -   [Доступные источники](/roleplay/the-cities-of-progress/wiki/dostupnye-istochniki)
 -   [Симбирск](/roleplay/the-cities-of-progress/wiki/simbirsk)

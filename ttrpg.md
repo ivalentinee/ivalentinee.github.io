@@ -118,6 +118,12 @@ permalink: /ttrpg/
 
 Конечно, сеттинг у Пасфайндера своеобразный, и главу про Голарион я пролистал и забыл как страшный сон. Благо в этой книге сеттинг только обзорно описан, и для любителей есть [отдельная серия книг](https://paizo.com/store/pathfinder/setting).
 
+#### [Основная книга игрока 2](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka-2)
+![PF2E Player Core](/assets/img/ttrpg/pf2-player-core-2-closed.jpg){: height="300" }
+![PF2E Player Core Open](/assets/img/ttrpg/pf2-player-core-2-open.jpg){: height="300" }
+
+Все эти квардроберские расы мне, конечно, не очень нравятся, а вот новые классы и не-мультиклассовые архетипы — это хорошо.
+
 #### [Основной бестиарий](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnoj-bestiarij)
 ![PF2E Monster Core](/assets/img/ttrpg/pf2-monster-core-closed.jpg){: height="300" }
 ![PF2E Monster Core Open](/assets/img/ttrpg/pf2-monster-core-open.jpg){: height="300" }

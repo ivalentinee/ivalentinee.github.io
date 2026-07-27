@@ -9,6 +9,8 @@ back: /roleplay/the-cities-of-progress/
 # [Ограничения](/roleplay/the-cities-of-progress/wiki/dostupnye-istochniki)
 Можно использовать всё, что есть в [Основной книге игрока](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka), [Основной книге игрока 2](https://hobbygames.ru/pathfinder-nri-vtoraja-redakcija-osnovnaja-kniga-igroka-2), [Guns & Gears](https://store.paizo.com/pathfinder-guns-gears-remastered/), [Treasure Vault](https://store.paizo.com/treasure-vault-remastered/)
 
+По-умолчанию доступны только _обычные_ опции. _Необычные_ и _редкие_ нужно согласовывать с ГМом.
+
 # [Классы](/roleplay/the-cities-of-progress/wiki/dostupnye-klassy)
 Список доступных классов в [справочнике](/roleplay/the-cities-of-progress/wiki/dostupnye-klassy)
 
@@ -96,6 +98,22 @@ back: /roleplay/the-cities-of-progress/
 ## [Нефилимы](https://pf2.ru/ancestries/nephilim)
 [Нефилимы](/roleplay/the-cities-of-progress/wiki/nefilimy) — существа, которые родились в месте и времени схождения планов.\\
 Так что никаких дьявольских родителей — просто магия немножно разыгралась.
+
+
+## [Людоящеры](https://2e.aonprd.com/Ancestries.aspx?ID=15)
+Древний народ, населяющий [Сибирь](/roleplay/the-cities-of-progress/wiki/sibir). Хитрые и коварные холоднокровные гуманоиды с чешуйчатой кожей, вытянутыми мордами и мощными хвостами.
+
+В Сибири людоящеры находятся в вечном конфликте с орками и людьми — война длится столетиями без победителя. Людоящерские общества построены на хитрости и тактическом превосходстве: засады, ловушки, атаки с воды.
+
+Людоящеры в Городах Прогресса — те немногие, кто не хочет участвовать в бесконечном сибирском конфликте и ушёл на запад. При этом сохранили коварный характер — не из злости, а из культуры, в которой выросли. Подробнее — в [справочнике](/roleplay/the-cities-of-progress/wiki/lyudoyashchery).
+
+
+## [Холо](https://2e.aonprd.com/Ancestries.aspx?ID=70)
+Собакоподобные гуманоиды. Кочевые племена из степей и пустынь Средней Азии.
+
+Народ, который живёт легендами, странствием и уважением к прошлому. Племена управляются старейшинами-матриархами. Религиозные практики — шаманизм, культ сна как реальности.
+
+В Городах Прогресса холо почти не встречаются — предпочитают свои кочевья. Подробнее — в [справочнике](/roleplay/the-cities-of-progress/wiki/kholo).
 
 
 ## ~~[Подменыши](https://pf2.ru/heritages/changeling)~~

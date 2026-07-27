@@ -10,8 +10,9 @@ tags:
 
 Происхождения (backgrounds) из [доступных источников](/roleplay/the-cities-of-progress/wiki/dostupnye-istochniki), разрешённые в кампании.
 
-Из [Основной Книги Игрока](https://pf2.ru/rules/player-core) ([Player Core](https://2e.aonprd.com/Sources.aspx?ID=216))
------------------------------------------------------------------------------------------------------------------------
+По-умолчанию доступны только [обычные]{.underline} происхождения. [Необычные]{.underline} и [редкие]{.underline} нужно согласовывать с ГМом.
+
+## Из [Основной Книги Игрока](https://pf2.ru/rules/player-core) ([Player Core](https://2e.aonprd.com/Sources.aspx?ID=216))
 
 -   [Адвокат](https://pf2.ru/backgrounds/barrister)
 -   [Адепт боевых искусств](https://pf2.ru/backgrounds/martial%20disciple)
@@ -54,34 +55,39 @@ tags:
 -   [Художник](https://pf2.ru/backgrounds/artist)
 -   [Шарлатан](https://pf2.ru/backgrounds/charlatan)
 
-Из [Guns & Gears](https://2e.aonprd.com/Sources.aspx?ID=98)
------------------------------------------------------------
+## Из [Основной Книги Игрока 2](https://pf2.ru/sources/player%20core%202) ([Player Core 2](https://2e.aonprd.com/Sources.aspx?ID=227))
 
-### Gears
+### Обычные
 
-1.  Обычные
+-   [Астролог](https://pf2.ru/backgrounds/astrologer)
+-   [Беженец](https://pf2.ru/backgrounds/refugee)
+-   [Водитель](https://pf2.ru/backgrounds/driver)
+-   [Диверсант](https://pf2.ru/backgrounds/saboteur)
+-   [Конный разведчик](https://pf2.ru/backgrounds/outrider)
+-   [Мусорщик](https://pf2.ru/backgrounds/scavenger)
+-   [Оруженосец](https://pf2.ru/backgrounds/squire)
+-   [Паломник](https://pf2.ru/backgrounds/pilgrim)
+-   [Повстанец](https://pf2.ru/backgrounds/insurgent)
+-   [Подопечный](https://pf2.ru/backgrounds/ward)
+-   [Посыльный](https://pf2.ru/backgrounds/courier)
+-   [Сборщик податей](https://pf2.ru/backgrounds/tax%20collector)
+-   [Слуга](https://pf2.ru/backgrounds/servant)
+-   [Собиратель кореньев](https://pf2.ru/backgrounds/root%20worker)
+-   [Счетовод](https://pf2.ru/backgrounds/bookkeeper)
+-   [Цирюльник](https://pf2.ru/backgrounds/barber)
 
-    -   [Антитехнический активист](https://pf2.ru/backgrounds/anti-tech%20activist) ([Anit-tech Activist](https://2e.aonprd.com/Backgrounds.aspx?ID=249))
-    -   ~~[Заводной гладиатор](https://pf2.ru/backgrounds/Clockfighter) ([Clockfighter](https://2e.aonprd.com/Backgrounds.aspx?ID=250))~~
-    -   [Исследователь заводных механизмов](https://pf2.ru/backgrounds/Clockwork%20Researcher) ([Clockwork Researcher](https://2e.aonprd.com/Backgrounds.aspx?ID=251))
-    -   [Криптограф](https://pf2.ru/backgrounds/Codebreaker) ([Codebreaker](https://2e.aonprd.com/Backgrounds.aspx?ID=252))
-    -   *Апостол шестерни* ([Disciple of the Gear](https://2e.aonprd.com/Backgrounds.aspx?ID=253))
-    -   Водитель ([Driver](https://2e.aonprd.com/Backgrounds.aspx?ID=254))
-    -   [Преследуемый вор](https://pf2.ru/backgrounds/Hounded%20Thief) ([Hounded Thief](https://2e.aonprd.com/Backgrounds.aspx?ID=255))
-    -   [Мусорщик](https://pf2.ru/backgrounds/Junker) ([Junker](https://2e.aonprd.com/Backgrounds.aspx?ID=256))
-    -   [Механик](https://pf2.ru/backgrounds/Mechanic) ([Mechanic](https://2e.aonprd.com/Backgrounds.aspx?ID=257))
-    -   [Медик-часовщик](https://pf2.ru/backgrounds/Medicinal%20Clocksmith) ([Medicinal Clocksmith](https://2e.aonprd.com/Backgrounds.aspx?ID=258))
-    -   [Печатник](https://pf2.ru/backgrounds/Printer) ([Printer](https://2e.aonprd.com/Backgrounds.aspx?ID=259))
-    -   Диверсант ([Saboteyr](https://2e.aonprd.com/Backgrounds.aspx?ID=260))
-    -   [Мастер игрушек](https://pf2.ru/backgrounds/Toymaker) ([Toymaker](https://2e.aonprd.com/Backgrounds.aspx?ID=261))
+### Редкие
 
-2.  Редкие
+-   [Благословлённый](https://pf2.ru/backgrounds/blessed)
+-   [Возвращённый](https://pf2.ru/backgrounds/returned)
+-   [Дикое дитя](https://pf2.ru/backgrounds/feral%20child)
+-   [Должник фей](https://pf2.ru/backgrounds/feybound)
+-   [Королевская кровь](https://pf2.ru/backgrounds/royalty)
+-   [Потерявший память](https://pf2.ru/backgrounds/amnesiac)
+-   [Проклятый](https://pf2.ru/backgrounds/cursed)
+-   [Терзаемый призраками](https://pf2.ru/backgrounds/haunted)
 
-    -   ~~[Брошенный дубликат](https://pf2.ru/backgrounds/Discarded%20Duplicate) ([Discarded Duplicate](https://2e.aonprd.com/Backgrounds.aspx?ID=262))~~
-    -   [Механический симбиоз](https://pf2.ru/backgrounds/Mechanical%20Symbiosis) ([Mechanical Symbiosis](https://2e.aonprd.com/Backgrounds.aspx?ID=263))
-    -   [Спасенный механизмом](https://pf2.ru/backgrounds/Saved%20by%20Clockwork) ([Saved by Clockwork](https://2e.aonprd.com/Backgrounds.aspx?ID=264))
-    -   ~~[Технозависимый](https://pf2.ru/backgrounds/Tech-Reliant) ([Tech-Reliant](https://2e.aonprd.com/Backgrounds.aspx?ID=265))~~
-    -   ~~[Оживленный желанием](https://pf2.ru/backgrounds/Wished%20Alive) ([Wished Alive](https://2e.aonprd.com/Backgrounds.aspx?ID=266))~~
+## Из [Guns & Gears](https://2e.aonprd.com/Sources.aspx?ID=98)
 
 ### Guns
 
@@ -116,8 +122,7 @@ tags:
     -   [Ревенант](https://pf2.ru/backgrounds/Revenant) ([Revenant](https://2e.aonprd.com/Backgrounds.aspx?ID=287))
     -   [Небылица](https://pf2.ru/backgrounds/tall-tale) ([Tall Tale](https://2e.aonprd.com/Backgrounds.aspx?ID=288))
 
-Связи
------
+## Связи
 
 -   [Доступные источники](/roleplay/the-cities-of-progress/wiki/dostupnye-istochniki)
 -   [Доступные классы](/roleplay/the-cities-of-progress/wiki/dostupnye-klassy)
