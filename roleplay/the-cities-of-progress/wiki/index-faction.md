@@ -7,6 +7,7 @@ back: /roleplay/the-cities-of-progress/
 
 
 - [Альфа Мед](/roleplay/the-cities-of-progress/wiki/alfa-med)
+- [Башня Тени](/roleplay/the-cities-of-progress/wiki/bashnya-teni)
 - [Канцелярия Симбирска](/roleplay/the-cities-of-progress/wiki/kantselyariya-simbirska)
 - [Лавка Исторических Ценностей](/roleplay/the-cities-of-progress/wiki/lavka-istoricheskikh-tsennostey)
 - [Мелекесское хозяйство](/roleplay/the-cities-of-progress/wiki/melekesskoe-khozyaystvo)
