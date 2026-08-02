@@ -15,6 +15,8 @@ back: /roleplay/the-cities-of-progress/
 - [Доступные источники правил](/roleplay/the-cities-of-progress/wiki/dostupnye-istochniki)
 - [Доступные классы](/roleplay/the-cities-of-progress/wiki/dostupnye-klassy)
 - [Доступные происхождения](/roleplay/the-cities-of-progress/wiki/dostupnye-proiskhozhdeniya)
+- [Драконы](/roleplay/the-cities-of-progress/wiki/drakony)
+- [Древняя магия](/roleplay/the-cities-of-progress/wiki/drevnyaya-magiya)
 - [Исторические аналогии сеттинга](/roleplay/the-cities-of-progress/wiki/istoricheskie-analogii)
 - [Лешие](/roleplay/the-cities-of-progress/wiki/leshie)
 - [Люди](/roleplay/the-cities-of-progress/wiki/lyudi)
@@ -58,6 +60,7 @@ back: /roleplay/the-cities-of-progress/
 
 
 - [Автоматоны](/roleplay/the-cities-of-progress/wiki/avtomatony)
+- [Дварфы-отступники](/roleplay/the-cities-of-progress/wiki/dvarfy-otstupniki)
 - [Магический цикл (апокалиптическая угроза)](/roleplay/the-cities-of-progress/wiki/magicheskiy-tsikl)
 - [Технология дварфов](/roleplay/the-cities-of-progress/wiki/tekhnologiya-dvarfov)
 - [Эльфийский корабль](/roleplay/the-cities-of-progress/wiki/elfiyskiy-korabl)

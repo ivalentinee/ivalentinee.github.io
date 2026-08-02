@@ -20,7 +20,7 @@ tags:
 -   [Язык Древних](/roleplay/the-cities-of-progress/wiki/yazyk-drevnikh) --- легендарный праязык
 -   [Эльфийский](/roleplay/the-cities-of-progress/wiki/elfiyskiy-yazyk) --- диалекты на основе Языка Древних
 -   [Дварфийский](/roleplay/the-cities-of-progress/wiki/dvarfiyskiy-yazyk) --- неизменный, «грубый как камень»
--   [Полуросличий](/roleplay/the-cities-of-progress/wiki/poluroslichiy-yazyk) --- примитивный, без письменности
+-   [Полуросличий](/roleplay/the-cities-of-progress/wiki/poluroslichiy-yazyk) --- древний, использует схожую с Дварфийским письменность
 -   Гномьи языки --- каждое государство развило свой, единого нет
 
 ## Связи

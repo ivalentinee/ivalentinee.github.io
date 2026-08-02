@@ -21,6 +21,7 @@ back: /roleplay/the-cities-of-progress/
 
 - [Александр Михайлович Чечевицын (член Тайного совета)](/roleplay/the-cities-of-progress/wiki/aleksandr-chechevitsyn)
 - [Владимир Ленин](/roleplay/the-cities-of-progress/wiki/lenin)
+- [Змей Горыныч / Матвей Георгиевич Пожарский](/roleplay/the-cities-of-progress/wiki/zmey-gorynych)
 - [Константин Константинович (член Тайного совета)](/roleplay/the-cities-of-progress/wiki/konstantin-konstantinovich)
 - [Лев Давидович (член Тайного совета)](/roleplay/the-cities-of-progress/wiki/lev-davidovich)
 - [Магистр Николай (член Тайного совета)](/roleplay/the-cities-of-progress/wiki/magistr-nikolay)

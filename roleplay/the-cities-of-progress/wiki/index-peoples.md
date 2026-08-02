@@ -26,6 +26,7 @@ back: /roleplay/the-cities-of-progress/
 
 
 - [Автоматоны](/roleplay/the-cities-of-progress/wiki/avtomatony)
+- [Дварфы-отступники](/roleplay/the-cities-of-progress/wiki/dvarfy-otstupniki)
 
 </div>
 </details>
